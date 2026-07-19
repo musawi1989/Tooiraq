@@ -33,6 +33,9 @@ Based on the user's uploaded "Rafidain Design System" doc: **Iraq Red `#CE1126` 
   2. **Real operators** (Bil Weekend, Untamed Borders, etc.) added for onboarding outreach: they have `pending: true`, `src` (link to their original listing shown as "View original listing ↗" — **to be removed once they approve**), NO invented prices/ratings/reviews (price 0 = "Price on request"), descriptions written in our own words, no copied images.
 - Keep it this way until providers approve their profiles. Owner's outreach tracker: `tooiraq-provider-outreach.xlsx` (sent to Max in chat).
 
+## WhatsApp routing
+All WhatsApp chat/booking buttons route to ONE central number via `WA_NUMBER` in app.js (currently +964 774 014 2909 — Max's number, set via a Netlify Agent Runner edit). Inquiries reach Max, who coordinates with providers during onboarding. Buttons still only show where an agency has `wa` set (sample agencies); real pending agencies show their source link instead.
+
 ## Working conventions
 - Every user-visible string exists in `STR.en` and `STR.ar` in app.js (`data-i18n` for static HTML, `t()` in JS). Test both languages; AR flips to RTL.
 - Data edits happen in `data.js` only; pages render from it.
