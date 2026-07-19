@@ -48,6 +48,10 @@
       reviewsWord: "reviews", langsWord: "Languages",
       crumbHome: "Home", crumbTours: "Tours",
       bestSeller: "Best seller", likelySellOut: "Likely to sell out", verified: "Verified",
+      poa: "Price on request", onboardingBadge: "Onboarding", newOp: "New on TooIraq — onboarding",
+      srcBtn: "View original listing ↗",
+      srcNote: "Temporary reference link for onboarding — will be removed once this provider approves their TooIraq profile.",
+      visitSite: "Website ↗",
       aboutTitle: "About this tour", incTitle: "What's included",
       itinTitle: "Itinerary", meetTitle: "Meeting point & pickup",
       revTitle: "Traveler reviews", offeredBy: "Offered by", since: "On TooIraq since",
@@ -120,6 +124,10 @@
       reviewsWord: "تقييم", langsWord: "اللغات",
       crumbHome: "الرئيسية", crumbTours: "الجولات",
       bestSeller: "الأكثر مبيعاً", likelySellOut: "ينفد سريعاً", verified: "موثّقة",
+      poa: "السعر عند الطلب", onboardingBadge: "قيد الانضمام", newOp: "جديد على TooIraq — قيد الانضمام",
+      srcBtn: "عرض الإعلان الأصلي ↗",
+      srcNote: "رابط مرجعي مؤقت لغرض الانضمام — سيُزال بعد موافقة المزوّد على ملفه في TooIraq.",
+      visitSite: "الموقع الإلكتروني ↗",
       aboutTitle: "عن هذه الجولة", incTitle: "ما هو مشمول",
       itinTitle: "برنامج الجولة", meetTitle: "نقطة اللقاء والنقل",
       revTitle: "آراء المسافرين", offeredBy: "مقدَّمة من", since: "على TooIraq منذ",
@@ -172,6 +180,9 @@
   const toursOf = (aid) => TOURS.filter((x) => x.agency === aid);
   const starsHTML = (r) => { const f = Math.round(r); let s = ""; for (let i = 1; i <= 5; i++) s += i <= f ? "★" : "☆"; return '<span class="stars">' + s + "</span>"; };
   const durLbl = (tour) => tour.days > 1 ? tour.days + " " + t("days") : (tour.hours || 8) + " " + t("hours");
+  const priceHTML = (tour) => tour.price
+    ? '<span class="price">' + t("from") + "<b>$" + tour.price + "</b><small>" + t("perPerson") + "</small></span>"
+    : '<span class="price"><b style="font-size:15px;line-height:1.3">' + t("poa") + "</b></span>";
   const fill = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
   const badgeHTML = (tour, inline) =>
     tour.badge === "best" ? '<span class="badge badge-hot"' + (inline ? ' style="position:static"' : "") + ">" + t("bestSeller") + "</span>" :
@@ -233,9 +244,10 @@
       '<div class="body">' +
       '<span class="place">' + esc(L(c)) + "</span>" +
       '<h3><a href="tour.html?id=' + tour.id + '">' + esc(L(tour.title)) + "</a></h3>" +
-      '<div class="rating-row">' + starsHTML(tour.rating) + "<b>" + tour.rating.toFixed(1) + "</b><span>(" + tour.reviews + ")</span></div>" +
+      (tour.rating ? '<div class="rating-row">' + starsHTML(tour.rating) + "<b>" + tour.rating.toFixed(1) + "</b><span>(" + tour.reviews + ")</span></div>"
+        : '<div class="rating-row"><span class="badge badge-save">' + t("onboardingBadge") + "</span></div>") +
       '<div class="meta"><span>🕐 ' + durLbl(tour) + "</span>" + (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>" +
-      '<div class="foot"><span class="price">' + t("from") + "<b>$" + tour.price + "</b><small>" + t("perPerson") + "</small></span>" +
+      '<div class="foot">' + priceHTML(tour) +
       '<a class="btn btn-tint btn-sm" href="tour.html?id=' + tour.id + '">' + t("seeTour") + "</a></div>" +
       "</div></article>"
     );
@@ -255,8 +267,10 @@
       (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") +
       "</div>" +
       '<div class="side">' +
-      '<div class="rating-row"><b>' + tour.rating.toFixed(1) + "</b>" + starsHTML(tour.rating) + "<span>" + tour.reviews + " " + t("reviewsWord") + "</span></div>" +
-      '<div><span class="price">' + t("from") + "<b>$" + tour.price + "</b><small>" + t("perPerson") + "</small></span>" +
+      (tour.rating ? '<div class="rating-row"><b>' + tour.rating.toFixed(1) + "</b>" + starsHTML(tour.rating) + "<span>" + tour.reviews + " " + t("reviewsWord") + "</span></div>"
+        : '<div><span class="badge badge-save">' + t("onboardingBadge") + "</span></div>") +
+      "<div>" + priceHTML(tour) +
+      (tour.src ? '<a class="footnote" style="display:block;margin-top:6px" target="_blank" rel="noopener" href="' + tour.src + '">' + t("srcBtn") + "</a>" : "") +
       '<a class="btn btn-primary btn-sm btn-block mt-2" href="tour.html?id=' + tour.id + '">' + t("seeTour") + "</a></div>" +
       "</div></article>"
     );
@@ -268,13 +282,18 @@
       '<article class="tcard"><div class="body">' +
       '<div style="display:flex;gap:12px;align-items:center">' +
       '<div class="alogo" style="background:#CE1126;width:48px;height:48px;border-radius:12px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">' + a.initials + "</div>" +
-      "<div><h3 style='font-size:17px'>" + esc(L(a.name)) + "</h3><span class='footnote'>" + esc(L(a.base)) + " · " + t("agSince") + " " + a.since + "</span></div></div>" +
-      '<div class="rating-row">' + starsHTML(a.rating) + "<b>" + a.rating.toFixed(1) + "</b><span>(" + a.reviews + " " + t("reviewsWord") + ")</span>" +
-      (a.verified ? '&nbsp;<span class="badge badge-verified">✓ ' + t("verified") + "</span>" : "") + "</div>" +
+      "<div><h3 style='font-size:17px'>" + esc(L(a.name)) + "</h3><span class='footnote'>" + esc(L(a.base)) + (a.since ? " · " + t("agSince") + " " + a.since : "") + "</span></div></div>" +
+      (a.rating
+        ? '<div class="rating-row">' + starsHTML(a.rating) + "<b>" + a.rating.toFixed(1) + "</b><span>(" + a.reviews + " " + t("reviewsWord") + ")</span>" +
+          (a.verified ? '&nbsp;<span class="badge badge-verified">✓ ' + t("verified") + "</span>" : "") + "</div>"
+        : '<div><span class="badge badge-save">' + t("newOp") + "</span></div>") +
       '<p class="subhead">' + esc(L(a.desc)) + "</p>" +
       '<div class="foot"><span class="footnote"><b style="color:var(--label-primary)">' + n + "</b> " + t("agTours") + "</span>" +
-      '<span style="display:flex;gap:8px"><a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + a.wa + '">' + t("chat") + "</a>" +
-      '<a class="btn btn-outline btn-sm" href="tel:' + a.phone.replace(/\s/g, "") + '">' + t("call") + "</a></span></div>" +
+      '<span style="display:flex;gap:8px">' +
+      (a.wa ? '<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + a.wa + '">' + t("chat") + "</a>" : "") +
+      (a.phone ? '<a class="btn btn-outline btn-sm" href="tel:' + a.phone.replace(/\s/g, "") + '">' + t("call") + "</a>" : "") +
+      (a.site ? '<a class="btn btn-outline btn-sm" target="_blank" rel="noopener" href="' + a.site + '">' + t("visitSite") + "</a>" : "") +
+      "</span></div>" +
       "</div></article>"
     );
   }
@@ -314,7 +333,7 @@
     fill("dest-big", CITIES.slice(0, 2).map(tile).join(""));
     fill("dest-small", CITIES.slice(2, 6).map(tile).join(""));
 
-    const top = TOURS.slice().sort((a, b) => b.rating - a.rating || b.reviews - a.reviews).slice(0, 6);
+    const top = TOURS.slice().sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0)).slice(0, 6);
     fill("featured", top.map(tourCard).join(""));
 
     fill("trust-row",
@@ -371,12 +390,12 @@
         (!state.types.length || state.types.includes(x.type)) &&
         x.price <= state.price &&
         (!state.dur.length || state.dur.includes(x.days > 1 ? "2" : "1")) &&
-        x.rating >= state.minRating &&
+        (x.rating || 0) >= state.minRating &&
         (!state.cancel || x.cancel));
-      if (state.sort === "priceUp") list.sort((a, b) => a.price - b.price);
-      else if (state.sort === "priceDn") list.sort((a, b) => b.price - a.price);
-      else if (state.sort === "rating") list.sort((a, b) => b.rating - a.rating);
-      else list.sort((a, b) => (b.badge ? 1 : 0) - (a.badge ? 1 : 0) || b.reviews - a.reviews);
+      if (state.sort === "priceUp") list.sort((a, b) => (a.price || 1e9) - (b.price || 1e9));
+      else if (state.sort === "priceDn") list.sort((a, b) => (b.price || 0) - (a.price || 0));
+      else if (state.sort === "rating") list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+      else list.sort((a, b) => (b.badge ? 1 : 0) - (a.badge ? 1 : 0) || (b.reviews || 0) - (a.reviews || 0));
       fill("r-list", list.length ? list.map(resultCard).join("") : '<div class="panel subhead">' + t("noResults") + "</div>");
       fill("r-count", "<b>" + list.length + "</b> " + t("found"));
     }
@@ -417,8 +436,11 @@
       '<div class="container detail-top">' +
       '<div class="crumbs"><a href="index.html">' + t("crumbHome") + '</a> / <a href="tours.html">' + t("crumbTours") + '</a> / <a href="tours.html?city=' + tour.city + '">' + esc(L(c)) + "</a></div>" +
       '<div class="detail-title-row"><div><h1>' + esc(L(tour.title)) + "</h1>" +
-      '<div class="detail-sub"><span class="rating-row"><b>' + tour.rating.toFixed(1) + "</b>" + starsHTML(tour.rating) + "<span>(" + tour.reviews + " " + t("reviewsWord") + ")</span></span>" +
-      "<span>📍 " + esc(L(c)) + "</span><span>🗂 " + esc(L(ty)) + "</span><span>🕐 " + durLbl(tour) + "</span><span>👥 " + t("upTo") + " " + tour.groupMax + "</span></div></div>" +
+      '<div class="detail-sub">' +
+      (tour.rating ? '<span class="rating-row"><b>' + tour.rating.toFixed(1) + "</b>" + starsHTML(tour.rating) + "<span>(" + tour.reviews + " " + t("reviewsWord") + ")</span></span>"
+        : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") +
+      "<span>📍 " + esc(L(c)) + "</span><span>🗂 " + esc(L(ty)) + "</span><span>🕐 " + durLbl(tour) + "</span>" +
+      (tour.groupMax ? "<span>👥 " + t("upTo") + " " + tour.groupMax + "</span>" : "") + "</div></div>" +
       (tour.badge ? "<div>" + badgeHTML(tour, true) + "</div>" : "") +
       "</div>" +
       '<div class="gallery"><a class="g-main"><img alt="" src="' + IMG(gallery[0]) + '"/></a>' +
@@ -434,24 +456,30 @@
       '<div class="panel"><h2>' + t("itinTitle") + '</h2><ul class="itin">' +
       (tour.itinerary || []).map((s, i) => '<li><span class="dot">' + (i + 1) + '</span><span class="tx"><b>' + esc(L(s.t)) + "</b><span>" + esc(L(s.d)) + "</span></span></li>").join("") + "</ul></div>" +
       '<div class="panel"><h2>' + t("meetTitle") + "</h2><p>📍 " + esc(L(tour.meeting)) + "</p></div>" +
-      '<div class="panel"><h2>' + t("revTitle") + "</h2>" +
-      revs.map((r) => '<div class="review"><div class="who"><span class="av">' + esc(r.n.slice(0, 1)) + "</span><div><b>" + esc(r.n) + "</b><br><span>" + esc(L(r.from)) + "</span></div>" +
-        '<span style="margin-inline-start:auto">' + starsHTML(r.stars) + "</span></div><p>" + esc(L(r.tx)) + "</p></div>").join("") + "</div>" +
+      (tour.src ? "" :
+        '<div class="panel"><h2>' + t("revTitle") + "</h2>" +
+        revs.map((r) => '<div class="review"><div class="who"><span class="av">' + esc(r.n.slice(0, 1)) + "</span><div><b>" + esc(r.n) + "</b><br><span>" + esc(L(r.from)) + "</span></div>" +
+          '<span style="margin-inline-start:auto">' + starsHTML(r.stars) + "</span></div><p>" + esc(L(r.tx)) + "</p></div>").join("") + "</div>") +
       "</div>" +
 
       '<aside><div class="panel bookbox">' +
-      '<div><span class="from">' + t("from") + '</span><div class="amount">$' + tour.price + " <small>" + t("perPerson") + "</small></div>" +
-      (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>" +
+      (tour.price
+        ? '<div><span class="from">' + t("from") + '</span><div class="amount">$' + tour.price + " <small>" + t("perPerson") + "</small></div>" +
+          (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>"
+        : '<div><div class="amount" style="font-size:22px">' + t("poa") + "</div>" +
+          (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>") +
+      (tour.src ? '<a class="btn btn-outline btn-block" target="_blank" rel="noopener" href="' + tour.src + '">' + t("srcBtn") + "</a>" +
+        '<p class="bb-note" style="color:#8E1020">' + t("srcNote") + "</p>" : "") +
       '<div class="field"><label>' + t("bbDate") + '</label><input type="date" id="bb-date"/></div>' +
       '<div class="field"><label>' + t("bbPax") + '</label><select id="bb-pax">' + paxOpts + "</select></div>" +
       '<div class="field"><label>' + t("bbName") + '</label><input type="text" id="bb-name"/></div>' +
       '<div class="field"><label>' + t("bbWa") + '</label><input type="tel" id="bb-wa" placeholder="+964 …"/></div>' +
-      '<button class="btn btn-wa btn-block" id="bb-book">' + t("bookWa") + "</button>" +
+      (a && a.wa ? '<button class="btn btn-wa btn-block" id="bb-book">' + t("bookWa") + "</button>" : "") +
       '<button class="btn btn-tint btn-block" id="bb-req">' + t("bookReq") + "</button>" +
       '<p class="bb-note">' + t("bbNote") + "</p>" +
       (a ? '<div class="bb-agency"><div class="alogo" style="background:#CE1126;width:42px;height:42px;border-radius:10px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">' + a.initials + '</div><div><span class="footnote">' + t("offeredBy") + "</span><br><b>" + esc(L(a.name)) + "</b> " +
         (a.verified ? '<span class="badge badge-verified">✓ ' + t("verified") + "</span>" : "") +
-        '<br><span class="footnote">★ ' + a.rating.toFixed(1) + " · " + t("since") + " " + a.since + "</span></div></div>" : "") +
+        '<br><span class="footnote">' + (a.rating ? "★ " + a.rating.toFixed(1) + " · " + t("since") + " " + a.since : t("newOp")) + "</span></div></div>" : "") +
       "</div></aside></div>";
 
     const waMsg = () => {
@@ -460,7 +488,8 @@
       const n = document.getElementById("bb-name").value || "—";
       return encodeURIComponent(t("waBook") + "\n• " + t("waTour") + ": " + L(tour.title) + "\n• " + t("waDate") + ": " + d + "\n• " + t("waPax") + ": " + p + "\n• " + t("waName") + ": " + n);
     };
-    document.getElementById("bb-book").addEventListener("click", () => {
+    const bbBook = document.getElementById("bb-book");
+    if (bbBook) bbBook.addEventListener("click", () => {
       window.open("https://wa.me/" + (a ? a.wa : "") + "?text=" + waMsg(), "_blank", "noopener");
     });
     document.getElementById("bb-req").addEventListener("click", () => {
