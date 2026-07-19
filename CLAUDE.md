@@ -34,9 +34,10 @@ Based on the user's uploaded "Rafidain Design System" doc: **Iraq Red `#CE1126` 
 - Keep it this way until providers approve their profiles. Owner's outreach tracker: `tooiraq-provider-outreach.xlsx` (sent to Max in chat).
 
 ## WhatsApp routing
-All WhatsApp chat/booking buttons route to ONE central number via `WA_NUMBER` in app.js (currently +964 774 014 2909 — Max's number, set via a Netlify Agent Runner edit). Inquiries reach Max, who coordinates with providers during onboarding. Buttons still only show where an agency has `wa` set (sample agencies); real pending agencies show their source link instead.
+Each agency's chat/booking buttons use that agency's OWN `wa` number from data.js (`https://wa.me/<a.wa>`). A short-lived "route everything to one central number" edit (July 19, 2026, via Netlify Agent Runner) was reverted at Max's request — do not reintroduce a central `WA_NUMBER`. Buttons only render where an agency has `wa` set (currently the sample agencies); real pending agencies have `wa: ""` and show their source link instead.
 
 ## Working conventions
+- **Testing-phase publishing (Max's standing instruction, July 19, 2026):** every change goes straight to `main` → live, immediately, without waiting for per-push confirmation. Max wants the live site to always reflect the latest state — no local-only mockups. Verify each change locally first (syntax, quick render), push, then confirm the deploy landed (version.txt bump). Revisit this convention when the site becomes presentable/production.
 - Every user-visible string exists in `STR.en` and `STR.ar` in app.js (`data-i18n` for static HTML, `t()` in JS). Test both languages; AR flips to RTL.
 - Data edits happen in `data.js` only; pages render from it.
 - Netlify Forms in use: `booking-request`, `provider-application`, `contact` (static copies exist in HTML for detection — don't remove them).

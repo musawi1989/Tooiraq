@@ -6,11 +6,6 @@
 (function () {
   "use strict";
 
-  /* ---------- WhatsApp routing ----------
-     All chat / booking messages are directed to this single number
-     (wa.me format, no "+" or spaces). */
-  const WA_NUMBER = "9647740142909";
-
   /* ---------- safe storage ---------- */
   const store = {
     get(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } },
@@ -295,7 +290,7 @@
       '<p class="subhead">' + esc(L(a.desc)) + "</p>" +
       '<div class="foot"><span class="footnote"><b style="color:var(--label-primary)">' + n + "</b> " + t("agTours") + "</span>" +
       '<span style="display:flex;gap:8px">' +
-      (a.wa ? '<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + WA_NUMBER + '">' + t("chat") + "</a>" : "") +
+      (a.wa ? '<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + a.wa + '">' + t("chat") + "</a>" : "") +
       (a.phone ? '<a class="btn btn-outline btn-sm" href="tel:' + a.phone.replace(/\s/g, "") + '">' + t("call") + "</a>" : "") +
       (a.site ? '<a class="btn btn-outline btn-sm" target="_blank" rel="noopener" href="' + a.site + '">' + t("visitSite") + "</a>" : "") +
       "</span></div>" +
@@ -495,7 +490,7 @@
     };
     const bbBook = document.getElementById("bb-book");
     if (bbBook) bbBook.addEventListener("click", () => {
-      window.open("https://wa.me/" + WA_NUMBER + "?text=" + waMsg(), "_blank", "noopener");
+      window.open("https://wa.me/" + (a ? a.wa : "") + "?text=" + waMsg(), "_blank", "noopener");
     });
     document.getElementById("bb-req").addEventListener("click", () => {
       const f = document.getElementById("booking-form");
