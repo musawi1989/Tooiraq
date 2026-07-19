@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TooIraq — Find your tour across Iraq | Tours, Guides & Travel Agencies</title>
+  <meta name="description" content="Compare tours from licensed Iraqi agencies, talk to them directly on WhatsApp, and book without prepayment — Babylon, Baghdad, Erbil, Karbala, the Marshes and more."/>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%23CE1126'/%3E%3Cpath d='M13 31h18M15 31v-5h14v5M17 26v-5h10v5M19 21v-4h6v4' stroke='%23fff' stroke-width='2.2' fill='none'/%3E%3C/svg%3E"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/rafidain.css"/>
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+
+  <section class="hero">
+    <div class="container">
+      <h1 data-i18n="heroTitle"></h1>
+      <p class="lead" data-i18n="heroLead"></p>
+      <div class="searchbox" id="searchbox"></div>
+      <div class="chip-row" id="type-chips"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div><h2 class="t2" data-i18n="catTitle"></h2><p class="subhead sub" data-i18n="catSub"></p></div>
+      </div>
+      <div class="cat-grid" id="cat-grid"></div>
+      <div class="view-all-wrap"><a class="btn btn-primary btn-xl" href="tours.html" data-i18n="viewAllBtn"></a></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div><h2 class="t2" data-i18n="trendTitle"></h2><p class="subhead sub" data-i18n="trendSub"></p></div>
+      </div>
+      <div class="dest-tiles" id="dest-big"></div>
+      <div class="dest-tiles-sm" id="dest-small"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div><h2 class="t2" data-i18n="featTitle"></h2><p class="subhead sub" data-i18n="featSub"></p></div>
+        <a class="link-all" href="tours.html" data-i18n="seeAll"></a>
+      </div>
+      <div class="card-grid" id="featured"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="trust-row" id="trust-row"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div><h2 class="t2" data-i18n="agTitle"></h2><p class="subhead sub" data-i18n="agSub"></p></div>
+        <a class="link-all" href="agencies.html" data-i18n="seeAll"></a>
+      </div>
+      <div class="card-grid" id="home-agencies"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div><h2 data-i18n="ctaTitle"></h2><p data-i18n="ctaText"></p></div>
+        <a class="btn" href="join.html" data-i18n="ctaBtn"></a>
+      </div>
+      <p class="notice-sample" data-i18n="sampleNotice"></p>
+    </div>
+  </section>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="assets/img.js"></script>
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>TooIraq.init({ page: "home" });</script>
+</body>
+</html>

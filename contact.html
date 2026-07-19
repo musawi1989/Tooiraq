@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — TooIraq</title>
+  <meta name="description" content="Contact the TooIraq team — questions from travelers and Iraqi tour providers welcome."/>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%23CE1126'/%3E%3Cpath d='M13 31h18M15 31v-5h14v5M17 26v-5h10v5M19 21v-4h6v4' stroke='%23fff' stroke-width='2.2' fill='none'/%3E%3C/svg%3E"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/rafidain.css"/>
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="t1" data-i18n="contactTitle"></h1>
+      <p class="subhead mt-2" data-i18n="contactSub"></p>
+
+      <div class="panel mt-6" style="max-width:640px">
+        <form class="form-grid" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="contact"/>
+          <p style="display:none"><input name="bot-field"/></p>
+          <div class="form-row">
+            <div><label data-i18n="fName"></label><input type="text" name="name" required/></div>
+            <div><label data-i18n="fEmail"></label><input type="email" name="email" required/></div>
+          </div>
+          <div><label data-i18n="fMsg"></label><textarea name="message" required></textarea></div>
+          <button class="btn btn-primary" type="submit" data-i18n="fSendBtn"></button>
+          <p class="form-note"><span data-i18n="contactDirect"></span> <a href="mailto:hello@tooiraq.com">hello@tooiraq.com</a></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="assets/img.js"></script>
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>TooIraq.init({ page: "contact" });</script>
+</body>
+</html>

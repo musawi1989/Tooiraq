@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>List Your Business — TooIraq</title>
+  <meta name="description" content="List your Iraqi tour agency or travel service on TooIraq free during launch — bilingual listings and WhatsApp bookings."/>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%23CE1126'/%3E%3Cpath d='M13 31h18M15 31v-5h14v5M17 26v-5h10v5M19 21v-4h6v4' stroke='%23fff' stroke-width='2.2' fill='none'/%3E%3C/svg%3E"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/rafidain.css"/>
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="t1" data-i18n="joinTitle"></h1>
+      <p class="subhead mt-2" style="max-width:640px" data-i18n="joinSub"></p>
+
+      <div class="trust-row mt-6" style="grid-template-columns:repeat(3,1fr)">
+        <div class="trust"><div class="ic">✓</div><div><h4 data-i18n="joinB1t"></h4><p data-i18n="joinB1p"></p></div></div>
+        <div class="trust"><div class="ic">🌍</div><div><h4 data-i18n="joinB2t"></h4><p data-i18n="joinB2p"></p></div></div>
+        <div class="trust"><div class="ic">💬</div><div><h4 data-i18n="joinB3t"></h4><p data-i18n="joinB3p"></p></div></div>
+      </div>
+
+      <div class="panel mt-6" style="max-width:720px">
+        <form class="form-grid" name="provider-application" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="provider-application"/>
+          <p style="display:none"><input name="bot-field"/></p>
+          <div class="form-row">
+            <div><label data-i18n="jBusiness"></label><input type="text" name="business" required/></div>
+            <div><label data-i18n="jCity"></label><input type="text" name="city" required/></div>
+          </div>
+          <div class="form-row">
+            <div><label data-i18n="jWa"></label><input type="tel" name="whatsapp" required placeholder="+964 …"/></div>
+            <div><label data-i18n="jEmail"></label><input type="email" name="email"/></div>
+          </div>
+          <div><label data-i18n="jServices"></label><input type="text" name="services" required/></div>
+          <div><label data-i18n="jDesc"></label><textarea name="description"></textarea></div>
+          <button class="btn btn-primary" type="submit" data-i18n="jSend"></button>
+          <p class="form-note" data-i18n="joinNote"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer" class="site-footer"></footer>
+
+  <script src="assets/img.js"></script>
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>TooIraq.init({ page: "join" });</script>
+</body>
+</html>
