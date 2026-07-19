@@ -89,7 +89,8 @@
       footExplore: "Explore", footProviders: "For providers", footSupport: "Support",
       footHome: "Home", footTours: "All tours", footAgencies: "Agencies",
       footJoin: "List your business", footPortal: "Provider portal", footContact: "Contact us",
-      footRights: "All rights reserved.", footSample: "Sample listings shown during preview."
+      footRights: "All rights reserved.", footSample: "Sample listings shown during preview.",
+      waFab: "Chat with us on WhatsApp", waFabMsg: "Hi TooIraq! I have a question about tours in Iraq."
     },
     ar: {
       navHome: "الرئيسية", navTours: "الجولات", navAgencies: "الشركات", navContact: "اتصل بنا",
@@ -165,7 +166,8 @@
       footExplore: "استكشف", footProviders: "للمزوّدين", footSupport: "الدعم",
       footHome: "الرئيسية", footTours: "كل الجولات", footAgencies: "الشركات",
       footJoin: "أضف نشاطك", footPortal: "بوابة المزوّدين", footContact: "اتصل بنا",
-      footRights: "جميع الحقوق محفوظة.", footSample: "تُعرض نماذج تجريبية خلال المعاينة."
+      footRights: "جميع الحقوق محفوظة.", footSample: "تُعرض نماذج تجريبية خلال المعاينة.",
+      waFab: "تواصل معنا عبر واتساب", waFabMsg: "مرحباً TooIraq! لدي سؤال حول الجولات في العراق."
     }
   };
 
@@ -190,6 +192,11 @@
 
   const BRAND_MARK =
     '<svg class="brand-mark" viewBox="0 0 44 44" fill="none"><rect width="44" height="44" rx="12" fill="#CE1126"/><path d="M13 31h18M15 31v-5h14v5M17 26v-5h10v5M19 21v-4h6v4" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><circle cx="22" cy="13" r="1.8" fill="#fff"/></svg>';
+
+  /* Site-wide WhatsApp number (international format, digits only, no "+") */
+  const SITE_WA = "9647700000000";
+  const WA_ICON =
+    '<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" focusable="false"><path fill="#fff" d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.6c1.7.9 3.7 1.4 5.8 1.4h.1c6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-4.9 1 1-4.8-.3-.4c-1-1.6-1.5-3.4-1.5-5.3C4.8 9.5 9.5 4.8 16 4.8S27.2 9.5 27.2 15 22.5 24.8 16 24.8zm6.1-7.5c-.3-.2-2-1-2.3-1.1-.3-.1-.5-.2-.8.2s-.9 1.1-1.1 1.3c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.7-1.7-1-.9-1.7-2-1.9-2.3-.2-.3 0-.5.1-.7.1-.1.3-.4.5-.6.1-.2.2-.3.3-.5.1-.2 0-.4 0-.6s-.8-1.9-1-2.6c-.3-.7-.5-.6-.7-.6h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.9 5.2.8.4 1.5.6 2 .7.8.3 1.6.2 2.2.1.7-.1 2-.8 2.3-1.6.3-.8.3-1.5.2-1.6-.1-.2-.3-.3-.6-.4z"/></svg>';
 
   /* ---------- chrome ---------- */
   function injectChrome(active) {
@@ -220,6 +227,24 @@
         "<div><h4>" + t("footSupport") + "</h4><a href='contact.html'>" + t("footContact") + "</a><a href='mailto:hello@tooiraq.com'>hello@tooiraq.com</a></div>" +
         "</div><div class='footer-bottom'><span>© " + new Date().getFullYear() + " TooIraq — " + t("footRights") + "</span><span>" + t("footSample") + "</span></div></div>";
     }
+    injectWaFab();
+  }
+
+  /* Floating WhatsApp chat button — appears on every page */
+  function injectWaFab() {
+    let fab = document.getElementById("wa-fab");
+    if (!fab) {
+      fab = document.createElement("a");
+      fab.id = "wa-fab";
+      fab.className = "wa-fab";
+      fab.target = "_blank";
+      fab.rel = "noopener";
+      document.body.appendChild(fab);
+    }
+    fab.href = "https://wa.me/" + SITE_WA + "?text=" + encodeURIComponent(t("waFabMsg"));
+    fab.setAttribute("aria-label", t("waFab"));
+    fab.setAttribute("title", t("waFab"));
+    fab.innerHTML = WA_ICON + '<span class="wa-fab-label">' + t("waFab") + "</span>";
   }
   const nav = (href, key, on) => '<a href="' + href + '"' + (on ? ' class="active"' : "") + ">" + t(key) + "</a>";
 
