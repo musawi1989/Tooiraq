@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tour — TooIraq</title>
-  <meta name="description" content="Tour details on TooIraq — itinerary, what's included, traveler reviews, and direct WhatsApp booking with the local provider."/>
+  <title>My booking — TooIraq</title>
+  <meta name="robots" content="noindex"/>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%23CE1126'/%3E%3Cpath d='M13 31h18M15 31v-5h14v5M17 26v-5h10v5M19 21v-4h6v4' stroke='%23fff' stroke-width='2.2' fill='none'/%3E%3C/svg%3E"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -13,18 +13,7 @@
 </head>
 <body>
   <header id="site-header" class="site-header"></header>
-
-  <main id="tour-root"></main>
-
-  <!-- Netlify booking-request form: static copy for detection + JS-submitted -->
-  <form id="booking-form" name="booking-request" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" hidden>
-    <input type="hidden" name="form-name" value="booking-request"/>
-    <input type="text" name="tour"/><input type="text" name="agency"/>
-    <input type="text" name="date"/><input type="text" name="travelers"/>
-    <input type="text" name="name"/><input type="text" name="whatsapp"/>
-    <input name="bot-field"/>
-  </form>
-
+  <main id="booking-root" class="container" style="padding:24px 0 64px"></main>
   <footer id="site-footer" class="site-footer"></footer>
 
   <script src="assets/config.js"></script>
@@ -33,6 +22,6 @@
   <script src="assets/app.js"></script>
   <script src="assets/backend.js"></script>
   <script src="assets/pay.js"></script>
-  <script>TooIraq.init({ page: "tour" });</script>
+  <script src="assets/booking.js"></script>
 </body>
 </html>

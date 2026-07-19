@@ -18,9 +18,12 @@
 
   <footer id="site-footer" class="site-footer"></footer>
 
+  <script src="assets/config.js"></script>
   <script src="assets/img.js"></script>
   <script src="assets/data.js"></script>
   <script src="assets/app.js"></script>
-  <script>TooIraq.init({ page: "portal" });</script>
+  <script src="assets/backend.js"></script>
+  <script src="assets/portal.js"></script>
+  <script>if (!(window.TI_BACKEND && window.TI_BACKEND.enabled)) TooIraq.init({ page: "portal" });</script>
 </body>
 </html>

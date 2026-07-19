@@ -43,8 +43,15 @@ Each agency's chat/booking buttons use that agency's OWN `wa` number from data.j
 - Netlify Forms in use: `booking-request`, `provider-application`, `contact` (static copies exist in HTML for detection — don't remove them).
 - Commit style: descriptive message + `Co-Authored-By: Claude <model> <noreply@anthropic.com>`.
 
+## Backend (built July 19, 2026 — see backend/README.md for the full runbook)
+- **Stack (Max approved):** Supabase (Postgres + Auth + Storage + Edge Functions) + **PayPal Orders v2** (sandbox → live). Static site stays exactly as-is; backend activates when `assets/config.js` gets `SUPABASE_URL` + `SUPABASE_ANON_KEY` (anon key is publishable; RLS is the security boundary — never commit service keys/PayPal secret).
+- **Files:** `backend/schema.sql` (15 tables + RLS + RPCs, money in integer cents, server-side price authority via `create_booking`), `assets/backend.js` (API layer, inert when unconfigured), `assets/pay.js` (PayPal buttons), `assets/account.js|booking.js|portal.js|admin.js` (traveler hub, guest booking manage page, real provider portal, admin panel), `supabase/functions/paypal-*` (order create/capture with amount verification), `scripts/seed.mjs` (mirrors data.js into DB, slug = static id).
+- **Catalog merge:** app.js merges published DB tours/agencies into the static arrays at runtime (`mergeBackendCatalog`); static tours tagged `_dbId` book against their seeded DB row. New provider tours appear automatically. Old localStorage portal prototype still renders when backend is off.
+- **Status:** all code pushed & dormant. Waiting on Max for: Supabase access token (or URL + anon key), then PayPal sandbox Client ID + Secret. Provisioning steps: backend/README.md.
+
 ## Roadmap (agreed with Max)
 1. Real photography (licensed or provider-supplied) replacing SVG scenes.
-2. Real backend: provider accounts + database + admin panel for Max (approve agencies, manage listings, see bookings). Candidates: Netlify DB/Auth/Functions or Supabase.
-3. Custom domain + email when Max buys them.
-4. Netlify account note: the account's API access returns 403 (support ticket needed); deploys work fine via this Git integration regardless.
+2. Backend go-live: provision Supabase (see above), seed, make Max admin, deploy PayPal edge functions.
+3. v1.1 backend: wishlist hearts on tour cards, photo uploads in portal (storage bucket ready), traveler↔provider messaging UI (tables ready), review collection emails.
+4. Custom domain + email when Max buys them.
+5. Netlify account note: the account's API access returns 403 (support ticket needed); deploys work fine via this Git integration regardless.

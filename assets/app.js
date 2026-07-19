@@ -18,7 +18,7 @@
     en: {
       navHome: "Home", navTours: "Tours", navAgencies: "Agencies", navContact: "Contact",
       langBtn: "عربي", providerLogin: "Provider login", listBusiness: "List your business",
-      menu: "Menu", bookNow: "Book now",
+      menu: "Menu", bookNow: "Book now", account: "Account",
       heroTitle: "Find your tour across Iraq",
       heroLead: "Compare tours from licensed Iraqi agencies, talk to them directly on WhatsApp, and book without prepayment.",
       sDest: "Destination", sDestAll: "All of Iraq", sDate: "Date", sPax: "Travelers", sGo: "Search",
@@ -62,6 +62,18 @@
       bbSent: "Request sent! The agency will contact you shortly.",
       waBook: "Hello! I would like to book via TooIraq:",
       waTour: "Tour", waDate: "Date", waPax: "Travelers", waName: "Name",
+      bkCreated: "Booking request sent! Your reference:",
+      bkManage: "Track / manage this booking",
+      bkFillAll: "Please fill date, name and WhatsApp number.",
+      bkErr: "Couldn't create the booking — try again or book via WhatsApp.",
+      payNow: "Pay online", bkPayNote: "Pay online now, or arrange payment directly with the agency.",
+      signIn: "Sign in", signUp: "Create account", save: "Save changes",
+      authErr: "Sign-in failed — check your details and try again.",
+      signUpDone: "Account created! Check your email to confirm, then sign in.",
+      st_pending: "Pending confirmation", st_confirmed: "Confirmed", st_declined: "Declined",
+      st_cancelled_by_traveler: "Cancelled by traveler", st_cancelled_by_agency: "Cancelled by agency",
+      st_completed: "Completed", st_no_show: "No-show",
+      pay_unpaid: "Unpaid", pay_paid: "Paid", pay_refunded: "Refunded", pay_partially_refunded: "Partially refunded",
       agenciesTitle: "Tour agencies & providers", agenciesSub: "Verified Iraqi operators you contact directly — no middleman.",
       agTours: "tours", agSince: "Since", chat: "WhatsApp", call: "Call",
       portalTitle: "Provider portal", portalSub: "Manage your agency profile and tours on TooIraq.",
@@ -95,7 +107,7 @@
     ar: {
       navHome: "الرئيسية", navTours: "الجولات", navAgencies: "الشركات", navContact: "اتصل بنا",
       langBtn: "English", providerLogin: "دخول المزوّدين", listBusiness: "أضف نشاطك",
-      menu: "القائمة", bookNow: "احجز الآن",
+      menu: "القائمة", bookNow: "احجز الآن", account: "الحساب",
       heroTitle: "اعثر على جولتك في العراق",
       heroLead: "قارن الجولات من شركات عراقية مجازة، وتواصل معها مباشرة عبر واتساب، واحجز دون دفع مسبق.",
       sDest: "الوجهة", sDestAll: "كل العراق", sDate: "التاريخ", sPax: "المسافرون", sGo: "بحث",
@@ -139,6 +151,18 @@
       bbSent: "تم إرسال الطلب! ستتواصل معك الشركة قريباً.",
       waBook: "مرحباً! أود الحجز عبر TooIraq:",
       waTour: "الجولة", waDate: "التاريخ", waPax: "المسافرون", waName: "الاسم",
+      bkCreated: "تم إرسال طلب الحجز! رقم حجزك:",
+      bkManage: "تتبّع أو أدر هذا الحجز",
+      bkFillAll: "يرجى إدخال التاريخ والاسم ورقم واتساب.",
+      bkErr: "تعذر إنشاء الحجز — حاول مجدداً أو احجز عبر واتساب.",
+      payNow: "ادفع إلكترونياً", bkPayNote: "ادفع الآن إلكترونياً أو رتّب الدفع مباشرة مع الشركة.",
+      signIn: "تسجيل الدخول", signUp: "إنشاء حساب", save: "حفظ التغييرات",
+      authErr: "تعذر تسجيل الدخول — تحقق من بياناتك وحاول مجدداً.",
+      signUpDone: "تم إنشاء الحساب! أكّد بريدك الإلكتروني ثم سجّل الدخول.",
+      st_pending: "بانتظار التأكيد", st_confirmed: "مؤكد", st_declined: "مرفوض",
+      st_cancelled_by_traveler: "ألغاه المسافر", st_cancelled_by_agency: "ألغته الشركة",
+      st_completed: "مكتمل", st_no_show: "لم يحضر",
+      pay_unpaid: "غير مدفوع", pay_paid: "مدفوع", pay_refunded: "مسترجع", pay_partially_refunded: "مسترجع جزئياً",
       agenciesTitle: "شركات السياحة ومقدمو الخدمات", agenciesSub: "شركات عراقية موثّقة تتواصل معها مباشرة — بلا وسيط.",
       agTours: "جولات", agSince: "منذ", chat: "واتساب", call: "اتصال",
       portalTitle: "بوابة المزوّدين", portalSub: "أدر ملف شركتك وجولاتك على TooIraq.",
@@ -190,6 +214,62 @@
     tour.badge === "best" ? '<span class="badge badge-hot"' + (inline ? ' style="position:static"' : "") + ">" + t("bestSeller") + "</span>" :
     tour.badge === "likely" ? '<span class="badge badge-hot" style="background:#8E1020' + (inline ? ";position:static" : "") + '">' + t("likelySellOut") + "</span>" : "";
 
+  /* image source: http(s) URL passes through, otherwise img.js key */
+  const SRC = (k) => (typeof k === "string" && /^https?:/.test(k)) ? k : IMG(k || "babylon");
+
+  /* ---------- live catalog merge (Supabase → static arrays) ----------
+     Published DB tours/agencies merge into TOURS/AGENCIES so every
+     existing render path works unchanged. DB rows whose slug matches a
+     static tour id just tag it with _dbId (seeded mirror rows) so
+     bookings become real; new provider tours are appended. */
+  let catalogMerged = false;
+  function dbTourAdapt(r, slug) {
+    return {
+      id: slug, _dbId: r.id,
+      agency: (r.agencies && r.agencies.id) || r.agency_id,
+      img: (r.images && r.images[0]) || "babylon", imgs: r.images || [],
+      title: r.title || { en: "", ar: "" }, desc: r.description || { en: "", ar: "" },
+      city: r.city_id, type: r.type_id,
+      days: r.days || 1, hours: r.hours || null,
+      price: Math.round((r.price_cents || 0) / 100),
+      groupMax: r.group_max || 10, langs: r.langs || [],
+      cancel: r.cancel !== "nonrefundable",
+      highlights: r.highlights || { en: [], ar: [] }, itinerary: r.itinerary || [],
+      meeting: r.meeting || { en: "", ar: "" },
+      rating: r.rating ? +r.rating : 0, reviews: r.review_count || 0,
+      badge: r.badge || null, src: r.src_url || null
+    };
+  }
+  function mergeBackendCatalog() {
+    const B = window.TI_BACKEND;
+    if (catalogMerged || !B || !B.enabled) return;
+    catalogMerged = true;
+    B.publishedTours().then((rows) => {
+      if (!rows || !rows.length) return;
+      let changed = false;
+      rows.forEach((r) => {
+        const ag = r.agencies || {};
+        if (ag.id && !AGENCIES.some((x) => x.id === ag.id)) {
+          AGENCIES.push({
+            id: ag.id, name: ag.name || { en: "", ar: "" }, base: { en: "", ar: "" },
+            desc: { en: "", ar: "" }, initials: ag.initials || "•", color: "art-teal",
+            wa: ag.whatsapp || "", phone: "", site: "",
+            verified: !!ag.verified, rating: ag.rating ? +ag.rating : 0,
+            reviews: ag.review_count || 0, since: ag.since || null
+          });
+          changed = true;
+        }
+        const slug = r.slug || r.id;
+        const existing = TOURS.find((x) => x.id === slug);
+        if (existing) {
+          existing._dbId = r.id;
+          if (r.images && r.images.length) existing.imgs = r.images;
+        } else { TOURS.push(dbTourAdapt(r, slug)); changed = true; }
+      });
+      if (changed) render();
+    }).catch(function () {});
+  }
+
   const BRAND_MARK =
     '<svg class="brand-mark" viewBox="0 0 44 44" fill="none"><rect width="44" height="44" rx="12" fill="#CE1126"/><path d="M13 31h18M15 31v-5h14v5M17 26v-5h10v5M19 21v-4h6v4" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><circle cx="22" cy="13" r="1.8" fill="#fff"/></svg>';
 
@@ -206,6 +286,7 @@
         "</nav>" +
         '<div class="header-actions">' +
         '<button class="lang-toggle" id="lang-toggle">' + t("langBtn") + "</button>" +
+        (backendOn() ? '<a class="btn btn-outline btn-sm" href="account.html">👤 ' + t("account") + "</a>" : "") +
         '<a class="btn btn-outline btn-sm" href="provider.html">' + t("providerLogin") + "</a>" +
         '<a class="btn btn-primary btn-sm" href="join.html">' + t("listBusiness") + "</a>" +
         '<button class="nav-burger" id="nav-burger" aria-label="' + t("menu") + '" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
@@ -213,6 +294,7 @@
         '<nav class="mobile-menu" id="mobile-menu">' +
         mnav("index.html", "navHome", active === "home") + mnav("tours.html", "navTours", active === "tours") +
         mnav("agencies.html", "navAgencies", active === "agencies") + mnav("contact.html", "navContact", active === "contact") +
+        (backendOn() ? '<a href="account.html">👤 ' + t("account") + "</a>" : "") +
         '<a href="provider.html">' + t("providerLogin") + "</a>" +
         '<a class="mm-cta" href="join.html">' + t("listBusiness") + "</a>" +
         "</nav>";
@@ -237,6 +319,7 @@
   }
   const nav = (href, key, on) => '<a href="' + href + '"' + (on ? ' class="active"' : "") + ">" + t(key) + "</a>";
   const mnav = nav;
+  const backendOn = () => !!(window.TOOIRAQ_CONFIG && window.TOOIRAQ_CONFIG.SUPABASE_URL && window.TOOIRAQ_CONFIG.SUPABASE_ANON_KEY);
 
   function setLang(next) {
     lang = next; store.set("tooiraq-lang", lang);
@@ -255,7 +338,7 @@
     return (
       '<article class="tcard">' +
       '<a class="media" href="tour.html?id=' + tour.id + '">' + badgeHTML(tour) +
-      '<img loading="lazy" alt="' + esc(L(tour.title)) + '" src="' + IMG(tour.img) + '"/></a>' +
+      '<img loading="lazy" alt="' + esc(L(tour.title)) + '" src="' + SRC(tour.img) + '"/></a>' +
       '<div class="body">' +
       '<span class="place">' + esc(L(c)) + "</span>" +
       '<h3><a href="tour.html?id=' + tour.id + '">' + esc(L(tour.title)) + "</a></h3>" +
@@ -273,7 +356,7 @@
     return (
       '<article class="rcard">' +
       '<a class="media" href="tour.html?id=' + tour.id + '">' + badgeHTML(tour) +
-      '<img loading="lazy" alt="' + esc(L(tour.title)) + '" src="' + IMG(tour.img) + '"/></a>' +
+      '<img loading="lazy" alt="' + esc(L(tour.title)) + '" src="' + SRC(tour.img) + '"/></a>' +
       '<div class="mid">' +
       '<h3><a href="tour.html?id=' + tour.id + '">' + esc(L(tour.title)) + "</a></h3>" +
       '<div class="loc"><a href="tours.html?city=' + tour.city + '">' + esc(L(c)) + "</a> · " + esc(L(ty)) + (a ? " · " + esc(L(a.name)) : "") + "</div>" +
@@ -456,9 +539,10 @@
     const tour = TOURS.find((x) => x.id === params.get("id")) || TOURS[0];
     const c = cityOf(tour.city), ty = typeOf(tour.type), a = agencyOf(tour.agency);
     document.title = L(tour.title) + " — TooIraq";
-    const gallery = [tour.img, CITY_IMG[tour.city], "river", "marsh", "babylon"]
+    const gallery = (tour.imgs && tour.imgs.length ? tour.imgs.slice(0, 5)
+      : [tour.img, CITY_IMG[tour.city], "river", "marsh", "babylon"])
       .filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 5);
-    while (gallery.length < 5) gallery.push("baghdad");
+    while (gallery.length < 5) gallery.push(gallery[0] || "baghdad");
     const revs = REVIEWS_POOL.slice(tour.price % 3, (tour.price % 3) + 3);
     const paxOpts = [1, 2, 3, 4, 5, 6, 8, 10].map((n) => '<option value="' + n + '">' + (n === 1 ? t("pax1") : n + " " + t("paxN")) + "</option>").join("");
 
@@ -473,8 +557,8 @@
       (tour.groupMax ? "<span>👥 " + t("upTo") + " " + tour.groupMax + "</span>" : "") + "</div></div>" +
       (tour.badge ? "<div>" + badgeHTML(tour, true) + "</div>" : "") +
       "</div>" +
-      '<div class="gallery"><a class="g-main"><img alt="" src="' + IMG(gallery[0]) + '"/></a>' +
-      gallery.slice(1).map((g) => '<a><img loading="lazy" alt="" src="' + IMG(g) + '"/></a>').join("") + "</div></div>" +
+      '<div class="gallery"><a class="g-main"><img alt="" src="' + SRC(gallery[0]) + '"/></a>' +
+      gallery.slice(1).map((g) => '<a><img loading="lazy" alt="" src="' + SRC(g) + '"/></a>').join("") + "</div></div>" +
 
       '<div class="container detail-layout"><div class="detail-main">' +
       '<div class="panel"><h2>' + t("aboutTitle") + "</h2><p>" + esc(L(tour.desc)) + "</p>" +
@@ -533,18 +617,59 @@
     if (bbBook) bbBook.addEventListener("click", () => {
       window.open("https://wa.me/" + (a ? a.wa : "") + "?text=" + waMsg(), "_blank", "noopener");
     });
-    document.getElementById("bb-req").addEventListener("click", () => {
+    document.getElementById("bb-req").addEventListener("click", async () => {
+      const btn = document.getElementById("bb-req");
+      const B = window.TI_BACKEND;
+      const date = document.getElementById("bb-date").value;
+      const pax = +document.getElementById("bb-pax").value || 1;
+      const name = document.getElementById("bb-name").value.trim();
+      const wa = document.getElementById("bb-wa").value.trim();
+
+      /* real booking path (backend configured + tour mirrored in DB) */
+      if (B && B.enabled && tour._dbId) {
+        let msg = document.getElementById("bb-msg");
+        if (!msg) {
+          msg = document.createElement("p");
+          msg.id = "bb-msg"; msg.className = "bb-note"; msg.style.color = "#8E1020";
+          btn.parentNode.insertBefore(msg, btn.nextSibling);
+        }
+        if (!date || !name || !wa) { msg.textContent = t("bkFillAll"); return; }
+        msg.textContent = ""; btn.disabled = true;
+        const r = await B.createBooking({
+          tourId: tour._dbId, date: date, adults: pax, children: 0,
+          name: name, whatsapp: wa, locale: lang
+        });
+        btn.disabled = false;
+        if (!r || r.error || !r.data) { msg.textContent = t("bkErr"); return; }
+        const bk = r.data;
+        const manageUrl = "booking.html?ref=" + encodeURIComponent(bk.ref) + "&token=" + encodeURIComponent(bk.manage_token);
+        const box = wrap.querySelector(".bookbox");
+        box.innerHTML =
+          '<div class="freecancel" style="font-size:15px">✓ ' + t("bkCreated") + "</div>" +
+          '<div class="amount" style="font-size:24px">' + esc(bk.ref) + "</div>" +
+          (bk.total_cents > 0 ? '<div class="from">' + t("waPax") + ": " + pax + " · $" + (bk.total_cents / 100) + "</div>" : "") +
+          '<a class="btn btn-outline btn-block" href="' + manageUrl + '">' + t("bkManage") + "</a>" +
+          (window.TI_PAY && window.TI_PAY.enabled && bk.total_cents > 0
+            ? '<p class="bb-note">' + t("bkPayNote") + '</p><div id="bb-ppbox"></div>' : "") +
+          (a && a.wa ? '<a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="https://wa.me/' + a.wa + "?text=" + waMsg() + '">' + t("bookWa") + "</a>" : "");
+        const ppbox = document.getElementById("bb-ppbox");
+        if (ppbox) window.TI_PAY.renderButtons(ppbox, bk.ref, bk.manage_token,
+          () => { ppbox.outerHTML = '<p class="freecancel">✓</p>'; }, function () {});
+        return;
+      }
+
+      /* fallback: Netlify form (backend off) */
       const f = document.getElementById("booking-form");
       if (f) {
         f.querySelector('[name="tour"]').value = L(tour.title);
         f.querySelector('[name="agency"]').value = a ? L(a.name) : "";
-        f.querySelector('[name="date"]').value = document.getElementById("bb-date").value;
-        f.querySelector('[name="travelers"]').value = document.getElementById("bb-pax").value;
-        f.querySelector('[name="name"]').value = document.getElementById("bb-name").value;
-        f.querySelector('[name="whatsapp"]').value = document.getElementById("bb-wa").value;
+        f.querySelector('[name="date"]').value = date;
+        f.querySelector('[name="travelers"]').value = pax;
+        f.querySelector('[name="name"]').value = name;
+        f.querySelector('[name="whatsapp"]').value = wa;
         try { f.submit(); return; } catch (e) {}
       }
-      document.getElementById("bb-req").textContent = "✓ " + t("bbSent");
+      btn.textContent = "✓ " + t("bbSent");
     });
   }
 
@@ -582,7 +707,7 @@
     const typeOpts = TYPES.map((x) => '<option value="' + x.id + '">' + esc(L(x)) + "</option>").join("");
 
     function ptour(x, isLive) {
-      return '<div class="ptour"><img alt="" src="' + IMG(x.img || "babylon") + '"/>' +
+      return '<div class="ptour"><img alt="" src="' + SRC(x.img) + '"/>' +
         '<div class="tx"><b>' + esc(L(x.title)) + "</b><span>" + esc(L(cityOf(x.city) || {})) + " · $" + x.price + " · " +
         (x.days > 1 ? x.days + " " + t("days") : (x.hours || 8) + " " + t("hours")) + "</span></div>" +
         '<span class="pill-status ' + (isLive ? "pill-live" : "pill-pending") + '">' + (isLive ? t("pLive") : t("pPending")) + "</span></div>";
@@ -647,7 +772,8 @@
     if (page === "tours") renderToursPage();
     if (page === "tour") renderTourPage();
     if (page === "agencies") renderAgenciesPage();
-    if (page === "portal") renderPortal();
+    if (page === "portal" && !(window.TI_BACKEND && window.TI_BACKEND.enabled)) renderPortal();
+    if (typeof window.TooIraq.onRender === "function") window.TooIraq.onRender();
   }
   window.TooIraq = {
     init(opts) {
@@ -655,6 +781,14 @@
       document.documentElement.lang = lang;
       document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
       render();
-    }
+      mergeBackendCatalog();
+    },
+    /* extension points for account/portal/admin/booking page scripts */
+    addStrings(en, ar) { Object.assign(STR.en, en || {}); Object.assign(STR.ar, ar || {}); },
+    t: t, L: L, esc: esc, IMGx: (k) => IMG(k), store: store,
+    getLang: () => lang, setLang: setLang,
+    cityOf: cityOf, typeOf: typeOf,
+    starsHTML: starsHTML, fill: fill,
+    onRender: null
   };
 })();
