@@ -48,7 +48,7 @@
       reviewsWord: "reviews", langsWord: "Languages",
       crumbHome: "Home", crumbTours: "Tours",
       bestSeller: "Best seller", likelySellOut: "Likely to sell out", verified: "Verified",
-      poa: "Price on request", onboardingBadge: "Onboarding", newOp: "New on TooIraq — onboarding",
+      poa: "Price on request", onboardingBadge: "Onboarding", newOp: "New on TooIraq — onboarding", durVaries: "Duration varies",
       srcBtn: "View original listing ↗",
       srcNote: "Temporary reference link for onboarding — will be removed once this provider approves their TooIraq profile.",
       visitSite: "Website ↗",
@@ -124,7 +124,7 @@
       reviewsWord: "تقييم", langsWord: "اللغات",
       crumbHome: "الرئيسية", crumbTours: "الجولات",
       bestSeller: "الأكثر مبيعاً", likelySellOut: "ينفد سريعاً", verified: "موثّقة",
-      poa: "السعر عند الطلب", onboardingBadge: "قيد الانضمام", newOp: "جديد على TooIraq — قيد الانضمام",
+      poa: "السعر عند الطلب", onboardingBadge: "قيد الانضمام", newOp: "جديد على TooIraq — قيد الانضمام", durVaries: "مدة متغيرة",
       srcBtn: "عرض الإعلان الأصلي ↗",
       srcNote: "رابط مرجعي مؤقت لغرض الانضمام — سيُزال بعد موافقة المزوّد على ملفه في TooIraq.",
       visitSite: "الموقع الإلكتروني ↗",
@@ -179,7 +179,7 @@
   const agencyOf = (id) => AGENCIES.find((a) => a.id === id);
   const toursOf = (aid) => TOURS.filter((x) => x.agency === aid);
   const starsHTML = (r) => { const f = Math.round(r); let s = ""; for (let i = 1; i <= 5; i++) s += i <= f ? "★" : "☆"; return '<span class="stars">' + s + "</span>"; };
-  const durLbl = (tour) => tour.days > 1 ? tour.days + " " + t("days") : (tour.hours || 8) + " " + t("hours");
+  const durLbl = (tour) => tour.days > 1 ? tour.days + " " + t("days") : (tour.hours ? tour.hours + " " + t("hours") : (tour.days === 1 ? "1 " + t("day") : t("durVaries")));
   const priceHTML = (tour) => tour.price
     ? '<span class="price">' + t("from") + "<b>$" + tour.price + "</b><small>" + t("perPerson") + "</small></span>"
     : '<span class="price"><b style="font-size:15px;line-height:1.3">' + t("poa") + "</b></span>";
@@ -389,7 +389,7 @@
         (!state.cities.length || state.cities.includes(x.city)) &&
         (!state.types.length || state.types.includes(x.type)) &&
         x.price <= state.price &&
-        (!state.dur.length || state.dur.includes(x.days > 1 ? "2" : "1")) &&
+        (!state.dur.length || state.dur.includes(x.days > 1 ? "2" : (x.days === 1 ? "1" : ""))) &&
         (x.rating || 0) >= state.minRating &&
         (!state.cancel || x.cancel));
       if (state.sort === "priceUp") list.sort((a, b) => (a.price || 1e9) - (b.price || 1e9));
