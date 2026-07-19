@@ -448,6 +448,85 @@ html[lang="ar"] .form-grid label { letter-spacing:0; }
 .center { text-align:center; }
 .auth-card { max-width:420px; margin:48px auto; }
 
+/* ============================================================
+   Mobile layer — hamburger nav, filter drawer, booking bar
+   ============================================================ */
+
+/* Hamburger (hidden on desktop) */
+.nav-burger {
+  display:none; flex-direction:column; justify-content:center; align-items:center; gap:5px;
+  width:44px; height:44px; border:1px solid var(--separator-opaque); border-radius:var(--radius-sm);
+  background:var(--bg-base); cursor:pointer; flex:none;
+}
+.nav-burger span { display:block; width:18px; height:2px; border-radius:2px; background:var(--label-primary); transition:transform var(--dur-fast) var(--ease-standard), opacity var(--dur-fast); }
+.nav-burger[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.nav-burger[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.nav-burger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+/* Mobile menu sheet (hidden on desktop) */
+.mobile-menu { display:none; border-top:1px solid var(--separator); background:var(--bg-base); }
+.mobile-menu a {
+  display:flex; align-items:center; gap:10px; min-height:50px; padding:12px 24px;
+  font-size:17px; font-weight:500; color:var(--label-primary); border-bottom:1px solid var(--separator);
+}
+.mobile-menu a.active { color:var(--color-primary); background:var(--color-primary-tint); }
+.mobile-menu a:last-child { border-bottom:none; }
+.mobile-menu .mm-cta { color:var(--color-primary); font-weight:600; }
+
+/* Filters toggle button (hidden on desktop) */
+.f-toggle { display:none; }
+
+/* Mobile booking bar (hidden on desktop) */
+.bb-mobilebar { display:none; }
+
+@media (max-width:860px){
+  .main-nav { display:none; }
+  .header-actions a.btn { display:none; }   /* provider login + list business move into the menu */
+  .nav-burger { display:flex; }
+  .mobile-menu.open { display:block; }
+  .header-inner { gap:12px; height:60px; }
+  .hero { padding:36px 0 56px; }
+  .section { padding:28px 0; }
+  .cta-band { padding:26px 22px; }
+  .searchbox .go .btn { width:100%; min-height:50px; }
+  .panel { padding:16px; }
+  .detail-layout { padding-bottom:24px; }
+}
+
+/* Filter sheet chrome (mobile only) */
+.f-close { display:none; background:none; border:none; font-size:20px; line-height:1; cursor:pointer; color:var(--label-primary); padding:4px 8px; }
+.f-apply { display:none; }
+
+@media (max-width:960px){
+  /* Results page: filters become a full-screen sheet */
+  .f-toggle { display:inline-flex; }
+  .filters { display:none; }
+  .filters.open {
+    display:flex; flex-direction:column; position:fixed; inset:0; z-index:80;
+    border-radius:0; border:none; margin:0; overflow:auto; background:var(--bg-tertiary);
+  }
+  .filters.open .f-head { position:sticky; top:0; background:var(--bg-tertiary); z-index:1; }
+  .filters.open .f-close { display:block; }
+  .filters.open .f-apply {
+    display:block; position:sticky; bottom:0; margin-top:auto;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    background:var(--bg-tertiary); border-top:1px solid var(--separator);
+  }
+
+  /* Tour detail: fixed bottom bar with price + jump-to-booking */
+  .bb-mobilebar {
+    display:flex; position:fixed; inset-inline:0; bottom:0; z-index:70;
+    align-items:center; justify-content:space-between; gap:14px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    background:var(--material-regular);
+    backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%);
+    border-top:1px solid var(--separator);
+  }
+  .bb-mobilebar .price b { font-size:19px; }
+  .bb-mobilebar .btn { min-width:150px; }
+  body.has-bbbar { padding-bottom:84px; }
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after { transition-duration:.01ms !important; animation-duration:.01ms !important; }
   html { scroll-behavior:auto; }

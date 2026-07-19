@@ -18,6 +18,7 @@
     en: {
       navHome: "Home", navTours: "Tours", navAgencies: "Agencies", navContact: "Contact",
       langBtn: "عربي", providerLogin: "Provider login", listBusiness: "List your business",
+      menu: "Menu", bookNow: "Book now",
       heroTitle: "Find your tour across Iraq",
       heroLead: "Compare tours from licensed Iraqi agencies, talk to them directly on WhatsApp, and book without prepayment.",
       sDest: "Destination", sDestAll: "All of Iraq", sDate: "Date", sPax: "Travelers", sGo: "Search",
@@ -94,6 +95,7 @@
     ar: {
       navHome: "الرئيسية", navTours: "الجولات", navAgencies: "الشركات", navContact: "اتصل بنا",
       langBtn: "English", providerLogin: "دخول المزوّدين", listBusiness: "أضف نشاطك",
+      menu: "القائمة", bookNow: "احجز الآن",
       heroTitle: "اعثر على جولتك في العراق",
       heroLead: "قارن الجولات من شركات عراقية مجازة، وتواصل معها مباشرة عبر واتساب، واحجز دون دفع مسبق.",
       sDest: "الوجهة", sDestAll: "كل العراق", sDate: "التاريخ", sPax: "المسافرون", sGo: "بحث",
@@ -206,8 +208,20 @@
         '<button class="lang-toggle" id="lang-toggle">' + t("langBtn") + "</button>" +
         '<a class="btn btn-outline btn-sm" href="provider.html">' + t("providerLogin") + "</a>" +
         '<a class="btn btn-primary btn-sm" href="join.html">' + t("listBusiness") + "</a>" +
-        "</div></div>";
+        '<button class="nav-burger" id="nav-burger" aria-label="' + t("menu") + '" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span><span></span></button>' +
+        "</div></div>" +
+        '<nav class="mobile-menu" id="mobile-menu">' +
+        mnav("index.html", "navHome", active === "home") + mnav("tours.html", "navTours", active === "tours") +
+        mnav("agencies.html", "navAgencies", active === "agencies") + mnav("contact.html", "navContact", active === "contact") +
+        '<a href="provider.html">' + t("providerLogin") + "</a>" +
+        '<a class="mm-cta" href="join.html">' + t("listBusiness") + "</a>" +
+        "</nav>";
       document.getElementById("lang-toggle").addEventListener("click", () => setLang(lang === "en" ? "ar" : "en"));
+      const burger = document.getElementById("nav-burger"), mm = document.getElementById("mobile-menu");
+      burger.addEventListener("click", () => {
+        const open = mm.classList.toggle("open");
+        burger.setAttribute("aria-expanded", open ? "true" : "false");
+      });
     }
     const footer = document.getElementById("site-footer");
     if (footer) {
@@ -222,6 +236,7 @@
     }
   }
   const nav = (href, key, on) => '<a href="' + href + '"' + (on ? ' class="active"' : "") + ">" + t(key) + "</a>";
+  const mnav = nav;
 
   function setLang(next) {
     lang = next; store.set("tooiraq-lang", lang);
@@ -366,7 +381,8 @@
 
     root.innerHTML =
       '<div class="results-layout">' +
-      '<aside class="filters"><div class="f-head">' + t("filters") + '<button class="f-clear" id="f-clear">' + t("clearAll") + "</button></div>" +
+      '<aside class="filters"><div class="f-head">' + t("filters") +
+      '<span style="display:flex;gap:6px;align-items:center"><button class="f-clear" id="f-clear">' + t("clearAll") + '</button><button class="f-close" id="f-close" aria-label="✕">✕</button></span></div>' +
       '<div class="f-group"><h5>' + t("fDest") + "</h5>" + checks(CITIES, "city", state.cities) + "</div>" +
       '<div class="f-group"><h5>' + t("fType") + "</h5>" + checks(TYPES, "type", state.types) + "</div>" +
       '<div class="f-group"><h5>' + t("fPrice") + '</h5><input type="range" id="f-price" min="40" max="' + maxPrice + '" value="' + maxPrice + '" step="5"/><div class="f-price-val">$<span id="f-price-v">' + maxPrice + "</span></div></div>" +
@@ -377,8 +393,10 @@
       '<label class="f-check"><input type="radio" name="fr" data-r="4.5"/>4.5+ ★</label>' +
       '<label class="f-check"><input type="radio" name="fr" data-r="4.8"/>4.8+ ★</label></div>' +
       '<div class="f-group"><label class="f-check"><input type="checkbox" id="f-cancel"/>' + t("fCancel") + "</label></div>" +
+      '<div class="f-apply"><button class="btn btn-primary btn-block" id="f-done"></button></div>' +
       "</aside>" +
       '<div><div class="results-bar"><span class="count" id="r-count"></span>' +
+      '<button class="btn btn-outline btn-sm f-toggle" id="f-toggle" aria-expanded="false">⚙︎ ' + t("filters") + "</button>" +
       '<span class="sort">⇅ ' + t("sortBy") + ' <select id="r-sort">' +
       '<option value="rec">' + t("sortRec") + '</option><option value="priceUp">' + t("sortPriceUp") + "</option>" +
       '<option value="priceDn">' + t("sortPriceDn") + '</option><option value="rating">' + t("sortRating") + "</option></select></span></div>" +
@@ -398,6 +416,7 @@
       else list.sort((a, b) => (b.badge ? 1 : 0) - (a.badge ? 1 : 0) || (b.reviews || 0) - (a.reviews || 0));
       fill("r-list", list.length ? list.map(resultCard).join("") : '<div class="panel subhead">' + t("noResults") + "</div>");
       fill("r-count", "<b>" + list.length + "</b> " + t("found"));
+      fill("f-done", list.length + " " + t("found"));
     }
 
     const collect = (key) => Array.from(root.querySelectorAll('[data-f="' + key + '"]:checked')).map((x) => x.value);
@@ -415,6 +434,17 @@
       if (e.target.id === "f-price") { state.price = +e.target.value; document.getElementById("f-price-v").textContent = e.target.value; apply(); }
     });
     document.getElementById("f-clear").addEventListener("click", () => { window.location.href = "tours.html"; });
+    const fToggle = document.getElementById("f-toggle"), fPanel = root.querySelector(".filters");
+    const setSheet = (open) => {
+      fPanel.classList.toggle("open", open);
+      fToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      document.body.style.overflow = open ? "hidden" : "";
+    };
+    if (fToggle && fPanel) {
+      fToggle.addEventListener("click", () => setSheet(!fPanel.classList.contains("open")));
+      document.getElementById("f-close").addEventListener("click", () => setSheet(false));
+      document.getElementById("f-done").addEventListener("click", () => setSheet(false));
+    }
     apply();
   }
 
@@ -480,7 +510,18 @@
       (a ? '<div class="bb-agency"><div class="alogo" style="background:#CE1126;width:42px;height:42px;border-radius:10px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">' + a.initials + '</div><div><span class="footnote">' + t("offeredBy") + "</span><br><b>" + esc(L(a.name)) + "</b> " +
         (a.verified ? '<span class="badge badge-verified">✓ ' + t("verified") + "</span>" : "") +
         '<br><span class="footnote">' + (a.rating ? "★ " + a.rating.toFixed(1) + " · " + t("since") + " " + a.since : t("newOp")) + "</span></div></div>" : "") +
-      "</div></aside></div>";
+      "</div></aside></div>" +
+
+      '<div class="bb-mobilebar">' +
+      (tour.price
+        ? '<span class="price">' + t("from") + "<b>$" + tour.price + "</b><small>" + t("perPerson") + "</small></span>"
+        : '<span class="price"><b style="font-size:16px">' + t("poa") + "</b></span>") +
+      '<button class="btn btn-primary" id="bb-jump">' + t("bookNow") + "</button></div>";
+    document.body.classList.add("has-bbbar");
+    document.getElementById("bb-jump").addEventListener("click", () => {
+      const bb = wrap.querySelector(".bookbox");
+      if (bb) bb.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
 
     const waMsg = () => {
       const d = document.getElementById("bb-date").value || "—";
