@@ -19,6 +19,11 @@
       navHome: "Home", navTours: "Tours", navAgencies: "Agencies", navContact: "Contact",
       langBtn: "عربي", providerLogin: "Provider login", listBusiness: "List your business",
       menu: "Menu", bookNow: "Book now", account: "Account",
+      modeLocal: "Traveling within Iraq", modeIntl: "Visiting from abroad",
+      yourCityLbl: "Your city", yourCityPh: "Select your city",
+      departsFromLbl: "Departs from",
+      noLocalDepartPre: "No tours currently depart from", noLocalDepartPost: "Try Baghdad, the main transport hub, or clear this filter.",
+      clearDepart: "Clear this filter",
       heroTitle: "Find your tour across Iraq",
       heroLead: "Compare tours from licensed Iraqi agencies, talk to them directly on WhatsApp, and book without prepayment.",
       sDest: "Destination", sDestAll: "All of Iraq", sDate: "Date", sPax: "Travelers", sGo: "Search",
@@ -109,6 +114,11 @@
       navHome: "الرئيسية", navTours: "الجولات", navAgencies: "الشركات", navContact: "اتصل بنا",
       langBtn: "English", providerLogin: "دخول المزوّدين", listBusiness: "أضف نشاطك",
       menu: "القائمة", bookNow: "احجز الآن", account: "الحساب",
+      modeLocal: "أسافر داخل العراق", modeIntl: "أزور من الخارج",
+      yourCityLbl: "مدينتك", yourCityPh: "اختر مدينتك",
+      departsFromLbl: "تنطلق من",
+      noLocalDepartPre: "لا توجد حالياً جولات تنطلق من", noLocalDepartPost: "جرّب بغداد، المحور الرئيسي للنقل، أو امسح هذا الفلتر.",
+      clearDepart: "امسح هذا الفلتر",
       heroTitle: "اعثر على جولتك في العراق",
       heroLead: "قارن الجولات من شركات عراقية مجازة، وتواصل معها مباشرة عبر واتساب، واحجز دون دفع مسبق.",
       sDest: "الوجهة", sDestAll: "كل العراق", sDate: "التاريخ", sPax: "المسافرون", sGo: "بحث",
@@ -208,6 +218,12 @@
   const toursOf = (aid) => TOURS.filter((x) => x.agency === aid);
   const starsHTML = (r) => { const f = Math.round(r); let s = ""; for (let i = 1; i <= 5; i++) s += i <= f ? "★" : "☆"; return '<span class="stars">' + s + "</span>"; };
   const durLbl = (tour) => tour.days > 1 ? tour.days + " " + t("days") : (tour.hours ? tour.hours + " " + t("hours") : (tour.days === 1 ? "1 " + t("day") : t("durVaries")));
+  /* only surface departsFrom when it names a REAL hub beyond the tour's own destination city */
+  const departExtras = (tour) => (tour.departsFrom || [tour.city]).filter((c) => c !== tour.city);
+  const departBadgeHTML = (tour) => {
+    const extra = departExtras(tour);
+    return extra.length ? "<span>🚌 " + t("departsFromLbl") + ": " + extra.map((cid) => esc(L(cityOf(cid)))).join(" · ") + "</span>" : "";
+  };
   const priceHTML = (tour) => tour.price
     ? '<span class="price">' + t("from") + "<b>$" + tour.price + "</b><small>" + t("perPerson") + "</small></span>"
     : '<span class="price"><b style="font-size:15px;line-height:1.3">' + t("poa") + "</b></span>";
@@ -232,6 +248,7 @@
       img: (r.images && r.images[0]) || "babylon", imgs: r.images || [],
       title: r.title || { en: "", ar: "" }, desc: r.description || { en: "", ar: "" },
       city: r.city_id, type: r.type_id,
+      departsFrom: (r.departs_city_ids && r.departs_city_ids.length) ? r.departs_city_ids : [r.city_id],
       days: r.days || 1, hours: r.hours || null,
       price: Math.round((r.price_cents || 0) / 100),
       groupMax: r.group_max || 10, langs: r.langs || [],
@@ -362,7 +379,7 @@
       '<div class="mid">' +
       '<h3><a href="tour.html?id=' + tour.id + '">' + esc(L(tour.title)) + "</a></h3>" +
       '<div class="loc"><a href="tours.html?city=' + tour.city + '">' + esc(L(c)) + "</a> · " + esc(L(ty)) + (a ? " · " + esc(L(a.name)) : "") + "</div>" +
-      '<div class="feats"><span>🕐 ' + durLbl(tour) + "</span><span>👥 " + t("upTo") + " " + tour.groupMax + " " + t("people") + "</span><span>🗣 " + (tour.langs || []).join(" · ") + "</span></div>" +
+      '<div class="feats"><span>🕐 ' + durLbl(tour) + "</span><span>👥 " + t("upTo") + " " + tour.groupMax + " " + t("people") + "</span><span>🗣 " + (tour.langs || []).join(" · ") + "</span>" + departBadgeHTML(tour) + "</div>" +
       '<p class="subhead">' + esc(L(tour.desc)) + "</p>" +
       (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") +
       "</div>" +
@@ -398,8 +415,41 @@
     );
   }
 
+  /* ---------- travel mode (local traveler city selector) ----------
+     Explicit, visible toggle — nothing is assumed from language.
+     "local" reveals a Your-city picker used to filter tours by
+     departsFrom on tours.html; "intl" (or unset) hides it entirely,
+     per the requirement that this only applies to local travelers. */
+  function travelMode() { return store.get("tooiraq-travel-mode") || ""; }
+  function departCity() { return store.get("tooiraq-depart-city") || ""; }
+  function renderTravelMode() {
+    const el = document.getElementById("travel-mode");
+    if (!el) return;
+    const paint = () => {
+      const mode = travelMode(), city = departCity();
+      const cityOpts = '<option value="">' + t("yourCityPh") + "</option>" +
+        CITIES.map((c) => '<option value="' + c.id + '"' + (city === c.id ? " selected" : "") + ">" + esc(L(c)) + "</option>").join("");
+      el.innerHTML =
+        '<div class="mode-pills">' +
+        '<button type="button" class="mode-pill' + (mode === "local" ? " selected" : "") + '" data-m="local">🇮🇶 ' + t("modeLocal") + "</button>" +
+        '<button type="button" class="mode-pill' + (mode === "intl" ? " selected" : "") + '" data-m="intl">✈️ ' + t("modeIntl") + "</button>" +
+        "</div>" +
+        (mode === "local" ? '<div class="mode-city"><label>' + t("yourCityLbl") + '</label><select id="mode-city-sel">' + cityOpts + "</select></div>" : "");
+      el.querySelectorAll("[data-m]").forEach((btn) => btn.addEventListener("click", () => {
+        const next = btn.dataset.m === mode ? "" : btn.dataset.m;
+        store.set("tooiraq-travel-mode", next);
+        if (next !== "local") store.set("tooiraq-depart-city", "");
+        paint();
+      }));
+      const sel = document.getElementById("mode-city-sel");
+      if (sel) sel.addEventListener("change", () => store.set("tooiraq-depart-city", sel.value));
+    };
+    paint();
+  }
+
   /* ---------- home ---------- */
   function renderHome() {
+    renderTravelMode();
     const citiesOpts = '<option value="">' + t("sDestAll") + "</option>" + CITIES.map((c) => '<option value="' + c.id + '">' + esc(L(c)) + "</option>").join("");
     const paxOpts = [1, 2, 3, 4, 5, 6, 8, 10].map((n) => '<option value="' + n + '">' + (n === 1 ? t("pax1") : n + " " + t("paxN")) + "</option>").join("");
     fill("searchbox",
@@ -410,6 +460,8 @@
     document.getElementById("q-go").addEventListener("click", () => {
       const c = document.getElementById("q-city").value, d = document.getElementById("q-date").value, p = document.getElementById("q-pax").value;
       const qs = new URLSearchParams(); if (c) qs.set("city", c); if (d) qs.set("date", d); if (p && p !== "1") qs.set("pax", p);
+      const mode = store.get("tooiraq-travel-mode"), dep = store.get("tooiraq-depart-city");
+      if (mode === "local" && dep) qs.set("depart", dep);
       window.location.href = "tours.html" + (qs.toString() ? "?" + qs.toString() : "");
     });
     fill("type-chips", '<a class="chip selected" href="tours.html">' + t("chipAll") + "</a>" +
@@ -450,10 +502,12 @@
     if (!root) return;
     const params = new URLSearchParams(window.location.search);
     const maxPrice = Math.max.apply(null, TOURS.map((x) => x.price));
+    const localMode = travelMode() === "local" || !!params.get("depart");
     const state = {
       cities: params.get("city") ? [params.get("city")] : [],
       types: params.get("type") ? [params.get("type")] : [],
-      price: maxPrice, dur: [], minRating: 0, cancel: false, sort: "rec"
+      price: maxPrice, dur: [], minRating: 0, cancel: false, sort: "rec",
+      depart: localMode ? (params.get("depart") || departCity() || "") : ""
     };
 
     function checks(list, key, sel) {
@@ -468,6 +522,10 @@
       '<div class="results-layout">' +
       '<aside class="filters"><div class="f-head">' + t("filters") +
       '<span style="display:flex;gap:6px;align-items:center"><button class="f-clear" id="f-clear">' + t("clearAll") + '</button><button class="f-close" id="f-close" aria-label="✕">✕</button></span></div>' +
+      (localMode ? '<div class="f-group"><h5>' + t("departsFromLbl") + '</h5><select id="f-depart" style="width:100%;min-height:40px;border:1px solid var(--separator-opaque);border-radius:var(--radius-sm);padding:6px 10px;font-family:inherit;font-size:15px;background:var(--bg-base);color:var(--label-primary)">' +
+        '<option value="">' + t("yourCityPh") + "</option>" +
+        CITIES.map((c) => '<option value="' + c.id + '"' + (state.depart === c.id ? " selected" : "") + ">" + esc(L(c)) + "</option>").join("") +
+        "</select></div>" : "") +
       '<div class="f-group"><h5>' + t("fDest") + "</h5>" + checks(CITIES, "city", state.cities) + "</div>" +
       '<div class="f-group"><h5>' + t("fType") + "</h5>" + checks(TYPES, "type", state.types) + "</div>" +
       '<div class="f-group"><h5>' + t("fPrice") + '</h5><input type="range" id="f-price" min="40" max="' + maxPrice + '" value="' + maxPrice + '" step="5"/><div class="f-price-val">$<span id="f-price-v">' + maxPrice + "</span></div></div>" +
@@ -494,14 +552,25 @@
         x.price <= state.price &&
         (!state.dur.length || state.dur.includes(x.days > 1 ? "2" : (x.days === 1 ? "1" : ""))) &&
         (x.rating || 0) >= state.minRating &&
-        (!state.cancel || x.cancel));
+        (!state.cancel || x.cancel) &&
+        (!state.depart || (x.departsFrom || [x.city]).includes(state.depart)));
       if (state.sort === "priceUp") list.sort((a, b) => (a.price || 1e9) - (b.price || 1e9));
       else if (state.sort === "priceDn") list.sort((a, b) => (b.price || 0) - (a.price || 0));
       else if (state.sort === "rating") list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
       else list.sort((a, b) => (b.badge ? 1 : 0) - (a.badge ? 1 : 0) || (b.reviews || 0) - (a.reviews || 0));
-      fill("r-list", list.length ? list.map(resultCard).join("") : '<div class="panel subhead">' + t("noResults") + "</div>");
+      const emptyHTML = (state.depart && !list.length)
+        ? '<div class="panel subhead">' + t("noLocalDepartPre") + " " + esc(L(cityOf(state.depart))) + ". " + t("noLocalDepartPost") +
+          '<br><button class="btn btn-tint btn-sm mt-2" id="r-clear-depart">' + t("clearDepart") + "</button></div>"
+        : '<div class="panel subhead">' + t("noResults") + "</div>";
+      fill("r-list", list.length ? list.map(resultCard).join("") : emptyHTML);
       fill("r-count", "<b>" + list.length + "</b> " + t("found"));
       fill("f-done", list.length + " " + t("found"));
+      const clearDepartBtn = document.getElementById("r-clear-depart");
+      if (clearDepartBtn) clearDepartBtn.addEventListener("click", () => {
+        state.depart = "";
+        const sel = document.getElementById("f-depart"); if (sel) sel.value = "";
+        apply();
+      });
     }
 
     const collect = (key) => Array.from(root.querySelectorAll('[data-f="' + key + '"]:checked')).map((x) => x.value);
@@ -513,6 +582,7 @@
       if (el.dataset.r !== undefined) state.minRating = parseFloat(el.dataset.r);
       if (el.id === "f-cancel") state.cancel = el.checked;
       if (el.id === "r-sort") state.sort = el.value;
+      if (el.id === "f-depart") { state.depart = el.value; store.set("tooiraq-depart-city", el.value); }
       apply();
     });
     root.addEventListener("input", (e) => {
@@ -556,7 +626,7 @@
       (tour.rating ? '<span class="rating-row"><b>' + tour.rating.toFixed(1) + "</b>" + starsHTML(tour.rating) + "<span>(" + tour.reviews + " " + t("reviewsWord") + ")</span></span>"
         : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") +
       "<span>📍 " + esc(L(c)) + "</span><span>🗂 " + esc(L(ty)) + "</span><span>🕐 " + durLbl(tour) + "</span>" +
-      (tour.groupMax ? "<span>👥 " + t("upTo") + " " + tour.groupMax + "</span>" : "") + "</div></div>" +
+      (tour.groupMax ? "<span>👥 " + t("upTo") + " " + tour.groupMax + "</span>" : "") + departBadgeHTML(tour) + "</div></div>" +
       (tour.badge ? "<div>" + badgeHTML(tour, true) + "</div>" : "") +
       "</div>" +
       '<div class="gallery"><a class="g-main"><img alt="" src="' + SRC(gallery[0]) + '"/></a>' +

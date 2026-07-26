@@ -24,6 +24,7 @@
     ppItinEn: "Itinerary — one step per line: Title | detail (English)",
     ppItinAr: "Itinerary — one step per line: Title | detail (Arabic)",
     ppLangs: "Tour languages (e.g. EN · AR · KU)", ppPickup: "Hotel pickup available",
+    ppDepartsFrom: "Cities this tour departs from", ppDepartsFromHint: "Shown to local Iraqi travelers searching by their own city — check every city where you genuinely offer pickup, not just the destination.",
     ppPolicy: "Cancellation policy", pol_free48: "Free up to 48h before", pol_free24: "Free up to 24h before", pol_nonrefundable: "Non-refundable",
     ts_draft: "Draft", ts_pending_review: "Pending review", ts_published: "Published", ts_paused: "Paused", ts_archived: "Archived",
     ppTraveler: "Traveler", ppConfirm: "Confirm", ppDecline: "Decline", ppComplete: "Completed", ppNoShow: "No-show",
@@ -48,6 +49,7 @@
     ppItinEn: "البرنامج — خطوة في كل سطر: العنوان | التفاصيل (إنجليزي)",
     ppItinAr: "البرنامج — خطوة في كل سطر: العنوان | التفاصيل (عربي)",
     ppLangs: "لغات الجولة (مثال: EN · AR · KU)", ppPickup: "توصيل من الفندق متاح",
+    ppDepartsFrom: "المدن التي تنطلق منها هذه الجولة", ppDepartsFromHint: "تظهر للمسافرين العراقيين المحليين الذين يبحثون بمدينتهم — حدّد كل مدينة تقدّم منها استلاماً فعلياً، وليس فقط مدينة الوجهة.",
     ppPolicy: "سياسة الإلغاء", pol_free48: "مجاني حتى ٤٨ ساعة", pol_free24: "مجاني حتى ٢٤ ساعة", pol_nonrefundable: "غير قابل للاسترجاع",
     ts_draft: "مسودة", ts_pending_review: "قيد المراجعة", ts_published: "منشورة", ts_paused: "موقوفة", ts_archived: "مؤرشفة",
     ppTraveler: "المسافر", ppConfirm: "تأكيد", ppDecline: "رفض", ppComplete: "اكتملت", ppNoShow: "لم يحضر",
@@ -213,6 +215,9 @@
       '<option value="' + p + '"' + (x.cancel === p ? " selected" : "") + ">" + t("pol_" + p) + "</option>").join("");
     const itinTxt = (side) => (x.itinerary || []).map((s) => (L2(s.t, side) + " | " + L2(s.d, side))).join("\n");
     const L2 = (o, side) => (o && o[side]) || "";
+    const departsChecked = (id) => ((x.departs_city_ids && x.departs_city_ids.length) ? x.departs_city_ids.includes(id) : id === x.city_id);
+    const departsChecks = CITIES.map((z) =>
+      '<label class="f-check"><input type="checkbox" class="pe-depart-c" value="' + z.id + '"' + (departsChecked(z.id) ? " checked" : "") + "/>" + esc(L(z)) + "</label>").join("");
 
     c.innerHTML =
       '<h1 class="t2">' + (editId ? t("ppEdit") : t("pAddTitle")) + "</h1>" +
@@ -221,6 +226,8 @@
       "<div><label>" + t("pfTitleAr") + '</label><input id="pe-tar" dir="rtl" value="' + esc(x.title.ar || "") + '"/></div></div>' +
       '<div class="form-row"><div><label>' + t("pfCity") + '</label><select id="pe-city">' + cityOpts + "</select></div>" +
       "<div><label>" + t("pfType") + '</label><select id="pe-type">' + typeOpts + "</select></div></div>" +
+      '<div><label>' + t("ppDepartsFrom") + '</label><div class="pe-city-checks">' + departsChecks + "</div>" +
+      '<p class="footnote mt-2">' + t("ppDepartsFromHint") + "</p></div>" +
       '<div class="form-row"><div><label>' + t("pfDays") + '</label><input id="pe-days" type="number" min="1" value="' + (x.days || 1) + '"/></div>' +
       "<div><label>" + t("pfHours") + '</label><input id="pe-hours" type="number" min="1" max="24" value="' + (x.hours || 8) + '"/></div></div>' +
       '<div class="form-row"><div><label>' + t("pfPrice") + '</label><input id="pe-price" type="number" min="0" value="' + Math.round((x.price_cents || 0) / 100) + '"/></div>' +
@@ -259,6 +266,7 @@
         title: { en: gv("pe-ten").trim(), ar: gv("pe-tar").trim() || gv("pe-ten").trim() },
         description: { en: gv("pe-den").trim(), ar: gv("pe-dar").trim() },
         city_id: gv("pe-city"), type_id: gv("pe-type"),
+        departs_city_ids: Array.from(document.querySelectorAll(".pe-depart-c:checked")).map((cb) => cb.value),
         days: +gv("pe-days") || 1, hours: +gv("pe-hours") || null,
         price_cents: Math.round((+gv("pe-price") || 0) * 100),
         group_max: +gv("pe-group") || 10,

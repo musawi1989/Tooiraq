@@ -98,6 +98,7 @@ const TOURS = [
   {
     id: "babylon-day-trip",
     city: "babylon", type: "history", agency: "babylon-gate",
+    departsFrom: ["baghdad", "babylon"],
     motif: "ziggurat", color: "art-gold",
     days: 1, price: 95,
     title: { en: "Babylon & the Lion: Full-Day Ancient City Tour", ar: "بابل والأسد: جولة يوم كامل في المدينة الأثرية" },
@@ -158,6 +159,7 @@ const TOURS = [
   {
     id: "karbala-najaf-ziyara",
     city: "karbala", type: "religious", agency: "noor-pilgrim",
+    departsFrom: ["karbala", "baghdad"],
     motif: "dome", color: "art-night",
     days: 2, price: 140,
     title: { en: "Karbala & Najaf: Two-Day Ziyara Package", ar: "كربلاء والنجف: برنامج زيارة ليومين" },
@@ -203,6 +205,7 @@ const TOURS = [
   {
     id: "samarra-malwiya",
     city: "samarra", type: "history", agency: "dijla-journeys",
+    departsFrom: ["baghdad"],
     motif: "malwiya", color: "art-gold",
     days: 1, price: 85,
     title: { en: "Samarra & the Spiral Minaret Day Tour", ar: "جولة يوم إلى سامراء والملوية" },
@@ -393,6 +396,34 @@ TOURS.push(
       { t: { en: "Spring mountains", ar: "جبال الربيع" }, d: { en: "Drive into the celebrating villages with photo stops.", ar: "انطلاق نحو القرى المحتفلة مع توقفات للتصوير." } },
       { t: { en: "Torch procession", ar: "موكب المشاعل" }, d: { en: "Watch the famous fire lines climb the hillside at dusk.", ar: "شاهد خطوط النار الشهيرة تصعد التلال عند الغسق." } }
     ]
+  },
+  {
+    /* Illustrative sample: a local agency running a long-distance,
+       cross-country tour that departs from its own home city and
+       ends in a different destination city — the pattern real Iraqi
+       operators commonly run (e.g. a southern city to Kurdistan). */
+    id: "basra-erbil-crosscountry",
+    city: "erbil", type: "culture", agency: "basra-breeze",
+    departsFrom: ["basra"],
+    motif: "citadel", color: "art-terracotta", img: "citadel",
+    days: 4, hours: null, price: 340, rating: 4.6, reviews: 22, groupMax: 10,
+    langs: ["EN", "AR"], cancel: true,
+    title: { en: "South to North: Basra to Erbil Grand Journey", ar: "من الجنوب إلى الشمال: رحلة من البصرة إلى أربيل" },
+    desc: {
+      en: "A four-day road journey the length of Iraq — depart Basra, overnight in Baghdad, and arrive in Erbil for the citadel and bazaar. Built for southern travelers who want the north without arranging transport themselves.",
+      ar: "رحلة برية لأربعة أيام على طول العراق — انطلاقاً من البصرة، مبيت في بغداد، ووصولاً إلى أربيل لزيارة القلعة والبازار. مصممة لمسافري الجنوب الراغبين بزيارة الشمال دون ترتيب النقل بأنفسهم."
+    },
+    highlights: {
+      en: ["Direct departure from Basra", "Overnight stop in Baghdad", "Erbil Citadel & Qaysari Bazaar", "All inter-city transport included"],
+      ar: ["انطلاق مباشر من البصرة", "توقف مبيت في بغداد", "قلعة أربيل وقيصرية البازار", "جميع تنقلات ما بين المدن مشمولة"]
+    },
+    meeting: { en: "Basra corniche pickup, 6:00 AM day 1", ar: "النقل من كورنيش البصرة، ٦:٠٠ صباحاً اليوم الأول" },
+    itinerary: [
+      { t: { en: "Day 1 — Departure", ar: "اليوم الأول — الانطلاق" }, d: { en: "Depart Basra at dawn, drive north with rest stops.", ar: "الانطلاق من البصرة عند الفجر مع توقفات للراحة شمالاً." } },
+      { t: { en: "Day 2 — Baghdad", ar: "اليوم الثاني — بغداد" }, d: { en: "Overnight in Baghdad with a free evening.", ar: "مبيت في بغداد مع أمسية حرة." } },
+      { t: { en: "Day 3 — Onward to Erbil", ar: "اليوم الثالث — نحو أربيل" }, d: { en: "Continue north into Kurdistan, arrive Erbil by evening.", ar: "متابعة الطريق شمالاً إلى كردستان، الوصول إلى أربيل مساءً." } },
+      { t: { en: "Day 4 — Erbil Citadel", ar: "اليوم الرابع — قلعة أربيل" }, d: { en: "Guided citadel visit and bazaar time before your return journey.", ar: "زيارة مرشدة للقلعة ووقت في البازار قبل رحلة العودة." } }
+    ]
   }
 );
 
@@ -580,6 +611,7 @@ function refTour(o) {
     title: { en: "All Iraq Tour (Bil Weekend)", ar: "جولة كل العراق (بالعطلة)" },
     desc: { en: "Bil Weekend's country-wide package — full details on the original listing.", ar: "باقة بالعطلة الشاملة لعموم العراق — التفاصيل في الإعلان الأصلي." } }),
   refTour({ id: "itt-day-tours", agency: "iraq-travel-tours", city: "baghdad", type: "culture", img: "baghdad",
+    departsFrom: ["baghdad", "erbil"],
     src: "https://iraqtravelandtours.com/day-tours/", srcName: "iraqtravelandtours.com",
     title: { en: "Day Tours Collection (Iraq Travel and Tours)", ar: "مجموعة الجولات اليومية (Iraq Travel and Tours)" },
     desc: { en: "A catalogue of English-guided day tours from Baghdad and Erbil.", ar: "مجموعة جولات يومية بمرشدين بالإنجليزية من بغداد وأربيل." } }),
@@ -656,3 +688,12 @@ function refTour(o) {
     title: { en: "Private Kurdistan Tours (Karwan Wahed)", ar: "جولات كردستان الخاصة (Karwan Wahed)" },
     desc: { en: "Private tours in and around Erbil, bookable via tourHQ.", ar: "جولات خاصة في أربيل وما حولها، تُحجز عبر tourHQ." } })
 ].forEach(t2 => TOURS.push(t2));
+
+/* ---------- local-departure city (for the "traveling within Iraq" home
+   selector) ----------
+   departsFrom = array of CITIES ids a tour can genuinely be joined
+   from. Only set explicitly above where the tour's own text already
+   states a different hub (e.g. "Baghdad or Hillah" pickup, or a
+   Baghdad-based agency's Baghdad-to-Erbil route). Every other tour
+   falls back to its own destination city — never invented. */
+TOURS.forEach(t => { if (!t.departsFrom) t.departsFrom = [t.city]; });

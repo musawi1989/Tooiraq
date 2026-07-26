@@ -157,6 +157,29 @@ html[lang="ar"] .searchbox .seg label { letter-spacing:0; }
   .searchbox .seg { border-inline-end:none; border-bottom:1px solid var(--separator); }
 }
 
+/* ---------- Travel mode (local vs international traveler) ---------- */
+.travel-mode { margin-top:22px; }
+.mode-pills { display:flex; gap:10px; flex-wrap:wrap; }
+.mode-pill {
+  min-height:44px; padding:10px 18px; border-radius:var(--radius-pill);
+  background:var(--bg-base); border:1.5px solid var(--separator-opaque);
+  font-size:15px; font-weight:600; color:var(--label-primary); cursor:pointer;
+  display:inline-flex; align-items:center; gap:8px;
+  transition:all var(--dur-fast) var(--ease-standard);
+}
+.mode-pill:hover { border-color:var(--color-primary); }
+.mode-pill.selected { background:var(--color-primary); border-color:var(--color-primary); color:#fff; }
+.mode-city {
+  margin-top:12px; max-width:320px; background:var(--bg-base);
+  border:1px solid var(--separator); border-radius:var(--radius-md);
+  padding:10px 14px; box-shadow:var(--shadow-1);
+  display:flex; flex-direction:column; gap:4px;
+}
+.mode-city label { font-size:11px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; color:var(--label-secondary); }
+html[lang="ar"] .mode-city label { letter-spacing:0; }
+.mode-city select { border:none; background:transparent; font-family:inherit; font-size:16px; color:var(--label-primary); outline:none; width:100%; min-height:28px; }
+@media (max-width:640px){ .mode-city{ max-width:none; } }
+
 .chip-row { display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
 .chip {
   min-height:36px; padding:7px 16px; border-radius:var(--radius-pill);
@@ -414,6 +437,11 @@ html[lang="ar"] .form-grid label { letter-spacing:0; }
 .form-grid textarea { min-height:96px; resize:vertical; }
 .form-grid input:focus,.form-grid select:focus,.form-grid textarea:focus { outline:2px solid var(--color-primary); outline-offset:2px; border-color:var(--color-primary); }
 .form-note { font-size:13px; color:var(--label-secondary); }
+.pe-city-checks {
+  display:flex; flex-wrap:wrap; gap:2px 20px; padding:12px 14px;
+  background:var(--bg-base); border:1px solid var(--separator-opaque); border-radius:var(--radius-md);
+}
+.pe-city-checks .f-check { min-height:36px; font-size:14px; }
 
 .notice-proto {
   background:var(--color-primary-tint); border:1px solid #F0C2C8; color:#8E1020;

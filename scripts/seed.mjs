@@ -62,6 +62,7 @@ for (const x of TOURS) {
     status: "published",
     title: x.title, description: x.desc || { en: "", ar: "" },
     city_id: x.city, type_id: x.type,
+    departs_city_ids: x.departsFrom || [x.city],
     days: x.days || 1, hours: x.hours || null,
     price_cents: cents(x.price), group_max: x.groupMax || 10,
     langs: x.langs || [], cancel: cancelPolicy(x.cancel),

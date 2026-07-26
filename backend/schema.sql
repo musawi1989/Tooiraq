@@ -135,6 +135,7 @@ create table if not exists public.tours (
   description jsonb not null default '{"en":"","ar":""}',
   city_id text not null,
   type_id text not null,
+  departs_city_ids text[] not null default '{}',            -- CITIES ids this tour can be joined from; empty = falls back to city_id (see app.js dbTourAdapt)
   days int not null default 1 check (days >= 1),
   hours int check (hours between 1 and 24),
   price_cents int not null default 0 check (price_cents >= 0),  -- 0 = price on request
