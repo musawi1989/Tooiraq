@@ -57,11 +57,12 @@
       itinTitle: "Itinerary", meetTitle: "Meeting point & pickup",
       revTitle: "Traveler reviews", offeredBy: "Offered by", since: "On TooIraq since",
       bbDate: "Date", bbPax: "Travelers", bbName: "Your name", bbWa: "Your WhatsApp number",
+      bbLoc: "Where are you located?", bbLocPh: "Hotel name or neighborhood — for pickup",
       bookWa: "Book on WhatsApp", bookReq: "Send booking request",
       bbNote: "No prepayment — you confirm details with the agency and pay them directly.",
       bbSent: "Request sent! The agency will contact you shortly.",
       waBook: "Hello! I would like to book via TooIraq:",
-      waTour: "Tour", waDate: "Date", waPax: "Travelers", waName: "Name",
+      waTour: "Tour", waDate: "Date", waPax: "Travelers", waName: "Name", waLoc: "Location",
       bkCreated: "Booking request sent! Your reference:",
       bkManage: "Track / manage this booking",
       bkFillAll: "Please fill date, name and WhatsApp number.",
@@ -146,11 +147,12 @@
       itinTitle: "برنامج الجولة", meetTitle: "نقطة اللقاء والنقل",
       revTitle: "آراء المسافرين", offeredBy: "مقدَّمة من", since: "على TooIraq منذ",
       bbDate: "التاريخ", bbPax: "المسافرون", bbName: "اسمك", bbWa: "رقم واتساب الخاص بك",
+      bbLoc: "أين تقيم؟", bbLocPh: "اسم الفندق أو المنطقة — لغرض الاستلام",
       bookWa: "احجز عبر واتساب", bookReq: "أرسل طلب حجز",
       bbNote: "بلا دفع مسبق — تؤكد التفاصيل مع الشركة وتدفع لها مباشرة.",
       bbSent: "تم إرسال الطلب! ستتواصل معك الشركة قريباً.",
       waBook: "مرحباً! أود الحجز عبر TooIraq:",
-      waTour: "الجولة", waDate: "التاريخ", waPax: "المسافرون", waName: "الاسم",
+      waTour: "الجولة", waDate: "التاريخ", waPax: "المسافرون", waName: "الاسم", waLoc: "الموقع",
       bkCreated: "تم إرسال طلب الحجز! رقم حجزك:",
       bkManage: "تتبّع أو أدر هذا الحجز",
       bkFillAll: "يرجى إدخال التاريخ والاسم ورقم واتساب.",
@@ -588,6 +590,7 @@
       '<div class="field"><label>' + t("bbPax") + '</label><select id="bb-pax">' + paxOpts + "</select></div>" +
       '<div class="field"><label>' + t("bbName") + '</label><input type="text" id="bb-name"/></div>' +
       '<div class="field"><label>' + t("bbWa") + '</label><input type="tel" id="bb-wa" placeholder="+964 …"/></div>' +
+      '<div class="field"><label>' + t("bbLoc") + '</label><input type="text" id="bb-loc" placeholder="' + esc(t("bbLocPh")) + '"/></div>' +
       (a && a.wa ? '<button class="btn btn-wa btn-block" id="bb-book">' + t("bookWa") + "</button>" : "") +
       '<button class="btn btn-tint btn-block" id="bb-req">' + t("bookReq") + "</button>" +
       '<p class="bb-note">' + t("bbNote") + "</p>" +
@@ -611,7 +614,8 @@
       const d = document.getElementById("bb-date").value || "—";
       const p = document.getElementById("bb-pax").value;
       const n = document.getElementById("bb-name").value || "—";
-      return encodeURIComponent(t("waBook") + "\n• " + t("waTour") + ": " + L(tour.title) + "\n• " + t("waDate") + ": " + d + "\n• " + t("waPax") + ": " + p + "\n• " + t("waName") + ": " + n);
+      const loc = document.getElementById("bb-loc").value.trim();
+      return encodeURIComponent(t("waBook") + "\n• " + t("waTour") + ": " + L(tour.title) + "\n• " + t("waDate") + ": " + d + "\n• " + t("waPax") + ": " + p + "\n• " + t("waName") + ": " + n + (loc ? "\n• " + t("waLoc") + ": " + loc : ""));
     };
     const bbBook = document.getElementById("bb-book");
     if (bbBook) bbBook.addEventListener("click", () => {
@@ -624,6 +628,7 @@
       const pax = +document.getElementById("bb-pax").value || 1;
       const name = document.getElementById("bb-name").value.trim();
       const wa = document.getElementById("bb-wa").value.trim();
+      const loc = document.getElementById("bb-loc").value.trim();
 
       /* real booking path (backend configured + tour mirrored in DB) */
       if (B && B.enabled && tour._dbId) {
@@ -637,7 +642,7 @@
         msg.textContent = ""; btn.disabled = true;
         const r = await B.createBooking({
           tourId: tour._dbId, date: date, adults: pax, children: 0,
-          name: name, whatsapp: wa, locale: lang
+          name: name, whatsapp: wa, note: loc || null, locale: lang
         });
         btn.disabled = false;
         if (!r || r.error || !r.data) { msg.textContent = t("bkErr"); return; }
@@ -667,6 +672,8 @@
         f.querySelector('[name="travelers"]').value = pax;
         f.querySelector('[name="name"]').value = name;
         f.querySelector('[name="whatsapp"]').value = wa;
+        const locField = f.querySelector('[name="location"]');
+        if (locField) locField.value = loc;
         try { f.submit(); return; } catch (e) {}
       }
       btn.textContent = "✓ " + t("bbSent");

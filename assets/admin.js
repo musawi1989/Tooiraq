@@ -156,7 +156,8 @@
         '<div class="ptour"><div class="tx"><b>' + bk.ref + " · " + esc(bk.tours ? L(bk.tours.title) : "") + "</b>" +
         "<span>" + esc(bk.agencies ? L(bk.agencies.name) : "") + " · " + bk.tour_date + " · " +
         (bk.pax_adults + bk.pax_children) + "👤 · " + money(bk.total_cents) + " · " + t("pay_" + bk.payment) +
-        " · " + esc(bk.contact_name) + " (" + esc(bk.contact_whatsapp) + ")</span></div>" +
+        " · " + esc(bk.contact_name) + " (" + esc(bk.contact_whatsapp) + ")" +
+        (bk.note ? " · 📍 " + esc(bk.note) : "") + "</span></div>" +
         pill(t("st_" + bk.status), ["confirmed", "completed"].includes(bk.status)) +
         "</div>").join("") : '<p class="subhead">' + t("adNone") + "</p>") + "</div>";
   }
