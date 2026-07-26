@@ -464,6 +464,9 @@
       if (mode === "local" && dep) qs.set("depart", dep);
       window.location.href = "tours.html" + (qs.toString() ? "?" + qs.toString() : "");
     });
+    fill("type-chips", '<a class="chip selected" href="tours.html">' + t("chipAll") + "</a>" +
+      TYPES.map((x) => '<a class="chip" href="tours.html?type=' + x.id + '">' + esc(L(x)) + "</a>").join(""));
+
     const CAT_ICONS = { history: "🏛️", nature: "🌿", religious: "🕌", culture: "🏙️", festival: "🎉" };
     fill("cat-grid", TYPES.map((x) => {
       const n = TOURS.filter((z) => z.type === x.id).length;

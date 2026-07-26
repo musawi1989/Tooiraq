@@ -180,6 +180,16 @@ html[lang="ar"] .mode-city label { letter-spacing:0; }
 .mode-city select { border:none; background:transparent; font-family:inherit; font-size:16px; color:var(--label-primary); outline:none; width:100%; min-height:28px; }
 @media (max-width:640px){ .mode-city{ max-width:none; } }
 
+.chip-row { display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+.chip {
+  min-height:36px; padding:7px 16px; border-radius:var(--radius-pill);
+  background:var(--bg-base); border:1px solid var(--separator-opaque);
+  font-size:15px; font-weight:500; color:var(--label-primary); cursor:pointer;
+  display:inline-flex; align-items:center; gap:7px;
+}
+.chip:hover { border-color:var(--color-primary); color:var(--color-primary); }
+.chip.selected { background:var(--color-primary); border-color:var(--color-primary); color:#fff; }
+
 /* ---------- Category browser ---------- */
 .cat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
 @media (max-width:960px){ .cat-grid{ grid-template-columns:repeat(2,1fr);} }
@@ -504,6 +514,7 @@ html[lang="ar"] .form-grid label { letter-spacing:0; }
   .mobile-menu.open { display:block; }
   .header-inner { gap:12px; height:60px; }
   .hero { padding:36px 0 56px; }
+  .chip-row { display:none; }   /* duplicates "Browse by category" below; kept on desktop only */
   .section { padding:28px 0; }
   .cta-band { padding:26px 22px; }
   .searchbox .go .btn { width:100%; min-height:50px; }
