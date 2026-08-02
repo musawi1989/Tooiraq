@@ -892,10 +892,8 @@
 
       '<aside><div class="panel bookbox">' +
       (tour.price
-        ? '<div><span class="from">' + t("from") + '</span><div class="amount">$' + tour.price + " <small>" + t("perPerson") + "</small></div>" +
-          (tour.cancel ? '<span class="freecancel">✓ ' + cancelLbl(tour) + "</span>" : "") + "</div>"
-        : '<div><div class="amount" style="font-size:22px">' + t("poa") + "</div>" +
-          (tour.cancel ? '<span class="freecancel">✓ ' + cancelLbl(tour) + "</span>" : "") + "</div>") +
+        ? '<div><span class="from">' + t("from") + '</span><div class="amount">$' + tour.price + " <small>" + t("perPerson") + "</small></div></div>"
+        : '<div><div class="amount" style="font-size:22px">' + t("poa") + "</div></div>") +
       (tour.src ? '<a class="btn btn-outline btn-block" target="_blank" rel="noopener" href="' + tour.src + '">' + t("srcBtn") + "</a>" +
         '<p class="bb-note" style="color:#8E1020">' + t("srcNote") + "</p>" : "") +
       '<div class="field"><label>' + t("bbDate") + '</label><input type="date" id="bb-date"/></div>' +
@@ -1278,8 +1276,7 @@
           "</div>" +
 
           '<aside><div class="panel bookbox">' +
-          '<div><span class="from">' + t("from") + '</span><div class="amount">$<input class="ed-mini ed-price" id="edv-price" type="number" min="0" value="' + (w.price || 0) + '"/> <small>' + t("perPerson") + "</small></div>" +
-          (w.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>" +
+          '<div><span class="from">' + t("from") + '</span><div class="amount">$<input class="ed-mini ed-price" id="edv-price" type="number" min="0" value="' + (w.price || 0) + '"/> <small>' + t("perPerson") + "</small></div></div>" +
           '<div class="field"><label>' + t("bbDate") + '</label><input type="date" disabled/></div>' +
           '<div class="field"><label>' + t("bbPax") + '</label><select disabled><option>' + t("pax1") + "</option></select></div>" +
           '<button class="btn btn-wa btn-block" disabled>' + t("bookWa") + "</button>" +
