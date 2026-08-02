@@ -1,9 +1,9 @@
-# TooIraq — Project Handoff
+# Iraq Tour (formerly TooIraq) — Project Handoff
 
 **Read this first.** This file lets any Claude session (Cowork chat or Claude Code) pick up the project instantly.
 
 ## What this is
-TooIraq (**tooiraq.netlify.app**) is a tour & activities marketplace for Iraq — travelers compare tours from Iraqi agencies and book directly via WhatsApp. Owner: Max (info@kad3d.com.au, GitHub: musawi1989). Bilingual English/Arabic with full RTL.
+**Iraq Tour** (live at **tooiraq.netlify.app** — URL keeps the old name until Max buys a domain) is a tour & activities marketplace for Iraq — travelers compare tours from Iraqi agencies and book directly via WhatsApp. Owner: Max (info@kad3d.com.au, GitHub: musawi1989). Bilingual English/Arabic with full RTL.
 
 ## How deployment works — NO manual uploads
 - This repo (`musawi1989/Tooiraq`, branch `main`) is linked to Netlify.
@@ -26,6 +26,9 @@ No frameworks, no build tools — intentionally simple and fast:
 - `assets/app.js` — all rendering + EN/AR i18n (STR dict) + pages logic
 - `assets/data.js` — ALL content: CITIES, TYPES, AGENCIES, TOURS (+ merged extras)
 - `assets/img.js` — inline SVG scene "photos" (placeholder until real photography)
+
+## Branding (Aug 2, 2026 — Max's rebrand)
+Site is branded **Iraq Tour** with Max's mudhif-guesthouse logo (original PNG: `assets/iraq-tour-logo.png`; redrawn as inline SVG `BRAND_MARK` in app.js + favicons in every page head). All user-visible strings say "Iraq Tour". INTERNAL names deliberately keep the old spelling — do NOT rename: `window.TooIraq` JS API, `TooIraq.init(...)` page boots, `tooiraq-*` localStorage keys, `TOOIRAQ_CONFIG`, the netlify URL, and hello@tooiraq.com (update email/domain when purchased).
 
 ## Design system — Rafidain (do not deviate)
 Based on the user's uploaded "Rafidain Design System" doc: **Iraq Red `#CE1126` is the primary** (buttons, brand, active states); **Green `#007A3D` only for positive meaning** (verified, free cancellation, savings, WhatsApp); **yellow `#FFB400` for rating stars only**; iOS-style neutral surfaces (`#F2F2F7` canvas, white cards, 20px radii, Poppins + Noto Naskh Arabic, material blur header). ~88% neutral / 9% red / 3% green.

@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq — lightweight scenic imagery (inline SVG, zero network)
+   Iraq Tour — lightweight scenic imagery (inline SVG, zero network)
    Each "photo" is a hand-drawn SVG scene (~1-2 KB) rendered as a
    data URI: instant loading, cacheable, crisp at any size.
    Swap any of these for real photographs later by replacing

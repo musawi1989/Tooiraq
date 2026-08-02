@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq — guest booking status & management page.
+   Iraq Tour — guest booking status & management page.
    Reached from the manage link (booking.html?ref=…&token=…).
    ============================================================ */
 (function () {
@@ -89,7 +89,7 @@
       row(t("bkpAgency"), esc(L(ag.name))) +
       "</div>" +
       '<div class="form-grid mt-4">' +
-      (ag.whatsapp ? '<a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="https://wa.me/' + esc(ag.whatsapp) + '?text=' + encodeURIComponent("TooIraq " + b.ref) + '">' + t("bkpChat") + "</a>" : "") +
+      (ag.whatsapp ? '<a class="btn btn-wa btn-block" target="_blank" rel="noopener" href="https://wa.me/' + esc(ag.whatsapp) + '?text=' + encodeURIComponent("Iraq Tour " + b.ref) + '">' + t("bkpChat") + "</a>" : "") +
       (canPay ? '<button class="btn btn-primary btn-block" id="bp-pay">' + t("bkpPay") + '</button><div id="bp-ppbox"></div>' : "") +
       (canCancel ? '<button class="btn btn-outline btn-block" id="bp-cancel">' + t("bkpCancel") + "</button>" : "") +
       '<div id="bp-msg" class="form-note"></div>' +

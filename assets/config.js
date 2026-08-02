@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq runtime config.
+   Iraq Tour runtime config.
    SUPABASE_ANON_KEY is a *publishable* key (safe in client code —
    security is enforced by Row Level Security in the database).
    NEVER put the service_role key, PayPal secret, or any private

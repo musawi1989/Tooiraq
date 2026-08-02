@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq — admin panel (role: admin only).
+   Iraq Tour — admin panel (role: admin only).
    Applications · agencies · tour review · bookings · reviews ·
    settings · audit. English-first UI (Max), still lang-aware.
    ============================================================ */
@@ -9,7 +9,7 @@
   const TQ = window.TooIraq;
 
   TQ.addStrings({
-    adTitle: "TooIraq Admin", adLead: "Approvals, moderation, bookings and settings.",
+    adTitle: "Iraq Tour Admin", adLead: "Approvals, moderation, bookings and settings.",
     adNotAdmin: "This account doesn't have admin access.",
     adOff: "Backend not configured yet.",
     adApps: "Applications", adAgencies: "Agencies", adTours: "Tour review", adBookings: "Bookings",
@@ -26,7 +26,7 @@
     adStatDrafts: "Provider drafts awaiting review",
     adDraftBy: "Draft by", adDemoVerify: "Verified (demo)", adLogout: "Log out"
   }, {
-    adTitle: "إدارة TooIraq", adLead: "الموافقات والإشراف والحجوزات والإعدادات.",
+    adTitle: "إدارة Iraq Tour", adLead: "الموافقات والإشراف والحجوزات والإعدادات.",
     adNotAdmin: "هذا الحساب لا يملك صلاحية الإدارة.",
     adOff: "قاعدة البيانات غير مفعّلة بعد.",
     adApps: "الطلبات", adAgencies: "الشركات", adTours: "مراجعة الجولات", adBookings: "الحجوزات",

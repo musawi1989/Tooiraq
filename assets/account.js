@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq — traveler account page (auth, bookings, wishlist,
+   Iraq Tour — traveler account page (auth, bookings, wishlist,
    reviews, profile). Requires backend.js configured; shows a
    friendly notice otherwise.
    ============================================================ */

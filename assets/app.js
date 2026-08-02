@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq — site engine v2 (Rafidain design system)
+   Iraq Tour — site engine v2 (Rafidain design system)
    Booking.com-style layouts · EN/AR with RTL · WhatsApp-first
    ============================================================ */
 
@@ -34,7 +34,7 @@
       sDest: "Destination", sDestAll: "All of Iraq", sDate: "Date", sPax: "Travelers", sGo: "Search",
       pax1: "1 traveler", paxN: "travelers",
       chipAll: "All types",
-      trendTitle: "Trending destinations", trendSub: "Most searched places on TooIraq this month",
+      trendTitle: "Trending destinations", trendSub: "Most searched places on Iraq Tour this month",
       featTitle: "Top experiences", featSub: "Highest-rated tours from local agencies", seeAll: "See all",
       toursCount: "tours", toursCount1: "1 tour",
       catTitle: "Browse by category", catSub: "Tours and events, organised the way you plan",
@@ -45,7 +45,7 @@
       trust4t: "Free cancellation", trust4p: "Most tours cancel free up to 48 hours before the start.",
       agTitle: "Featured agencies", agSub: "The local experts behind the tours",
       ctaTitle: "Run tours in Iraq? Get listed free.",
-      ctaText: "Join TooIraq during launch for free — a standardized dashboard for your tours, and travelers who reach you directly on WhatsApp.",
+      ctaText: "Join Iraq Tour during launch for free — a standardized dashboard for your tours, and travelers who reach you directly on WhatsApp.",
       ctaBtn: "Become a provider",
       sampleNotice: "Preview note: agencies, tours, ratings and reviews shown are sample listings while real providers are onboarded.",
       resultsTitle: "Tours & activities in Iraq", filters: "Filters", clearAll: "Clear all",
@@ -59,19 +59,19 @@
       reviewsWord: "reviews", langsWord: "Languages",
       crumbHome: "Home", crumbTours: "Tours",
       bestSeller: "Best seller", likelySellOut: "Likely to sell out", verified: "Verified",
-      poa: "Price on request", onboardingBadge: "Onboarding", newOp: "New on TooIraq — onboarding", durVaries: "Duration varies",
+      poa: "Price on request", onboardingBadge: "Onboarding", newOp: "New on Iraq Tour — onboarding", durVaries: "Duration varies",
       srcBtn: "View original listing ↗",
-      srcNote: "Temporary reference link for onboarding — will be removed once this provider approves their TooIraq profile.",
+      srcNote: "Temporary reference link for onboarding — will be removed once this provider approves their Iraq Tour profile.",
       visitSite: "Website ↗",
       aboutTitle: "About this tour", incTitle: "What's included",
       itinTitle: "Itinerary", meetTitle: "Meeting point & pickup",
-      revTitle: "Traveler reviews", offeredBy: "Offered by", since: "On TooIraq since",
+      revTitle: "Traveler reviews", offeredBy: "Offered by", since: "On Iraq Tour since",
       bbDate: "Date", bbPax: "Travelers", bbName: "Your name", bbWa: "Your WhatsApp number",
       bbLoc: "Where are you located?", bbLocPh: "Hotel name or neighborhood — for pickup",
       bookWa: "Book on WhatsApp", bookReq: "Send booking request",
       bbNote: "No prepayment — you confirm details with the agency and pay them directly.",
       bbSent: "Request sent! The agency will contact you shortly.",
-      waBook: "Hello! I would like to book via TooIraq:",
+      waBook: "Hello! I would like to book via Iraq Tour:",
       waTour: "Tour", waDate: "Date", waPax: "Travelers", waName: "Name", waLoc: "Location",
       bkCreated: "Booking request sent! Your reference:",
       bkManage: "Track / manage this booking",
@@ -87,7 +87,7 @@
       pay_unpaid: "Unpaid", pay_paid: "Paid", pay_refunded: "Refunded", pay_partially_refunded: "Partially refunded",
       agenciesTitle: "Tour agencies & providers", agenciesSub: "Verified Iraqi operators you contact directly — no middleman.",
       agTours: "tours", agSince: "Since", chat: "WhatsApp", call: "Call",
-      portalTitle: "Provider portal", portalSub: "Manage your agency profile and tours on TooIraq.",
+      portalTitle: "Provider portal", portalSub: "Manage your agency profile and tours on Iraq Tour.",
       plEmail: "Email", plPass: "Password", plAgency: "Your agency (demo)", plBtn: "Log in",
       plUser: "Username", plBad: "Wrong username or password.",
       plDemoHint: "Testing phase — every listed provider has a demo login: its username below with password 123456 (e.g. tooiraq / 123456).",
@@ -138,7 +138,7 @@
       pfWa: "Booking WhatsApp number", pfCancel: "Free cancellation up to 48h", pfDescEn: "Description (English)", pfDescAr: "Description (Arabic)",
       pfHi: "Highlights — one per line (English)", pfHiAr: "Highlights — one per line (Arabic)", pfMeet: "Meeting point / pickup",
       pfSave: "Submit for review", pfSaved: "Tour submitted! It's now pending review below.",
-      joinTitle: "List your business on TooIraq",
+      joinTitle: "List your business on Iraq Tour",
       joinSub: "Free during launch. Apply below — we review and publish within 48 hours, then you manage everything from the provider portal.",
       joinB1t: "Free listing", joinB1p: "No fees, no commission during launch. Travelers pay you directly.",
       joinB2t: "Bilingual reach", joinB2p: "Your tours are shown in English and Arabic automatically.",
@@ -146,9 +146,9 @@
       jBusiness: "Business name", jCity: "City / base", jWa: "WhatsApp number", jEmail: "Email (optional)",
       jServices: "Services you offer", jDesc: "About your business", jSend: "Submit application",
       joinNote: "We review every application before publishing. We never ask for payment details.",
-      contactTitle: "Contact TooIraq", contactSub: "Questions, suggestions, or an issue with a listing — we read everything.",
+      contactTitle: "Contact Iraq Tour", contactSub: "Questions, suggestions, or an issue with a listing — we read everything.",
       fName: "Your name", fEmail: "Email", fMsg: "Message", fSendBtn: "Send message", contactDirect: "Prefer email?",
-      footAbout: "TooIraq is a marketplace connecting travelers with licensed Iraqi tour agencies and travel services — from ancient Babylon to the mountains of Kurdistan. Every booking goes directly to the local provider.",
+      footAbout: "Iraq Tour is a marketplace connecting travelers with licensed Iraqi tour agencies and travel services — from ancient Babylon to the mountains of Kurdistan. Every booking goes directly to the local provider.",
       footExplore: "Explore", footProviders: "For providers", footSupport: "Support",
       footHome: "Home", footTours: "All tours", footAgencies: "Agencies",
       footJoin: "List your business", footPortal: "Provider portal", footContact: "Contact us",
@@ -173,7 +173,7 @@
       sDest: "الوجهة", sDestAll: "كل العراق", sDate: "التاريخ", sPax: "المسافرون", sGo: "بحث",
       pax1: "مسافر واحد", paxN: "مسافرين",
       chipAll: "كل الأنواع",
-      trendTitle: "الوجهات الرائجة", trendSub: "أكثر الأماكن بحثاً على TooIraq هذا الشهر",
+      trendTitle: "الوجهات الرائجة", trendSub: "أكثر الأماكن بحثاً على Iraq Tour هذا الشهر",
       featTitle: "أفضل التجارب", featSub: "الجولات الأعلى تقييماً من الشركات المحلية", seeAll: "عرض الكل",
       toursCount: "جولات", toursCount1: "جولة واحدة",
       catTitle: "تصفح حسب الفئة", catSub: "جولات وفعاليات مرتبة كما تخطط لرحلتك",
@@ -184,7 +184,7 @@
       trust4t: "إلغاء مجاني", trust4p: "معظم الجولات تُلغى مجاناً حتى ٤٨ ساعة قبل الانطلاق.",
       agTitle: "شركات مميزة", agSub: "الخبراء المحليون خلف هذه الجولات",
       ctaTitle: "تنظّم جولات في العراق؟ انضم مجاناً.",
-      ctaText: "انضم إلى TooIraq مجاناً خلال فترة الإطلاق — لوحة تحكم موحّدة لجولاتك، ومسافرون يصلونك مباشرة عبر واتساب.",
+      ctaText: "انضم إلى Iraq Tour مجاناً خلال فترة الإطلاق — لوحة تحكم موحّدة لجولاتك، ومسافرون يصلونك مباشرة عبر واتساب.",
       ctaBtn: "انضم كمزوّد",
       sampleNotice: "ملاحظة: الشركات والجولات والتقييمات المعروضة نماذج تجريبية ريثما تنضم الشركات الفعلية.",
       resultsTitle: "جولات وفعاليات في العراق", filters: "التصفية", clearAll: "مسح الكل",
@@ -198,19 +198,19 @@
       reviewsWord: "تقييم", langsWord: "اللغات",
       crumbHome: "الرئيسية", crumbTours: "الجولات",
       bestSeller: "الأكثر مبيعاً", likelySellOut: "ينفد سريعاً", verified: "موثّقة",
-      poa: "السعر عند الطلب", onboardingBadge: "قيد الانضمام", newOp: "جديد على TooIraq — قيد الانضمام", durVaries: "مدة متغيرة",
+      poa: "السعر عند الطلب", onboardingBadge: "قيد الانضمام", newOp: "جديد على Iraq Tour — قيد الانضمام", durVaries: "مدة متغيرة",
       srcBtn: "عرض الإعلان الأصلي ↗",
-      srcNote: "رابط مرجعي مؤقت لغرض الانضمام — سيُزال بعد موافقة المزوّد على ملفه في TooIraq.",
+      srcNote: "رابط مرجعي مؤقت لغرض الانضمام — سيُزال بعد موافقة المزوّد على ملفه في Iraq Tour.",
       visitSite: "الموقع الإلكتروني ↗",
       aboutTitle: "عن هذه الجولة", incTitle: "ما هو مشمول",
       itinTitle: "برنامج الجولة", meetTitle: "نقطة اللقاء والنقل",
-      revTitle: "آراء المسافرين", offeredBy: "مقدَّمة من", since: "على TooIraq منذ",
+      revTitle: "آراء المسافرين", offeredBy: "مقدَّمة من", since: "على Iraq Tour منذ",
       bbDate: "التاريخ", bbPax: "المسافرون", bbName: "اسمك", bbWa: "رقم واتساب الخاص بك",
       bbLoc: "أين تقيم؟", bbLocPh: "اسم الفندق أو المنطقة — لغرض الاستلام",
       bookWa: "احجز عبر واتساب", bookReq: "أرسل طلب حجز",
       bbNote: "بلا دفع مسبق — تؤكد التفاصيل مع الشركة وتدفع لها مباشرة.",
       bbSent: "تم إرسال الطلب! ستتواصل معك الشركة قريباً.",
-      waBook: "مرحباً! أود الحجز عبر TooIraq:",
+      waBook: "مرحباً! أود الحجز عبر Iraq Tour:",
       waTour: "الجولة", waDate: "التاريخ", waPax: "المسافرون", waName: "الاسم", waLoc: "الموقع",
       bkCreated: "تم إرسال طلب الحجز! رقم حجزك:",
       bkManage: "تتبّع أو أدر هذا الحجز",
@@ -226,7 +226,7 @@
       pay_unpaid: "غير مدفوع", pay_paid: "مدفوع", pay_refunded: "مسترجع", pay_partially_refunded: "مسترجع جزئياً",
       agenciesTitle: "شركات السياحة ومقدمو الخدمات", agenciesSub: "شركات عراقية موثّقة تتواصل معها مباشرة — بلا وسيط.",
       agTours: "جولات", agSince: "منذ", chat: "واتساب", call: "اتصال",
-      portalTitle: "بوابة المزوّدين", portalSub: "أدر ملف شركتك وجولاتك على TooIraq.",
+      portalTitle: "بوابة المزوّدين", portalSub: "أدر ملف شركتك وجولاتك على Iraq Tour.",
       plEmail: "البريد الإلكتروني", plPass: "كلمة المرور", plAgency: "شركتك (تجريبي)", plBtn: "تسجيل الدخول",
       plUser: "اسم المستخدم", plBad: "اسم المستخدم أو كلمة المرور غير صحيحة.",
       plDemoHint: "مرحلة تجريبية — لكل مزوّد مدرج دخول تجريبي: اسم المستخدم أدناه مع كلمة المرور 123456 (مثال: tooiraq / 123456).",
@@ -277,7 +277,7 @@
       pfWa: "رقم واتساب للحجوزات", pfCancel: "إلغاء مجاني حتى ٤٨ ساعة", pfDescEn: "الوصف (إنجليزي)", pfDescAr: "الوصف (عربي)",
       pfHi: "أبرز النقاط — سطر لكل نقطة (إنجليزي)", pfHiAr: "أبرز النقاط — سطر لكل نقطة (عربي)", pfMeet: "نقطة اللقاء / النقل",
       pfSave: "إرسال للمراجعة", pfSaved: "تم إرسال الجولة! وهي الآن قيد المراجعة أدناه.",
-      joinTitle: "أضف نشاطك إلى TooIraq",
+      joinTitle: "أضف نشاطك إلى Iraq Tour",
       joinSub: "مجاناً خلال الإطلاق. قدّم الطلب أدناه — نراجع وننشر خلال ٤٨ ساعة، ثم تدير كل شيء من بوابة المزوّدين.",
       joinB1t: "إدراج مجاني", joinB1p: "بلا رسوم وبلا عمولة خلال الإطلاق. يدفع المسافرون لك مباشرة.",
       joinB2t: "وصول بلغتين", joinB2p: "تُعرض جولاتك بالعربية والإنجليزية تلقائياً.",
@@ -285,9 +285,9 @@
       jBusiness: "اسم النشاط", jCity: "المدينة / المقر", jWa: "رقم الواتساب", jEmail: "البريد (اختياري)",
       jServices: "الخدمات التي تقدمها", jDesc: "عن نشاطك", jSend: "إرسال الطلب",
       joinNote: "نراجع كل طلب قبل النشر ولا نطلب أي بيانات دفع.",
-      contactTitle: "تواصل مع TooIraq", contactSub: "أسئلة أو اقتراحات أو مشكلة في إعلان — نقرأ كل رسالة.",
+      contactTitle: "تواصل مع Iraq Tour", contactSub: "أسئلة أو اقتراحات أو مشكلة في إعلان — نقرأ كل رسالة.",
       fName: "اسمك", fEmail: "البريد الإلكتروني", fMsg: "الرسالة", fSendBtn: "إرسال", contactDirect: "تفضّل البريد؟",
-      footAbout: "TooIraq سوق إلكتروني يربط المسافرين بشركات السياحة العراقية المجازة وخدمات السفر — من بابل القديمة إلى جبال كردستان. كل حجز يذهب مباشرة إلى المزوّد المحلي.",
+      footAbout: "Iraq Tour سوق إلكتروني يربط المسافرين بشركات السياحة العراقية المجازة وخدمات السفر — من بابل القديمة إلى جبال كردستان. كل حجز يذهب مباشرة إلى المزوّد المحلي.",
       footExplore: "استكشف", footProviders: "للمزوّدين", footSupport: "الدعم",
       footHome: "الرئيسية", footTours: "كل الجولات", footAgencies: "الشركات",
       footJoin: "أضف نشاطك", footPortal: "بوابة المزوّدين", footContact: "اتصل بنا",
@@ -438,7 +438,7 @@
   }
 
   const BRAND_MARK =
-    '<svg class="brand-mark" viewBox="0 0 44 44" fill="none"><rect width="44" height="44" rx="12" fill="#CE1126"/><path d="M13 31h18M15 31v-5h14v5M17 26v-5h10v5M19 21v-4h6v4" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><circle cx="22" cy="13" r="1.8" fill="#fff"/></svg>';
+    '<svg class="brand-mark" viewBox="0 0 44 44" fill="none"><rect width="44" height="44" rx="12" fill="#CE1126"/><g stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 33V15M35 33V15"/><path d="M9 19c4-8.5 22-8.5 26 0"/><path d="M18 33v-7c0-4.5 8-4.5 8 0v7"/><path d="M11 25.5l5 5.5M16 25.5l-5 5.5M28 25.5l5 5.5M33 25.5l-5 5.5"/><path d="M7.5 33h29"/></g><circle cx="22" cy="17.5" r="1.6" fill="#fff"/></svg>';
 
   /* ---------- chrome ---------- */
   function injectChrome(active) {
@@ -446,7 +446,7 @@
     if (header) {
       header.innerHTML =
         '<div class="container header-inner">' +
-        '<a class="brand" href="index.html">' + BRAND_MARK + '<span class="brand-name">Too<b>Iraq</b></span></a>' +
+        '<a class="brand" href="index.html">' + BRAND_MARK + '<span class="brand-name">Iraq <b>Tour</b></span></a>' +
         '<nav class="main-nav">' +
         nav("index.html", "navHome", active === "home") + nav("tours.html", "navTours", active === "tours") +
         nav("agencies.html", "navAgencies", active === "agencies") + nav("contact.html", "navContact", active === "contact") +
@@ -476,12 +476,12 @@
     if (footer) {
       footer.innerHTML =
         '<div class="container"><div class="footer-inner">' +
-        '<div><a class="brand" href="index.html">' + BRAND_MARK + '<span class="brand-name" style="color:#fff">Too<b>Iraq</b></span></a>' +
+        '<div><a class="brand" href="index.html">' + BRAND_MARK + '<span class="brand-name" style="color:#fff">Iraq <b>Tour</b></span></a>' +
         '<p class="footer-about">' + t("footAbout") + "</p></div>" +
         "<div><h4>" + t("footExplore") + "</h4><a href='index.html'>" + t("footHome") + "</a><a href='tours.html'>" + t("footTours") + "</a><a href='agencies.html'>" + t("footAgencies") + "</a></div>" +
         "<div><h4>" + t("footProviders") + "</h4><a href='join.html'>" + t("footJoin") + "</a><a href='provider.html'>" + t("footPortal") + "</a></div>" +
         "<div><h4>" + t("footSupport") + "</h4><a href='contact.html'>" + t("footContact") + "</a><a href='mailto:hello@tooiraq.com'>hello@tooiraq.com</a></div>" +
-        "</div><div class='footer-bottom'><span>© " + new Date().getFullYear() + " TooIraq — " + t("footRights") + "</span><span>" + t("footSample") + "</span></div></div>";
+        "</div><div class='footer-bottom'><span>© " + new Date().getFullYear() + " Iraq Tour — " + t("footRights") + "</span><span>" + t("footSample") + "</span></div></div>";
     }
   }
   const nav = (href, key, on) => '<a href="' + href + '"' + (on ? ' class="active"' : "") + ">" + t(key) + "</a>";
@@ -741,7 +741,7 @@
     if (abroadScope) {
       const h1 = document.querySelector('h1[data-i18n="resultsTitle"]');
       if (h1) { h1.textContent = t("abroadTitle"); h1.removeAttribute("data-i18n"); }
-      document.title = t("abroadTitle") + " — TooIraq";
+      document.title = t("abroadTitle") + " — Iraq Tour";
     }
 
     root.innerHTML =
@@ -845,7 +845,7 @@
     const params = new URLSearchParams(window.location.search);
     const tour = TOURS.find((x) => x.id === params.get("id")) || TOURS[0];
     const ty = typeOf(tour.type), a = agencyOf(tour.agency);
-    document.title = L(tour.title) + " — TooIraq";
+    document.title = L(tour.title) + " — Iraq Tour";
     const gallery = (tour.imgs && tour.imgs.length ? tour.imgs.slice(0, 5)
       : [tour.img, CITY_IMG[tour.city], "river", "marsh", "babylon"])
       .filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 5);
@@ -1002,7 +1002,7 @@
     if (!wrap) return;
     const params = new URLSearchParams(window.location.search);
     const a = agencyOf(params.get("id")) || AGENCIES[0];
-    document.title = L(a.name) + " — TooIraq";
+    document.title = L(a.name) + " — Iraq Tour";
     const tours = toursOf(a.id);
     wrap.innerHTML =
       '<div class="container" style="padding:20px 0 64px">' +

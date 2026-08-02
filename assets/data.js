@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq — listings data
+   Iraq Tour — listings data
    NOTE: All agencies, tours, prices and phone numbers below are
    SAMPLE content for the launch preview. Replace with real
    providers as they sign up. To add a tour or agency, copy an

@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq backend layer — Supabase client wrapper.
+   Iraq Tour backend layer — Supabase client wrapper.
    Loads @supabase/supabase-js from CDN only when configured.
    Every function is safe to call with backend off (returns null).
    ============================================================ */

@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq — real provider portal (Supabase-backed).
+   Iraq Tour — real provider portal (Supabase-backed).
    Activates only when the backend is configured; otherwise the
    localStorage prototype in app.js keeps running.
    Sections: dashboard · tours · editor · availability ·
@@ -316,7 +316,7 @@
       " · " + t("ppTraveler") + ": " + esc(bk.contact_name) +
       (bk.note ? " · 📍 " + esc(bk.note) : "") + "</span>" +
       '<span style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">' +
-      '<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + esc((bk.contact_whatsapp || "").replace(/[^\d]/g, "")) + '?text=' + encodeURIComponent("TooIraq " + bk.ref) + '">' + t("ppChatTraveler") + "</a>" +
+      '<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + esc((bk.contact_whatsapp || "").replace(/[^\d]/g, "")) + '?text=' + encodeURIComponent("Iraq Tour " + bk.ref) + '">' + t("ppChatTraveler") + "</a>" +
       (canAct ? '<button class="btn btn-green btn-sm pb-act" data-id="' + bk.id + '" data-st="confirmed">' + t("ppConfirm") + "</button>" +
         '<button class="btn btn-outline btn-sm pb-act" data-id="' + bk.id + '" data-st="declined">' + t("ppDecline") + "</button>" : "") +
       (canFinish ? '<button class="btn btn-tint btn-sm pb-act" data-id="' + bk.id + '" data-st="completed">' + t("ppComplete") + "</button>" +

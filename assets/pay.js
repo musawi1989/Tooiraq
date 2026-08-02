@@ -1,5 +1,5 @@
 /* ============================================================
-   TooIraq — PayPal buttons helper (client side).
+   Iraq Tour — PayPal buttons helper (client side).
    Renders PayPal Smart Buttons for a booking (by ref + manage
    token); order creation & capture happen server-side in
    Supabase edge functions, which enforce the real amount.
