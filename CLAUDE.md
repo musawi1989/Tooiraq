@@ -18,7 +18,7 @@ No frameworks, no build tools — intentionally simple and fast:
 - `tours.html` — results: sidebar filters (destination/type/price/duration/rating/cancellation) + sort + horizontal cards (Booking.com layout)
 - `tour.html?id=…` — detail: gallery, itinerary, included, reviews (samples only), sticky booking box (WhatsApp booking + Netlify form)
 - `agencies.html`, `join.html` (provider application), `contact.html`
-- `provider.html` — provider portal **prototype** (fake login, localStorage only; real backend is a planned phase)
+- `provider.html` — provider portal **prototype** (localStorage only; real Supabase portal in portal.js takes over when backend keys are configured). Demo credentials (Max, Aug 2, testing phase — these guard only browser-local sample data): agency `tooiraq` / `123456` (manages the Dijla Journeys sample agency; drafts it saves appear in the admin review queue), admin `admin` / `123456` (admin.html demo panel: overview stats, draft tour approve/reject, agency verify toggles, settings — all localStorage). Typing the admin credentials into the provider login forwards to admin.html. When Supabase goes live, replace these with real Auth accounts and remove the on-page hint.
 - `assets/rafidain.css` — design system (see below)
 - `assets/app.js` — all rendering + EN/AR i18n (STR dict) + pages logic
 - `assets/data.js` — ALL content: CITIES, TYPES, AGENCIES, TOURS (+ merged extras)

@@ -89,6 +89,9 @@
       agTours: "tours", agSince: "Since", chat: "WhatsApp", call: "Call",
       portalTitle: "Provider portal", portalSub: "Manage your agency profile and tours on TooIraq.",
       plEmail: "Email", plPass: "Password", plAgency: "Your agency (demo)", plBtn: "Log in",
+      plUser: "Username", plBad: "Wrong username or password.",
+      plDemoHint: "Testing phase — demo agency login: tooiraq / 123456",
+      plDemoAs: "Demo account — managing sample agency", plSignedAs: "Signed in as",
       protoNote: "Prototype mode — this portal is a working demo. Real provider accounts with secure login and a live database are the next build step. Anything you add here is saved only in this browser.",
       pNavDash: "Dashboard", pNavTours: "My tours", pNavAdd: "Add a tour", pNavOut: "Log out",
       pViews: "Profile views (30d)", pInq: "WhatsApp inquiries (30d)", pTours: "Live tours",
@@ -189,6 +192,9 @@
       agTours: "جولات", agSince: "منذ", chat: "واتساب", call: "اتصال",
       portalTitle: "بوابة المزوّدين", portalSub: "أدر ملف شركتك وجولاتك على TooIraq.",
       plEmail: "البريد الإلكتروني", plPass: "كلمة المرور", plAgency: "شركتك (تجريبي)", plBtn: "تسجيل الدخول",
+      plUser: "اسم المستخدم", plBad: "اسم المستخدم أو كلمة المرور غير صحيحة.",
+      plDemoHint: "مرحلة تجريبية — دخول الشركة التجريبي: tooiraq / 123456",
+      plDemoAs: "حساب تجريبي — تدير شركة عينة", plSignedAs: "مسجّل الدخول باسم",
       protoNote: "وضع تجريبي — هذه البوابة نموذج عمل. حسابات المزوّدين الحقيقية مع تسجيل دخول آمن وقاعدة بيانات هي خطوة البناء التالية. ما تضيفه هنا يُحفظ في هذا المتصفح فقط.",
       pNavDash: "لوحة التحكم", pNavTours: "جولاتي", pNavAdd: "أضف جولة", pNavOut: "تسجيل الخروج",
       pViews: "مشاهدات الملف (٣٠ يوماً)", pInq: "استفسارات واتساب (٣٠ يوماً)", pTours: "جولات منشورة",
@@ -876,19 +882,38 @@
     const who = store.get("tooiraq-provider");
 
     if (!who) {
-      const opts = AGENCIES.map((x) => '<option value="' + x.id + '">' + esc(L(x.name)) + "</option>").join("");
+      /* credential-gated demo login (testing phase, Max's sample accounts):
+         tooiraq/123456 → manages the flagship sample agency;
+         admin/123456 here forwards to the admin panel. Real accounts
+         come with Supabase (portal.js takes over when configured). */
       root.innerHTML =
         '<div class="container"><div class="auth-card panel">' +
         '<h1 class="t2">' + t("portalTitle") + '</h1><p class="subhead mt-2">' + t("portalSub") + "</p>" +
         '<div class="notice-proto mt-4">' + t("protoNote") + "</div>" +
         '<div class="form-grid">' +
-        "<div><label>" + t("plAgency") + '</label><select id="pl-agency">' + opts + "</select></div>" +
-        "<div><label>" + t("plEmail") + '</label><input type="email" id="pl-email" placeholder="you@agency.com"/></div>' +
-        "<div><label>" + t("plPass") + '</label><input type="password" id="pl-pass" placeholder="••••••••"/></div>' +
-        '<button class="btn btn-primary btn-block" id="pl-go">' + t("plBtn") + "</button></div></div></div>";
-      document.getElementById("pl-go").addEventListener("click", () => {
-        store.set("tooiraq-provider", document.getElementById("pl-agency").value); renderPortal();
-      });
+        "<div><label>" + t("plUser") + '</label><input id="pl-user" autocomplete="username" placeholder="tooiraq"/></div>' +
+        "<div><label>" + t("plPass") + '</label><input type="password" id="pl-pass" autocomplete="current-password" placeholder="••••••"/></div>' +
+        '<div id="pl-err" class="form-note hide" style="color:#8E1020"></div>' +
+        '<button class="btn btn-primary btn-block" id="pl-go">' + t("plBtn") + "</button>" +
+        '<p class="footnote">' + t("plDemoHint") + "</p>" +
+        "</div></div></div>";
+      const go = () => {
+        const u = document.getElementById("pl-user").value.trim().toLowerCase();
+        const p = document.getElementById("pl-pass").value;
+        if (u === "tooiraq" && p === "123456") {
+          store.set("tooiraq-provider", "dijla-journeys");
+          store.set("tooiraq-provider-user", "tooiraq");
+          renderPortal();
+        } else if (u === "admin" && p === "123456") {
+          store.set("tooiraq-admin", "1");
+          window.location.href = "admin.html";
+        } else {
+          const e2 = document.getElementById("pl-err");
+          e2.textContent = t("plBad"); e2.classList.remove("hide");
+        }
+      };
+      document.getElementById("pl-go").addEventListener("click", go);
+      document.getElementById("pl-pass").addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
       return;
     }
 
@@ -916,12 +941,13 @@
       "<div>" +
       '<div class="notice-proto">' + t("protoNote") + "</div>" +
       '<h1 class="t2" id="dash">' + esc(L(a.name)) + "</h1>" +
+      '<p class="footnote">' + t("plSignedAs") + " <b>" + esc(store.get("tooiraq-provider-user") || "tooiraq") + "</b> · " + t("plDemoAs") + "</p>" +
       '<div class="stat-row mt-4">' +
       '<div class="stat"><div class="v">1,284</div><div class="l">' + t("pViews") + "</div></div>" +
       '<div class="stat"><div class="v">96</div><div class="l">' + t("pInq") + "</div></div>" +
       '<div class="stat"><div class="v">' + live.length + '</div><div class="l">' + t("pTours") + "</div></div></div>" +
       '<div class="panel" id="mytours"><h2>' + t("pYourTours") + "</h2>" +
-      live.map((x) => ptour(x, true)).join("") + drafts.map((x) => ptour(x, false)).join("") + "</div>" +
+      live.map((x) => ptour(x, true)).join("") + drafts.map((x) => ptour(x, x.status === "approved")).join("") + "</div>" +
       '<div class="panel mt-4" id="add"><h2>' + t("pAddTitle") + '</h2><p class="subhead" style="margin-bottom:14px">' + t("pAddSub") + "</p>" +
       '<div class="form-grid">' +
       '<div class="form-row"><div><label>' + t("pfTitleEn") + '</label><input id="pf-ten"/></div><div><label>' + t("pfTitleAr") + '</label><input id="pf-tar" dir="rtl"/></div></div>' +
@@ -937,7 +963,7 @@
       '<button class="btn btn-primary" id="pf-save">' + t("pfSave") + "</button>" +
       "</div></div></div></div>";
 
-    document.getElementById("p-out").addEventListener("click", (e) => { e.preventDefault(); store.del("tooiraq-provider"); renderPortal(); });
+    document.getElementById("p-out").addEventListener("click", (e) => { e.preventDefault(); store.del("tooiraq-provider"); store.del("tooiraq-provider-user"); renderPortal(); });
     document.getElementById("pf-save").addEventListener("click", () => {
       const g = (id) => document.getElementById(id).value;
       const d = {
