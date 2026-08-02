@@ -35,6 +35,8 @@
     ppReplyPh: "Write a public reply…", ppReplySend: "Send reply", ppReplied: "Your reply",
     ppProfileLead: "This is what travelers see on your public profile.",
     ppWebsite: "Website", ppPhone: "Phone", ppLangsAg: "Languages you serve",
+    ppSocials: "Social links — shown on your profile and every tour page",
+    ppIg: "Instagram link", ppFb: "Facebook link", ppTk: "TikTok link", ppYt: "YouTube link",
     ppLogout: "Log out",
     payShort_unpaid: "Unpaid", payShort_paid: "Paid ✓", payShort_refunded: "Refunded", payShort_partially_refunded: "Part-refunded"
   }, {
@@ -61,6 +63,8 @@
     ppReplyPh: "اكتب رداً علنياً…", ppReplySend: "إرسال الرد", ppReplied: "ردّك",
     ppProfileLead: "هذا ما يراه المسافرون في ملفك العام.",
     ppWebsite: "الموقع الإلكتروني", ppPhone: "الهاتف", ppLangsAg: "اللغات التي تخدم بها",
+    ppSocials: "روابط التواصل الاجتماعي — تظهر في ملفك وفي كل صفحة جولة",
+    ppIg: "رابط إنستغرام", ppFb: "رابط فيسبوك", ppTk: "رابط تيك توك", ppYt: "رابط يوتيوب",
     ppLogout: "تسجيل الخروج",
     payShort_unpaid: "غير مدفوع", payShort_paid: "مدفوع ✓", payShort_refunded: "مسترجع", payShort_partially_refunded: "استرجاع جزئي"
   });
@@ -414,17 +418,28 @@
       "<div><label>" + t("ppPhone") + '</label><input id="pg-ph" value="' + esc(a.phone || "") + '"/></div></div>' +
       '<div class="form-row"><div><label>' + t("ppWebsite") + '</label><input id="pg-web" value="' + esc(a.website || "") + '"/></div>' +
       "<div><label>" + t("ppLangsAg") + '</label><input id="pg-langs" value="' + esc((a.langs || []).join(" ")) + '" placeholder="EN AR"/></div></div>' +
+      "<div><label>" + t("ppSocials") + "</label></div>" +
+      '<div class="form-row"><div><label>📸 ' + t("ppIg") + '</label><input id="pg-ig" value="' + esc((a.socials || {}).instagram || "") + '" placeholder="https://instagram.com/…"/></div>' +
+      "<div><label>📘 " + t("ppFb") + '</label><input id="pg-fb" value="' + esc((a.socials || {}).facebook || "") + '" placeholder="https://facebook.com/…"/></div></div>' +
+      '<div class="form-row"><div><label>🎵 ' + t("ppTk") + '</label><input id="pg-tk" value="' + esc((a.socials || {}).tiktok || "") + '" placeholder="https://tiktok.com/@…"/></div>' +
+      "<div><label>▶️ " + t("ppYt") + '</label><input id="pg-yt" value="' + esc((a.socials || {}).youtube || "") + '" placeholder="https://youtube.com/@…"/></div></div>' +
       '<div id="pg-msg" class="form-note"></div>' +
       '<button class="btn btn-primary" id="pg-save">' + t("save") + "</button>" +
       "</div></div>";
     document.getElementById("pg-save").addEventListener("click", async () => {
       const gv = (id) => document.getElementById(id).value;
+      const socials = {
+        instagram: gv("pg-ig").trim(), facebook: gv("pg-fb").trim(),
+        tiktok: gv("pg-tk").trim(), youtube: gv("pg-yt").trim()
+      };
+      Object.keys(socials).forEach((k) => { if (!socials[k]) delete socials[k]; });
       const patch = {
         name: { en: gv("pg-nen").trim(), ar: gv("pg-nar").trim() },
         base: { en: gv("pg-ben").trim(), ar: gv("pg-bar").trim() },
         description: { en: gv("pg-den").trim(), ar: gv("pg-dar").trim() },
         whatsapp: gv("pg-wa").trim().replace(/[^\d]/g, ""),
         phone: gv("pg-ph").trim(), website: gv("pg-web").trim(),
+        socials: socials,
         langs: gv("pg-langs").split(/[\s,·]+/).filter(Boolean).map((s) => s.toLowerCase())
       };
       await B.updateAgency(agency.id, patch);

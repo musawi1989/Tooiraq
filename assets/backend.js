@@ -71,7 +71,7 @@ window.TI_BACKEND = (function () {
   async function publishedTours() {
     const c = await client(); if (!c) return [];
     const { data } = await c.from("tours")
-      .select("*, agencies(id, slug, name, whatsapp, verified, rating, review_count, initials, since)")
+      .select("*, agencies(id, slug, name, whatsapp, website, socials, verified, rating, review_count, initials, since)")
       .eq("status", "published").order("created_at", { ascending: false });
     return data || [];
   }

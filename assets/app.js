@@ -93,6 +93,15 @@
       plDemoHint: "Testing phase — every listed provider has a demo login: its username below with password 123456 (e.g. tooiraq / 123456).",
       plDemoAs: "Demo account — managing sample agency", plSignedAs: "Signed in as",
       plDemoList: "View all demo usernames",
+      pNavProfile: "My profile", pfEdit: "Edit", pTapEdit: "Tap any tour to edit it.",
+      pfSaveChanges: "Save changes", pfSavedLocal: "Saved ✓ (changes live in this browser during the demo)",
+      pfSocials: "Social links", pfSocialsHint: "Shown as buttons on your public profile and on every one of your tour pages.",
+      pfInstagram: "Instagram link", pfFacebook: "Facebook link", pfTiktok: "TikTok link", pfYoutube: "YouTube link",
+      pfWebsite: "Website", pfImgs: "Photo URLs — one per line", pfLangs: "Tour languages (e.g. EN AR KU)",
+      pfItinEn: "Itinerary — one step per line: Title | detail (English)", pfItinAr: "Itinerary — one step per line: Title | detail (Arabic)",
+      pfMeetAr: "Meeting point (Arabic)", pfAbroad: "This tour goes outside Iraq (outbound)", pfDest: "Destination abroad",
+      pfDeparts: "Cities this tour departs from", pfBack: "← Back to my tours",
+      followUs: "Follow", socialsTitle: "Find us on social media",
       protoNote: "Prototype mode — this portal is a working demo. Real provider accounts with secure login and a live database are the next build step. Anything you add here is saved only in this browser.",
       pNavDash: "Dashboard", pNavTours: "My tours", pNavAdd: "Add a tour", pNavOut: "Log out",
       pViews: "Profile views (30d)", pInq: "WhatsApp inquiries (30d)", pTours: "Live tours",
@@ -197,6 +206,15 @@
       plDemoHint: "مرحلة تجريبية — لكل مزوّد مدرج دخول تجريبي: اسم المستخدم أدناه مع كلمة المرور 123456 (مثال: tooiraq / 123456).",
       plDemoAs: "حساب تجريبي — تدير شركة عينة", plSignedAs: "مسجّل الدخول باسم",
       plDemoList: "عرض جميع أسماء المستخدمين التجريبية",
+      pNavProfile: "ملفي", pfEdit: "تعديل", pTapEdit: "اضغط على أي جولة لتعديلها.",
+      pfSaveChanges: "حفظ التغييرات", pfSavedLocal: "تم الحفظ ✓ (تظهر التغييرات في هذا المتصفح خلال التجربة)",
+      pfSocials: "روابط التواصل الاجتماعي", pfSocialsHint: "تظهر كأزرار في ملفك العام وفي كل صفحة من صفحات جولاتك.",
+      pfInstagram: "رابط إنستغرام", pfFacebook: "رابط فيسبوك", pfTiktok: "رابط تيك توك", pfYoutube: "رابط يوتيوب",
+      pfWebsite: "الموقع الإلكتروني", pfImgs: "روابط الصور — رابط في كل سطر", pfLangs: "لغات الجولة (مثال: EN AR KU)",
+      pfItinEn: "البرنامج — خطوة في كل سطر: العنوان | التفاصيل (إنجليزي)", pfItinAr: "البرنامج — خطوة في كل سطر: العنوان | التفاصيل (عربي)",
+      pfMeetAr: "نقطة اللقاء (عربي)", pfAbroad: "هذه الجولة خارج العراق (سفر للخارج)", pfDest: "الوجهة خارج العراق",
+      pfDeparts: "المدن التي تنطلق منها الجولة", pfBack: "← العودة إلى جولاتي",
+      followUs: "تابعنا", socialsTitle: "تابعنا على مواقع التواصل",
       protoNote: "وضع تجريبي — هذه البوابة نموذج عمل. حسابات المزوّدين الحقيقية مع تسجيل دخول آمن وقاعدة بيانات هي خطوة البناء التالية. ما تضيفه هنا يُحفظ في هذا المتصفح فقط.",
       pNavDash: "لوحة التحكم", pNavTours: "جولاتي", pNavAdd: "أضف جولة", pNavOut: "تسجيل الخروج",
       pViews: "مشاهدات الملف (٣٠ يوماً)", pInq: "استفسارات واتساب (٣٠ يوماً)", pTours: "جولات منشورة",
@@ -272,6 +290,33 @@
   /* image source: http(s) URL passes through, otherwise img.js key */
   const SRC = (k) => (typeof k === "string" && /^https?:/.test(k)) ? k : IMG(k || "babylon");
 
+  /* social links → button row (agency cards, tour pages, portal preview) */
+  const SOCIAL_DEFS = [
+    ["instagram", "📸", "Instagram"], ["facebook", "📘", "Facebook"],
+    ["tiktok", "🎵", "TikTok"], ["youtube", "▶️", "YouTube"]
+  ];
+  const socialsHTML = (a, small) => {
+    const s = (a && a.socials) || {};
+    const btns = SOCIAL_DEFS.filter(([k]) => s[k]).map(([k, ic, lbl]) =>
+      '<a class="btn btn-outline ' + (small ? "btn-sm" : "") + '" target="_blank" rel="noopener" href="' + esc(s[k]) + '">' + ic + " " + lbl + "</a>").join("");
+    return btns ? '<div class="social-row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">' + btns + "</div>" : "";
+  };
+
+  /* demo-mode local edits (provider portal, testing phase): overrides
+     saved in this browser are merged into the static catalog at boot so
+     the public pages reflect a provider's edits immediately. Harmless
+     when absent; replaced by the real DB once Supabase is live. */
+  function applyLocalEdits() {
+    try {
+      const ov = JSON.parse(store.get("tooiraq-tour-edits") || "{}");
+      TOURS.forEach((x) => { if (ov[x.id]) Object.assign(x, ov[x.id]); });
+    } catch (e) {}
+    try {
+      const ao = JSON.parse(store.get("tooiraq-agency-edits") || "{}");
+      AGENCIES.forEach((a) => { if (ao[a.id]) Object.assign(a, ao[a.id]); });
+    } catch (e) {}
+  }
+
   /* ---------- live catalog merge (Supabase → static arrays) ----------
      Published DB tours/agencies merge into TOURS/AGENCIES so every
      existing render path works unchanged. DB rows whose slug matches a
@@ -310,7 +355,8 @@
           AGENCIES.push({
             id: ag.id, name: ag.name || { en: "", ar: "" }, base: { en: "", ar: "" },
             desc: { en: "", ar: "" }, initials: ag.initials || "•", color: "art-teal",
-            wa: ag.whatsapp || "", phone: "", site: "",
+            wa: ag.whatsapp || "", phone: "", site: ag.website || "",
+            socials: ag.socials || {},
             verified: !!ag.verified, rating: ag.rating ? +ag.rating : 0,
             reviews: ag.review_count || 0, since: ag.since || null
           });
@@ -448,6 +494,7 @@
       (a.phone ? '<a class="btn btn-outline btn-sm" href="tel:' + a.phone.replace(/\s/g, "") + '">' + t("call") + "</a>" : "") +
       (a.site ? '<a class="btn btn-outline btn-sm" target="_blank" rel="noopener" href="' + a.site + '">' + t("visitSite") + "</a>" : "") +
       "</span></div>" +
+      socialsHTML(a, true) +
       "</div></article>"
     );
   }
@@ -791,6 +838,7 @@
       (a ? '<div class="bb-agency"><div class="alogo" style="background:#CE1126;width:42px;height:42px;border-radius:10px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">' + a.initials + '</div><div><span class="footnote">' + t("offeredBy") + "</span><br><b>" + esc(L(a.name)) + "</b> " +
         (a.verified ? '<span class="badge badge-verified">✓ ' + t("verified") + "</span>" : "") +
         '<br><span class="footnote">' + (a.rating ? "★ " + a.rating.toFixed(1) + " · " + t("since") + " " + a.since : t("newOp")) + "</span></div></div>" : "") +
+      (a ? socialsHTML(a, true) : "") +
       "</div></aside></div>" +
 
       '<div class="bb-mobilebar">' +
@@ -878,6 +926,7 @@
   function renderAgenciesPage() { fill("agencies-grid", AGENCIES.map(agencyCard).join("")); }
 
   /* ---------- provider portal (prototype) ---------- */
+  let portalEdit = null;   /* null = list view; {kind:"tour",id} | {kind:"draft",i} | {kind:"new"} */
   function renderPortal() {
     const root = document.getElementById("portal-root");
     if (!root) return;
@@ -922,25 +971,129 @@
     }
 
     const a = agencyOf(who) || AGENCIES[0];
-    let drafts = [];
-    try { drafts = JSON.parse(store.get("tooiraq-drafts") || "[]").filter((d) => d.agency === a.id); } catch (e) {}
-    const live = toursOf(a.id);
-    const cityOpts = CITIES.map((x) => '<option value="' + x.id + '">' + esc(L(x)) + "</option>").join("");
-    const typeOpts = TYPES.map((x) => '<option value="' + x.id + '">' + esc(L(x)) + "</option>").join("");
+    let allDrafts = [];
+    try { allDrafts = JSON.parse(store.get("tooiraq-drafts") || "[]"); } catch (e) {}
+    const drafts = allDrafts.map((d, i) => ({ d: d, i: i })).filter((z) => z.d.agency === a.id);
+    const live = toursOf(a.id).filter((x) => !String(x.id).startsWith("draft"));
 
-    function ptour(x, isLive) {
-      return '<div class="ptour"><img alt="" src="' + SRC(x.img) + '"/>' +
-        '<div class="tx"><b>' + esc(L(x.title)) + "</b><span>" + esc(locLabel(x)) + " · $" + x.price + " · " +
-        (x.days > 1 ? x.days + " " + t("days") : (x.hours || 8) + " " + t("hours")) + "</span></div>" +
-        '<span class="pill-status ' + (isLive ? "pill-live" : "pill-pending") + '">' + (isLive ? t("pLive") : t("pPending")) + "</span></div>";
+    /* ---- editor view (add / edit any tour) ---- */
+    if (portalEdit) {
+      const isDraft = portalEdit.kind === "draft";
+      const isNew = portalEdit.kind === "new";
+      const x = isNew ? { title: {}, desc: {}, highlights: {}, itinerary: [], meeting: {}, langs: [], imgs: [] }
+        : (isDraft ? (allDrafts[portalEdit.i] || {}) : (TOURS.find((z) => z.id === portalEdit.id) || {}));
+      const V = (o, side) => (o && o[side]) || "";
+      const cityOpts = CITIES.map((z) => '<option value="' + z.id + '"' + (x.city === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("");
+      const typeOpts = TYPES.map((z) => '<option value="' + z.id + '"' + (x.type === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("");
+      const destOpts = ABROAD.map((z) => '<option value="' + z.id + '"' + (x.dest === z.id ? " selected" : "") + ">" + esc(L(z.name) + " — " + L(z.country)) + "</option>").join("");
+      const depChecked = (id) => ((x.departsFrom && x.departsFrom.length) ? x.departsFrom.includes(id) : (!x.abroad && id === x.city));
+      const depChecks = CITIES.map((z) =>
+        '<label class="f-check"><input type="checkbox" class="pf-dep" value="' + z.id + '"' + (depChecked(z.id) ? " checked" : "") + "/>" + esc(L(z)) + "</label>").join("");
+      const itinTxt = (side) => (x.itinerary || []).map((s) => V(s.t, side) + " | " + V(s.d, side)).join("\n");
+
+      root.innerHTML =
+        '<div class="container" style="padding:24px 0 64px;max-width:760px">' +
+        '<a href="#" id="pf-back" class="footnote">' + t("pfBack") + "</a>" +
+        '<h1 class="t2 mt-2">' + (isNew ? t("pAddTitle") : t("pfEdit") + " — " + esc(L(x.title))) + "</h1>" +
+        '<div class="notice-proto mt-4">' + t("protoNote") + "</div>" +
+        '<div class="panel mt-4"><div class="form-grid">' +
+        '<div class="form-row"><div><label>' + t("pfTitleEn") + '</label><input id="pf-ten" value="' + esc(V(x.title, "en")) + '"/></div>' +
+        "<div><label>" + t("pfTitleAr") + '</label><input id="pf-tar" dir="rtl" value="' + esc(V(x.title, "ar")) + '"/></div></div>' +
+        '<div class="form-row"><div><label>' + t("pfCity") + '</label><select id="pf-city">' + cityOpts + "</select></div>" +
+        "<div><label>" + t("pfType") + '</label><select id="pf-type">' + typeOpts + "</select></div></div>" +
+        '<div class="form-row"><div style="display:flex;align-items:end"><label class="f-check" style="margin-bottom:6px"><input type="checkbox" id="pf-abroad"' + (x.abroad ? " checked" : "") + "/>" + t("pfAbroad") + "</label></div>" +
+        '<div id="pf-dest-wrap"' + (x.abroad ? "" : ' style="display:none"') + "><label>" + t("pfDest") + '</label><select id="pf-dest">' + destOpts + "</select></div></div>" +
+        "<div><label>" + t("pfDeparts") + '</label><div class="pe-city-checks">' + depChecks + "</div></div>" +
+        '<div class="form-row"><div><label>' + t("pfDays") + '</label><input id="pf-days" type="number" min="1" value="' + (x.days || 1) + '"/></div>' +
+        "<div><label>" + t("pfHours") + '</label><input id="pf-hours" type="number" min="1" max="24" value="' + (x.hours || 8) + '"/></div></div>' +
+        '<div class="form-row"><div><label>' + t("pfPrice") + '</label><input id="pf-price" type="number" min="0" value="' + (x.price || 0) + '"/></div>' +
+        "<div><label>" + t("pfGroup") + '</label><input id="pf-group" type="number" min="1" value="' + (x.groupMax || 10) + '"/></div></div>' +
+        '<div class="form-row"><div><label>' + t("pfLangs") + '</label><input id="pf-langs" value="' + esc((x.langs || []).join(" ")) + '" placeholder="EN AR"/></div>' +
+        '<div style="display:flex;align-items:end"><label class="f-check" style="margin-bottom:6px"><input type="checkbox" id="pf-cancel"' + (x.cancel !== false ? " checked" : "") + "/>" + t("pfCancel") + "</label></div></div>" +
+        "<div><label>" + t("pfDescEn") + '</label><textarea id="pf-den">' + esc(V(x.desc, "en")) + "</textarea></div>" +
+        "<div><label>" + t("pfDescAr") + '</label><textarea id="pf-dar" dir="rtl">' + esc(V(x.desc, "ar")) + "</textarea></div>" +
+        '<div class="form-row"><div><label>' + t("pfHi") + '</label><textarea id="pf-hen">' + esc(((x.highlights || {}).en || []).join("\n")) + "</textarea></div>" +
+        "<div><label>" + t("pfHiAr") + '</label><textarea id="pf-har" dir="rtl">' + esc(((x.highlights || {}).ar || []).join("\n")) + "</textarea></div></div>" +
+        '<div class="form-row"><div><label>' + t("pfItinEn") + '</label><textarea id="pf-ien">' + esc(itinTxt("en")) + "</textarea></div>" +
+        "<div><label>" + t("pfItinAr") + '</label><textarea id="pf-iar" dir="rtl">' + esc(itinTxt("ar")) + "</textarea></div></div>" +
+        '<div class="form-row"><div><label>' + t("pfMeet") + ' (EN)</label><input id="pf-men" value="' + esc(V(x.meeting, "en")) + '"/></div>' +
+        "<div><label>" + t("pfMeetAr") + '</label><input id="pf-mar" dir="rtl" value="' + esc(V(x.meeting, "ar")) + '"/></div></div>' +
+        "<div><label>" + t("pfImgs") + '</label><textarea id="pf-imgs">' + esc((x.imgs || []).join("\n")) + "</textarea></div>" +
+        '<div id="pf-msg" class="form-note"></div>' +
+        '<button class="btn btn-primary" id="pf-save">' + (isNew ? t("pfSave") : t("pfSaveChanges")) + "</button>" +
+        "</div></div></div>";
+
+      document.getElementById("pf-back").addEventListener("click", (e) => { e.preventDefault(); portalEdit = null; renderPortal(); });
+      document.getElementById("pf-abroad").addEventListener("change", (e) => {
+        document.getElementById("pf-dest-wrap").style.display = e.target.checked ? "" : "none";
+      });
+      document.getElementById("pf-save").addEventListener("click", () => {
+        const g = (id) => document.getElementById(id).value;
+        const abroad = document.getElementById("pf-abroad").checked;
+        const parseItin = () => {
+          const en = g("pf-ien").split("\n").filter((s) => s.trim());
+          const ar = g("pf-iar").split("\n").filter((s) => s.trim());
+          return en.map((line, i2) => {
+            const [te, de] = line.split("|").map((s) => (s || "").trim());
+            const [ta, da] = (ar[i2] || "").split("|").map((s) => (s || "").trim());
+            return { t: { en: te || "", ar: ta || te || "" }, d: { en: de || "", ar: da || de || "" } };
+          });
+        };
+        const patch = {
+          title: { en: g("pf-ten").trim() || "Untitled tour", ar: g("pf-tar").trim() || g("pf-ten").trim() || "جولة" },
+          city: abroad ? null : g("pf-city"), type: g("pf-type"),
+          abroad: abroad, dest: abroad ? g("pf-dest") : null,
+          departsFrom: Array.from(document.querySelectorAll(".pf-dep:checked")).map((cb) => cb.value),
+          days: +g("pf-days") || 1, hours: +g("pf-hours") || null,
+          price: +g("pf-price") || 0, groupMax: +g("pf-group") || 10,
+          langs: g("pf-langs").split(/[\s,·]+/).filter(Boolean).map((s) => s.toUpperCase()),
+          cancel: document.getElementById("pf-cancel").checked,
+          desc: { en: g("pf-den"), ar: g("pf-dar") },
+          highlights: { en: g("pf-hen").split("\n").filter(Boolean), ar: g("pf-har").split("\n").filter(Boolean) },
+          itinerary: parseItin(),
+          meeting: { en: g("pf-men"), ar: g("pf-mar") || g("pf-men") },
+          imgs: g("pf-imgs").split("\n").map((s) => s.trim()).filter(Boolean)
+        };
+        if (isNew) {
+          allDrafts.push(Object.assign({ agency: a.id, img: patch.imgs[0] || CITY_IMG[patch.city] || "babylon", rating: 0, reviews: 0 }, patch));
+          store.set("tooiraq-drafts", JSON.stringify(allDrafts));
+          portalEdit = null; renderPortal(); return;
+        }
+        if (isDraft) {
+          Object.assign(allDrafts[portalEdit.i], patch);
+          store.set("tooiraq-drafts", JSON.stringify(allDrafts));
+        } else {
+          /* live catalog tour → browser-local override, visible across
+             the whole site in this browser during the demo */
+          let ov = {}; try { ov = JSON.parse(store.get("tooiraq-tour-edits") || "{}"); } catch (e) {}
+          ov[portalEdit.id] = Object.assign(ov[portalEdit.id] || {}, patch);
+          store.set("tooiraq-tour-edits", JSON.stringify(ov));
+          const liveT = TOURS.find((z) => z.id === portalEdit.id);
+          if (liveT) Object.assign(liveT, patch);
+        }
+        const m = document.getElementById("pf-msg");
+        m.textContent = t("pfSavedLocal"); m.style.color = "var(--color-accent)";
+      });
+      return;
     }
+
+    /* ---- list view (dashboard · tours · profile) ---- */
+    function ptour(x, isLive, attrs) {
+      return '<div class="ptour p-click" style="cursor:pointer" ' + attrs + '><img alt="" src="' + SRC(x.img) + '"/>' +
+        '<div class="tx"><b>' + esc(L(x.title)) + "</b><span>" + esc(locLabel(x)) + " · $" + (x.price || 0) + " · " +
+        (x.days > 1 ? x.days + " " + t("days") : (x.hours || 8) + " " + t("hours")) + "</span></div>" +
+        '<span class="pill-status ' + (isLive ? "pill-live" : "pill-pending") + '">' + (isLive ? t("pLive") : t("pPending")) + "</span>" +
+        '<span class="btn btn-outline btn-sm">' + t("pfEdit") + "</span></div>";
+    }
+    const soc = a.socials || {};
 
     root.innerHTML =
       '<div class="container portal-shell">' +
       '<aside class="portal-nav">' +
       '<a class="active" href="#dash">📊 ' + t("pNavDash") + "</a>" +
       '<a href="#mytours">🗂 ' + t("pNavTours") + "</a>" +
-      '<a href="#add">➕ ' + t("pNavAdd") + "</a>" +
+      '<a href="#" id="p-new">➕ ' + t("pNavAdd") + "</a>" +
+      '<a href="#profile">🏷 ' + t("pNavProfile") + "</a>" +
       '<a href="#" id="p-out">↩ ' + t("pNavOut") + "</a></aside>" +
       "<div>" +
       '<div class="notice-proto">' + t("protoNote") + "</div>" +
@@ -950,39 +1103,43 @@
       '<div class="stat"><div class="v">1,284</div><div class="l">' + t("pViews") + "</div></div>" +
       '<div class="stat"><div class="v">96</div><div class="l">' + t("pInq") + "</div></div>" +
       '<div class="stat"><div class="v">' + live.length + '</div><div class="l">' + t("pTours") + "</div></div></div>" +
-      '<div class="panel" id="mytours"><h2>' + t("pYourTours") + "</h2>" +
-      live.map((x) => ptour(x, true)).join("") + drafts.map((x) => ptour(x, x.status === "approved")).join("") + "</div>" +
-      '<div class="panel mt-4" id="add"><h2>' + t("pAddTitle") + '</h2><p class="subhead" style="margin-bottom:14px">' + t("pAddSub") + "</p>" +
-      '<div class="form-grid">' +
-      '<div class="form-row"><div><label>' + t("pfTitleEn") + '</label><input id="pf-ten"/></div><div><label>' + t("pfTitleAr") + '</label><input id="pf-tar" dir="rtl"/></div></div>' +
-      '<div class="form-row"><div><label>' + t("pfCity") + '</label><select id="pf-city">' + cityOpts + "</select></div><div><label>" + t("pfType") + '</label><select id="pf-type">' + typeOpts + "</select></div></div>" +
-      '<div class="form-row"><div><label>' + t("pfDays") + '</label><input id="pf-days" type="number" min="1" value="1"/></div><div><label>' + t("pfHours") + '</label><input id="pf-hours" type="number" min="1" value="8"/></div></div>' +
-      '<div class="form-row"><div><label>' + t("pfPrice") + '</label><input id="pf-price" type="number" min="1" value="75"/></div><div><label>' + t("pfGroup") + '</label><input id="pf-group" type="number" min="1" value="10"/></div></div>' +
-      '<div class="form-row"><div><label>' + t("pfWa") + '</label><input id="pf-wa" placeholder="+964 …"/></div>' +
-      '<div style="display:flex;align-items:end"><label class="f-check" style="margin-bottom:6px"><input type="checkbox" id="pf-cancel" checked/>' + t("pfCancel") + "</label></div></div>" +
-      "<div><label>" + t("pfDescEn") + '</label><textarea id="pf-den"></textarea></div>' +
-      "<div><label>" + t("pfDescAr") + '</label><textarea id="pf-dar" dir="rtl"></textarea></div>' +
-      '<div class="form-row"><div><label>' + t("pfHi") + '</label><textarea id="pf-hen"></textarea></div><div><label>' + t("pfHiAr") + '</label><textarea id="pf-har" dir="rtl"></textarea></div></div>' +
-      "<div><label>" + t("pfMeet") + '</label><input id="pf-meet"/></div>' +
-      '<button class="btn btn-primary" id="pf-save">' + t("pfSave") + "</button>" +
-      "</div></div></div></div>";
+      '<div class="panel" id="mytours"><h2>' + t("pYourTours") + '</h2><p class="footnote" style="margin-bottom:10px">' + t("pTapEdit") + "</p>" +
+      live.map((x) => ptour(x, true, 'data-tid="' + esc(x.id) + '"')).join("") +
+      drafts.map((z) => ptour(z.d, z.d.status === "approved", 'data-didx="' + z.i + '"')).join("") + "</div>" +
 
-    document.getElementById("p-out").addEventListener("click", (e) => { e.preventDefault(); store.del("tooiraq-provider"); store.del("tooiraq-provider-user"); renderPortal(); });
-    document.getElementById("pf-save").addEventListener("click", () => {
-      const g = (id) => document.getElementById(id).value;
-      const d = {
-        agency: a.id, img: CITY_IMG[g("pf-city")] || "babylon",
-        title: { en: g("pf-ten") || "Untitled tour", ar: g("pf-tar") || g("pf-ten") || "جولة" },
-        city: g("pf-city"), type: g("pf-type"),
-        days: +g("pf-days") || 1, hours: +g("pf-hours") || 8, price: +g("pf-price") || 0,
-        groupMax: +g("pf-group") || 10, wa: g("pf-wa"), cancel: document.getElementById("pf-cancel").checked,
-        desc: { en: g("pf-den"), ar: g("pf-dar") },
-        highlights: { en: g("pf-hen").split("\n").filter(Boolean), ar: g("pf-har").split("\n").filter(Boolean) },
-        meeting: { en: g("pf-meet"), ar: g("pf-meet") }, rating: 0, reviews: 0
+      '<div class="panel mt-4" id="profile"><h2>' + t("pNavProfile") + '</h2>' +
+      '<p class="subhead" style="margin-bottom:14px">' + t("pfSocialsHint") + "</p>" +
+      '<div class="form-grid">' +
+      '<div class="form-row"><div><label>📸 ' + t("pfInstagram") + '</label><input id="pg-ig" value="' + esc(soc.instagram || "") + '" placeholder="https://instagram.com/…"/></div>' +
+      "<div><label>📘 " + t("pfFacebook") + '</label><input id="pg-fb" value="' + esc(soc.facebook || "") + '" placeholder="https://facebook.com/…"/></div></div>' +
+      '<div class="form-row"><div><label>🎵 ' + t("pfTiktok") + '</label><input id="pg-tk" value="' + esc(soc.tiktok || "") + '" placeholder="https://tiktok.com/@…"/></div>' +
+      "<div><label>▶️ " + t("pfYoutube") + '</label><input id="pg-yt" value="' + esc(soc.youtube || "") + '" placeholder="https://youtube.com/@…"/></div></div>' +
+      '<div class="form-row"><div><label>' + t("pfWebsite") + '</label><input id="pg-site" value="' + esc(a.site || "") + '"/></div>' +
+      "<div><label>" + t("pfWa") + '</label><input id="pg-wa" value="' + esc(a.wa || "") + '" placeholder="9647…"/></div></div>' +
+      '<div id="pg-msg" class="form-note"></div>' +
+      '<button class="btn btn-primary" id="pg-save">' + t("pfSaveChanges") + "</button>" +
+      '<div id="pg-preview">' + socialsHTML(a, true) + "</div>" +
+      "</div></div>" +
+      "</div></div>";
+
+    document.getElementById("p-out").addEventListener("click", (e) => { e.preventDefault(); portalEdit = null; store.del("tooiraq-provider"); store.del("tooiraq-provider-user"); renderPortal(); });
+    document.getElementById("p-new").addEventListener("click", (e) => { e.preventDefault(); portalEdit = { kind: "new" }; renderPortal(); });
+    root.querySelectorAll("[data-tid]").forEach((el) => el.addEventListener("click", () => { portalEdit = { kind: "tour", id: el.dataset.tid }; renderPortal(); window.scrollTo(0, 0); }));
+    root.querySelectorAll("[data-didx]").forEach((el) => el.addEventListener("click", () => { portalEdit = { kind: "draft", i: +el.dataset.didx }; renderPortal(); window.scrollTo(0, 0); }));
+    document.getElementById("pg-save").addEventListener("click", () => {
+      const g = (id) => document.getElementById(id).value.trim();
+      const patch = {
+        socials: { instagram: g("pg-ig"), facebook: g("pg-fb"), tiktok: g("pg-tk"), youtube: g("pg-yt") },
+        site: g("pg-site"), wa: g("pg-wa").replace(/[^\d]/g, "")
       };
-      let all = []; try { all = JSON.parse(store.get("tooiraq-drafts") || "[]"); } catch (e) {}
-      all.push(d); store.set("tooiraq-drafts", JSON.stringify(all));
-      renderPortal(); window.location.hash = "mytours";
+      Object.keys(patch.socials).forEach((k) => { if (!patch.socials[k]) delete patch.socials[k]; });
+      let ao = {}; try { ao = JSON.parse(store.get("tooiraq-agency-edits") || "{}"); } catch (e) {}
+      ao[a.id] = Object.assign(ao[a.id] || {}, patch);
+      store.set("tooiraq-agency-edits", JSON.stringify(ao));
+      Object.assign(a, patch);
+      const m = document.getElementById("pg-msg");
+      m.textContent = t("pfSavedLocal"); m.style.color = "var(--color-accent)";
+      document.getElementById("pg-preview").innerHTML = socialsHTML(a, true);
     });
   }
 
@@ -1003,6 +1160,7 @@
       page = (opts && opts.page) || "home";
       document.documentElement.lang = lang;
       document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+      applyLocalEdits();
       render();
       mergeBackendCatalog();
     },

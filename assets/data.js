@@ -35,7 +35,9 @@ const AGENCIES = [
       en: "Baghdad-based operator running heritage walks, museum tours and custom trips across central Iraq. English and Arabic speaking guides.",
       ar: "شركة سياحية مقرها بغداد تنظم جولات تراثية وزيارات للمتاحف ورحلات مخصصة في وسط العراق، مع مرشدين يتحدثون العربية والإنجليزية."
     },
-    phone: "+964 770 000 0001", wa: "9647700000001", verified: true
+    phone: "+964 770 000 0001", wa: "9647700000001", verified: true,
+    /* sample placeholder socials (platform homepages — no real handles invented) */
+    socials: { instagram: "https://www.instagram.com/", facebook: "https://www.facebook.com/" }
   },
   {
     id: "babylon-gate",
@@ -810,6 +812,7 @@ TOURS.push(
    pending, source links, no invented prices/departures. */
 [
   refAgency({ id: "almassal", name: { en: "Al Massal Travel & Tourism", ar: "شركة المسل للسفر والسياحة" }, base: { en: "Baghdad (Karrada & Al-Mansour)", ar: "بغداد (الكرادة والمنصور)" }, initials: "AM", color: "art-teal", site: "https://almassal.iq/",
+    socials: { facebook: "https://www.facebook.com/MassalCompany" },
     desc: { en: "Baghdad agency selling outbound packages — Türkiye, Lebanon, UAE, Egypt, Malaysia, Armenia and more.", ar: "شركة بغدادية تبيع باقات سفر إلى الخارج — تركيا ولبنان والإمارات ومصر وماليزيا وأرمينيا وغيرها." } }),
   refAgency({ id: "naizak-baghdad", name: { en: "Naizak Baghdad Travel", ar: "نيزك بغداد للسياحة والسفر" }, base: { en: "Baghdad (Al-Adhamiyah)", ar: "بغداد (الأعظمية)" }, initials: "NB", color: "art-indigo", site: "https://naizakbaghdad.iq/",
     desc: { en: "Licensed Baghdad agency (est. 2013) offering international flights, visas and group tours to destinations like Dubai, Türkiye and Egypt.", ar: "شركة بغدادية مجازة (تأسست ٢٠١٣) تقدم تذاكر دولية وتأشيرات ورحلات جماعية إلى وجهات مثل دبي وتركيا ومصر." } })

@@ -44,6 +44,7 @@ for (const a of AGENCIES) {
     initials: a.initials || (a.name && a.name.en ? a.name.en.slice(0, 2).toUpperCase() : "TI"),
     color: a.color || "art-teal",
     phone: a.phone || null, whatsapp: a.wa || null, website: a.site || null,
+    socials: a.socials || {},
     langs: a.langs || [], verified: !!a.verified, since: a.since || null,
     src_url: a.src || null, pending_onboarding: !!a.pending
   };
