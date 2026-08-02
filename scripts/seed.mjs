@@ -68,6 +68,7 @@ for (const x of TOURS) {
     days: x.days || 1, hours: x.hours || null,
     price_cents: cents(x.price), group_max: x.groupMax || 10,
     langs: x.langs || [], cancel: cancelPolicy(x.cancel),
+    cancel_days: x.cancelDays || null,
     highlights: x.highlights || { en: [], ar: [] },
     exclusions: x.exclusions || { en: [], ar: [] },
     itinerary: x.itinerary || [],

@@ -148,6 +148,7 @@ create table if not exists public.tours (
   group_max int check (group_max >= 1),
   langs text[] not null default '{}',
   cancel cancel_policy not null default 'free48',
+  cancel_days int check (cancel_days >= 0),                 -- provider-chosen days notice for free cancellation (null = policy default)
   highlights jsonb not null default '{"en":[],"ar":[]}',
   exclusions jsonb not null default '{"en":[],"ar":[]}',    -- "what's not included"
   itinerary jsonb not null default '[]',                    -- [{t:{en,ar}, d:{en,ar}, img?}]

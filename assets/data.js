@@ -11,7 +11,8 @@ const CITIES = [
   { id: "baghdad",  en: "Baghdad",           ar: "بغداد",            motif: "dome",      color: "art-teal" },
   { id: "erbil",    en: "Erbil",             ar: "أربيل",            motif: "citadel",   color: "art-indigo" },
   { id: "babylon",  en: "Babylon (Hillah)",  ar: "بابل (الحلة)",     motif: "ziggurat",  color: "art-gold" },
-  { id: "karbala",  en: "Karbala & Najaf",   ar: "كربلاء والنجف",    motif: "dome",      color: "art-night" },
+  { id: "karbala",  en: "Karbala",           ar: "كربلاء",           motif: "dome",      color: "art-night" },
+  { id: "najaf",    en: "Najaf",             ar: "النجف",            motif: "dome",      color: "art-night" },
   { id: "marshes",  en: "The Marshes",       ar: "الأهوار",          motif: "boat",      color: "art-olive" },
   { id: "samarra",  en: "Samarra",           ar: "سامراء",           motif: "malwiya",   color: "art-terracotta" },
   { id: "mosul",    en: "Mosul & Nineveh",   ar: "الموصل ونينوى",    motif: "citadel",   color: "art-terracotta" },
@@ -256,7 +257,7 @@ const TOURS = [
 
 const CITY_IMG = {
   baghdad: "baghdad", erbil: "citadel", babylon: "babylon", karbala: "shrine",
-  marshes: "marsh", samarra: "malwiya", mosul: "citadel", basra: "basra"
+  najaf: "shrine", marshes: "marsh", samarra: "malwiya", mosul: "citadel", basra: "basra"
 };
 
 const TOUR_EXTRAS = {

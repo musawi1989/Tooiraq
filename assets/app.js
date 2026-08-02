@@ -118,6 +118,13 @@
       edStepImgAdd: "🖼 Add photo to this step", edStepImgUrl: "Step photo URL",
       edLangsTitle: "Languages offered — tap to toggle",
       edDurD: "days", edDurH: "hours",
+      viewProfile: "View profile", agProfTours: "Tours by this agency", ppNone2: "No tours listed yet.",
+      durDays: "Days", durHours: "Hours", durUnit: "Duration",
+      fcUpTo: "up to", fcDaysBefore: "days before the start",
+      fcDaysLbl: "Days notice needed for free cancellation",
+      errRequired: "Please fill in the missing information:",
+      vTitle: "Tour title", vDesc: "Description", vMeet: "Meeting point", vDur: "Duration (number)", vLangs: "At least one language",
+      edUpload: "⬆ Upload from gallery", edImgTooBig: "That image is too large to store in the demo — try a smaller one or use a URL.",
       protoNote: "Prototype mode — this portal is a working demo. Real provider accounts with secure login and a live database are the next build step. Anything you add here is saved only in this browser.",
       pNavDash: "Dashboard", pNavTours: "My tours", pNavAdd: "Add a tour", pNavOut: "Log out",
       pViews: "Profile views (30d)", pInq: "WhatsApp inquiries (30d)", pTours: "Live tours",
@@ -223,7 +230,7 @@
       plDemoAs: "حساب تجريبي — تدير شركة عينة", plSignedAs: "مسجّل الدخول باسم",
       plDemoList: "عرض جميع أسماء المستخدمين التجريبية",
       pNavProfile: "ملفي", pfEdit: "تعديل", pTapEdit: "اضغط على أي جولة لتعديلها.",
-      pfSaveChanges: "حفظ التغييرات", pfSavedLocal: "تم الحفظ ✓ (تظهر التغييرات في هذا المتصفح خلال التجربة)",
+      pfSaveChanges: "تثبيت التحديث", pfSavedLocal: "تم الحفظ ✓ (تظهر التغييرات في هذا المتصفح خلال التجربة)",
       pfSocials: "روابط التواصل الاجتماعي", pfSocialsHint: "تظهر كأزرار في ملفك العام وفي كل صفحة من صفحات جولاتك.",
       pfInstagram: "رابط إنستغرام", pfFacebook: "رابط فيسبوك", pfTiktok: "رابط تيك توك", pfYoutube: "رابط يوتيوب",
       pfWebsite: "الموقع الإلكتروني", pfImgs: "روابط الصور — رابط في كل سطر", pfLangs: "لغات الجولة (مثال: EN AR KU)",
@@ -247,6 +254,13 @@
       edStepImgAdd: "🖼 أضف صورة لهذه الخطوة", edStepImgUrl: "رابط صورة الخطوة",
       edLangsTitle: "اللغات المتوفرة — اضغط للتبديل",
       edDurD: "أيام", edDurH: "ساعات",
+      viewProfile: "عرض الملف", agProfTours: "جولات هذه الشركة", ppNone2: "لا توجد جولات مدرجة بعد.",
+      durDays: "أيام", durHours: "ساعات", durUnit: "المدة",
+      fcUpTo: "حتى", fcDaysBefore: "أيام قبل الانطلاق",
+      fcDaysLbl: "عدد أيام الإشعار المطلوبة للإلغاء المجاني",
+      errRequired: "يرجى إكمال المعلومات الناقصة:",
+      vTitle: "عنوان الجولة", vDesc: "الوصف", vMeet: "نقطة اللقاء", vDur: "المدة (رقم)", vLangs: "لغة واحدة على الأقل",
+      edUpload: "⬆ رفع من المعرض", edImgTooBig: "الصورة كبيرة جداً للتخزين في التجربة — جرّب صورة أصغر أو استخدم رابطاً.",
       protoNote: "وضع تجريبي — هذه البوابة نموذج عمل. حسابات المزوّدين الحقيقية مع تسجيل دخول آمن وقاعدة بيانات هي خطوة البناء التالية. ما تضيفه هنا يُحفظ في هذا المتصفح فقط.",
       pNavDash: "لوحة التحكم", pNavTours: "جولاتي", pNavAdd: "أضف جولة", pNavOut: "تسجيل الخروج",
       pViews: "مشاهدات الملف (٣٠ يوماً)", pInq: "استفسارات واتساب (٣٠ يوماً)", pTours: "جولات منشورة",
@@ -319,8 +333,10 @@
     tour.badge === "best" ? '<span class="badge badge-hot"' + (inline ? ' style="position:static"' : "") + ">" + t("bestSeller") + "</span>" :
     tour.badge === "likely" ? '<span class="badge badge-hot" style="background:#8E1020' + (inline ? ";position:static" : "") + '">' + t("likelySellOut") + "</span>" : "";
 
-  /* image source: http(s) URL passes through, otherwise img.js key */
-  const SRC = (k) => (typeof k === "string" && /^https?:/.test(k)) ? k : IMG(k || "babylon");
+  /* image source: http(s)/data URL passes through, otherwise img.js key */
+  const SRC = (k) => (typeof k === "string" && /^(https?:|data:)/.test(k)) ? k : IMG(k || "babylon");
+  /* cancellation label: plain free-cancel, or "free up to N days before" */
+  const cancelLbl = (tour) => t("freeCancel") + (tour.cancelDays ? " " + t("fcUpTo") + " " + tour.cancelDays + " " + t("fcDaysBefore") : "");
 
   /* social links → button row (agency cards, tour pages, portal preview) */
   const SOCIAL_DEFS = [
@@ -376,7 +392,7 @@
       days: r.days || 1, hours: r.hours || null,
       price: Math.round((r.price_cents || 0) / 100),
       groupMax: r.group_max || 10, langs: r.langs || [],
-      cancel: r.cancel !== "nonrefundable",
+      cancel: r.cancel !== "nonrefundable", cancelDays: r.cancel_days || null,
       highlights: r.highlights || { en: [], ar: [] }, itinerary: r.itinerary || [],
       exclusions: r.exclusions || { en: [], ar: [] }, notes: r.notes || { en: "", ar: "" },
       meeting: r.meeting || { en: "", ar: "" }, videoUrl: r.video_url || "",
@@ -524,7 +540,7 @@
       '<article class="tcard"><div class="body">' +
       '<div style="display:flex;gap:12px;align-items:center">' +
       '<div class="alogo" style="background:#CE1126;width:48px;height:48px;border-radius:12px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">' + a.initials + "</div>" +
-      "<div><h3 style='font-size:17px'>" + esc(L(a.name)) + "</h3><span class='footnote'>" + esc(L(a.base)) + (a.since ? " · " + t("agSince") + " " + a.since : "") + "</span></div></div>" +
+      "<div><h3 style='font-size:17px'><a href='agency.html?id=" + esc(a.id) + "'>" + esc(L(a.name)) + "</a></h3><span class='footnote'>" + esc(L(a.base)) + (a.since ? " · " + t("agSince") + " " + a.since : "") + "</span></div></div>" +
       (a.rating
         ? '<div class="rating-row">' + starsHTML(a.rating) + "<b>" + a.rating.toFixed(1) + "</b><span>(" + a.reviews + " " + t("reviewsWord") + ")</span>" +
           (a.verified ? '&nbsp;<span class="badge badge-verified">✓ ' + t("verified") + "</span>" : "") + "</div>"
@@ -849,7 +865,7 @@
       '<div class="container detail-layout"><div class="detail-main">' +
       '<div class="panel"><h2>' + t("aboutTitle") + "</h2><p>" + esc(L(tour.desc)) + "</p>" +
       '<div class="mt-4" style="display:flex;gap:8px;flex-wrap:wrap">' +
-      (tour.cancel ? '<span class="badge badge-save">✓ ' + t("freeCancel") + "</span>" : "") +
+      (tour.cancel ? '<span class="badge badge-save">✓ ' + cancelLbl(tour) + "</span>" : "") +
       '<span class="badge badge-save">🗣 ' + t("langsWord") + ": " + (tour.langs || []).join(" · ") + "</span></div></div>" +
       '<div class="panel"><h2>' + t("incTitle") + '</h2><div class="inc-grid">' +
       L(tour.highlights).map((h) => '<div class="inc-item"><span class="tick">✓</span><span>' + esc(h) + "</span></div>").join("") + "</div></div>" +
@@ -871,9 +887,9 @@
       '<aside><div class="panel bookbox">' +
       (tour.price
         ? '<div><span class="from">' + t("from") + '</span><div class="amount">$' + tour.price + " <small>" + t("perPerson") + "</small></div>" +
-          (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>"
+          (tour.cancel ? '<span class="freecancel">✓ ' + cancelLbl(tour) + "</span>" : "") + "</div>"
         : '<div><div class="amount" style="font-size:22px">' + t("poa") + "</div>" +
-          (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>") +
+          (tour.cancel ? '<span class="freecancel">✓ ' + cancelLbl(tour) + "</span>" : "") + "</div>") +
       (tour.src ? '<a class="btn btn-outline btn-block" target="_blank" rel="noopener" href="' + tour.src + '">' + t("srcBtn") + "</a>" +
         '<p class="bb-note" style="color:#8E1020">' + t("srcNote") + "</p>" : "") +
       '<div class="field"><label>' + t("bbDate") + '</label><input type="date" id="bb-date"/></div>' +
@@ -884,9 +900,9 @@
       (a && a.wa ? '<button class="btn btn-wa btn-block" id="bb-book">' + t("bookWa") + "</button>" : "") +
       '<button class="btn btn-tint btn-block" id="bb-req">' + t("bookReq") + "</button>" +
       '<p class="bb-note">' + t("bbNote") + "</p>" +
-      (a ? '<div class="bb-agency"><div class="alogo" style="background:#CE1126;width:42px;height:42px;border-radius:10px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">' + a.initials + '</div><div><span class="footnote">' + t("offeredBy") + "</span><br><b>" + esc(L(a.name)) + "</b> " +
+      (a ? '<a class="bb-agency bb-agency-link" href="agency.html?id=' + esc(a.id) + '"><div class="alogo" style="background:#CE1126;width:42px;height:42px;border-radius:10px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">' + a.initials + '</div><div><span class="footnote">' + t("offeredBy") + "</span><br><b>" + esc(L(a.name)) + "</b> " +
         (a.verified ? '<span class="badge badge-verified">✓ ' + t("verified") + "</span>" : "") +
-        '<br><span class="footnote">' + (a.rating ? "★ " + a.rating.toFixed(1) + " · " + t("since") + " " + a.since : t("newOp")) + "</span></div></div>" : "") +
+        '<br><span class="footnote">' + (a.rating ? "★ " + a.rating.toFixed(1) + " · " + t("since") + " " + a.since : t("newOp")) + " · " + t("viewProfile") + " ›</span></div></a>" : "") +
       (a ? socialsHTML(a, true) : "") +
       "</div></aside></div>" +
 
@@ -974,6 +990,36 @@
   /* ---------- agencies ---------- */
   function renderAgenciesPage() { fill("agencies-grid", AGENCIES.map(agencyCard).join("")); }
 
+  /* ---------- agency profile page ---------- */
+  function renderAgencyPage() {
+    const wrap = document.getElementById("agency-root");
+    if (!wrap) return;
+    const params = new URLSearchParams(window.location.search);
+    const a = agencyOf(params.get("id")) || AGENCIES[0];
+    document.title = L(a.name) + " — TooIraq";
+    const tours = toursOf(a.id);
+    wrap.innerHTML =
+      '<div class="container" style="padding:20px 0 64px">' +
+      '<div class="crumbs"><a href="index.html">' + t("crumbHome") + '</a> / <a href="agencies.html">' + t("navAgencies") + "</a> / " + esc(L(a.name)) + "</div>" +
+      '<div class="panel mt-4">' +
+      '<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">' +
+      '<div class="alogo" style="background:#CE1126;width:64px;height:64px;border-radius:16px;color:#fff;font-weight:700;font-size:24px;display:flex;align-items:center;justify-content:center">' + a.initials + "</div>" +
+      '<div style="flex:1;min-width:200px"><h1 class="t2" style="display:inline">' + esc(L(a.name)) + "</h1> " +
+      (a.verified ? '<span class="badge badge-verified">✓ ' + t("verified") + "</span>" : (a.pending ? '<span class="badge badge-save">' + t("onboardingBadge") + "</span>" : "")) +
+      '<br><span class="footnote">' + esc(L(a.base)) + (a.since ? " · " + t("agSince") + " " + a.since : "") +
+      (a.rating ? " · ★ " + a.rating.toFixed(1) + " (" + a.reviews + " " + t("reviewsWord") + ")" : "") + "</span></div></div>" +
+      '<p class="subhead mt-4">' + esc(L(a.desc)) + "</p>" +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">' +
+      (a.wa ? '<a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="https://wa.me/' + a.wa + '">' + t("chat") + "</a>" : "") +
+      (a.phone ? '<a class="btn btn-outline btn-sm" href="tel:' + a.phone.replace(/\s/g, "") + '">' + t("call") + "</a>" : "") +
+      (a.site ? '<a class="btn btn-outline btn-sm" target="_blank" rel="noopener" href="' + a.site + '">' + t("visitSite") + "</a>" : "") +
+      "</div>" + socialsHTML(a, true) + "</div>" +
+      '<div class="section-head mt-4"><h2 class="t2">' + t("agProfTours") + ' <span class="footnote">(' + tours.length + ")</span></h2></div>" +
+      (tours.length ? '<div class="card-grid">' + tours.map(tourCard).join("") + "</div>"
+        : '<div class="panel subhead">' + t("ppNone2") + "</div>") +
+      "</div>";
+  }
+
   /* ---------- provider portal (prototype) ---------- */
   let portalEdit = null;   /* null = list view; {kind:"tour",id} | {kind:"draft",i} | {kind:"new"} */
   function renderPortal() {
@@ -1058,7 +1104,7 @@
           departsFrom: src0.departsFrom || [], days: src0.days || 1, hours: src0.hours || 8,
           price: src0.price || 0, groupMax: src0.groupMax || 10,
           langs: src0.langs && src0.langs.length ? src0.langs : ["EN", "AR"],
-          cancel: src0.cancel !== false,
+          cancel: src0.cancel !== false, cancelDays: src0.cancelDays || null,
           highlights: { en: (src0.highlights && src0.highlights.en) || [], ar: (src0.highlights && src0.highlights.ar) || [] },
           exclusions: { en: (src0.exclusions && src0.exclusions.en) || [], ar: (src0.exclusions && src0.exclusions.ar) || [] },
           itinerary: src0.itinerary || [], meeting: src0.meeting || {},
@@ -1070,7 +1116,7 @@
       const w = portalEdit.w;
       const side = lang;
       const V2 = (o) => (o && (o[side] || o.en)) || "";
-      const LANGS_PRESET = ["AR", "EN", "KU", "TR", "FA", "UR", "HI", "BN", "ZH", "RU", "FR", "DE", "ES", "IT", "PT", "JA", "KO", "ID", "NL", "AZ"];
+      const LANGS_PRESET = [["AR", "العربية"], ["EN", "English"], ["KU", "کوردی"], ["TR", "Türkçe"], ["FA", "فارسی"], ["UR", "اردو"], ["HI", "हिन्दी"], ["BN", "বাংলা"], ["ZH", "中文"], ["RU", "Русский"], ["FR", "Français"], ["DE", "Deutsch"], ["ES", "Español"], ["IT", "Italiano"], ["PT", "Português"], ["JA", "日本語"], ["KO", "한국어"], ["ID", "Indonesia"], ["NL", "Nederlands"], ["AZ", "Azərbaycan"]];
 
       const syncText = () => {
         root.querySelectorAll("[data-ed]").forEach((el) => {
@@ -1085,8 +1131,13 @@
           else if (k === "it-d") { if (w.itinerary[i]) w.itinerary[i].d[side] = v; }
         });
         const num = (id, def) => { const el = document.getElementById(id); return el ? (+el.value || def) : def; };
-        w.price = num("edv-price", w.price); w.days = num("edv-days", w.days);
-        w.hours = num("edv-hours", w.hours); w.groupMax = num("edv-group", w.groupMax);
+        w.price = num("edv-price", w.price); w.groupMax = num("edv-group", w.groupMax);
+        const du = document.getElementById("edv-durunit"), dvEl = document.getElementById("edv-durval");
+        if (du && dvEl && +dvEl.value > 0) {
+          if (du.value === "days") { w.days = Math.max(1, Math.round(+dvEl.value)); w.hours = null; }
+          else { w.days = 1; w.hours = Math.max(1, Math.round(+dvEl.value)); }
+        }
+        const cdEl = document.getElementById("edv-canceldays"); if (cdEl) w.cancelDays = +cdEl.value > 0 ? Math.round(+cdEl.value) : null;
         const vv = document.getElementById("edv-video"); if (vv) w.videoUrl = vv.value.trim();
         const iu = document.getElementById("edv-imgurl"); if (iu) portalEdit.imgUrlDraft = iu.value.trim();
         const su = document.getElementById("edv-stepimg"); if (su) portalEdit.stepImgDraft = su.value.trim();
@@ -1129,9 +1180,12 @@
           (w.rating ? '<span class="rating-row"><b>' + w.rating.toFixed(1) + "</b>" + starsHTML(w.rating) + "<span>(" + w.reviews + " " + t("reviewsWord") + ")</span></span>"
             : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") +
           '<span>📍 <select class="ed-mini-sel" id="edv-dest">' + destOpts + '</select>' +
-          '<button type="button" class="ed-x" id="edv-newdest" title="' + t("edNewDest") + '" style="font-weight:700">＋</button></span>' +
+          '<button type="button" class="ed-plus" id="edv-newdest" title="' + t("edNewDest") + '">＋</button></span>' +
           '<span>🗂 <select class="ed-mini-sel" id="edv-type">' + typeOpts + "</select></span>" +
-          "<span>🕐 " + mini("edv-days", w.days || 1, 44) + " " + t("edDurD") + " · " + mini("edv-hours", w.hours || 8, 44) + " " + t("edDurH") + "</span>" +
+          '<span>🕐 <select class="ed-mini-sel" id="edv-durunit">' +
+          '<option value="days"' + ((w.days || 1) > 1 ? " selected" : "") + ">" + t("durDays") + "</option>" +
+          '<option value="hours"' + ((w.days || 1) <= 1 ? " selected" : "") + ">" + t("durHours") + "</option></select> " +
+          mini("edv-durval", (w.days || 1) > 1 ? w.days : (w.hours || 8), 56) + "</span>" +
           "<span>👥 " + t("upTo") + " " + mini("edv-group", w.groupMax || 10, 48) + "</span>" +
           '<button type="button" class="ed-chip' + (w.abroad ? " on" : "") + '" id="edv-abroad">🛫 ' + t("edOutbound") + "</button>" +
           "</div>" +
@@ -1153,13 +1207,16 @@
           '<div class="gallery">' +
           gal.map((g, i2) =>
             (i2 === 0 ? '<a class="g-main g-tile' : '<a class="g-tile') + (sel === i2 ? " g-sel" : "") + '" data-gi="' + i2 + '"><img alt="" src="' + SRC(g) + '"/>' +
-            '<span class="g-badge">' + (i2 + 1) + "</span></a>").join("") +
+            '<span class="g-badge">' + (i2 + 1) + "</span>" +
+            '<span class="g-tools"><button type="button" class="ed-gbtn" data-repl="' + i2 + '" title="' + esc(t("edApply")) + '">↻</button>' +
+            '<button type="button" class="ed-gbtn" data-delimg="' + i2 + '" title="' + esc(t("edRemoveImg")) + '">✕</button></span></a>').join("") +
           '<a class="g-tile g-addtile" id="edv-addimg"><span>' + t("edAddImg") + "</span></a>" +
           "</div>" +
           '<p class="footnote" style="margin-top:6px">' + t("edGalleryHint") + "</p>" +
           ((sel !== undefined && sel !== null) || portalEdit.addingImg
             ? '<div class="ed-urlrow"><input id="edv-imgurl" placeholder="https://…" value="' + esc(portalEdit.addingImg ? (portalEdit.imgUrlDraft || "") : (/^https?:/.test(gal[sel] || "") ? gal[sel] : "")) + '"/>' +
               '<button type="button" class="btn btn-primary btn-sm" id="edv-imgapply">' + t("edApply") + "</button>" +
+              '<button type="button" class="btn btn-outline btn-sm" id="edv-upload">' + t("edUpload") + "</button>" +
               (!portalEdit.addingImg
                 ? '<button type="button" class="btn btn-outline btn-sm" id="edv-imgleft">◀</button>' +
                   '<button type="button" class="btn btn-outline btn-sm" id="edv-imgright">▶</button>' +
@@ -1172,9 +1229,10 @@
           '<div class="container detail-layout"><div class="detail-main">' +
           '<div class="panel"><h2>' + t("aboutTitle") + '</h2><p contenteditable="true" data-ed="desc">' + esc(V2(w.desc)) + "</p>" +
           '<div class="mt-4" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
-          '<button type="button" class="ed-chip' + (w.cancel ? " on" : "") + '" id="edv-cancel">↩ ' + t("freeCancel") + "</button></div>" +
+          '<button type="button" class="ed-chip' + (w.cancel ? " on" : "") + '" id="edv-cancel">↩ ' + t("freeCancel") + "</button>" +
+          (w.cancel ? '<span class="footnote" style="display:inline-flex;align-items:center;gap:6px" title="' + esc(t("fcDaysLbl")) + '">' + t("fcUpTo") + ' <input class="ed-mini" id="edv-canceldays" type="number" min="0" placeholder="—" value="' + (w.cancelDays || "") + '" style="width:56px"/> ' + t("fcDaysBefore") + "</span>" : "") + "</div>" +
           '<div class="mt-4"><span class="footnote">🗣 ' + t("edLangsTitle") + '</span><div class="chip-multi" style="margin-top:6px">' +
-          LANGS_PRESET.map((lg) => '<button type="button" class="pf-chip' + ((w.langs || []).includes(lg) ? " on" : "") + '" data-lang="' + lg + '">' + lg + "</button>").join("") +
+          LANGS_PRESET.map((p) => '<button type="button" class="pf-chip lang-chip' + ((w.langs || []).includes(p[0]) ? " on" : "") + '" data-lang="' + p[0] + '"><b>' + p[0] + "</b><small>" + p[1] + "</small></button>").join("") +
           "</div></div></div>" +
 
           '<div class="panel"><h2>' + t("incTitle") + '</h2><div class="inc-grid">' +
@@ -1193,7 +1251,7 @@
             (s.img ? '<span style="position:relative;display:inline-block"><img class="itin-img" alt="" src="' + SRC(s.img) + '"/><button type="button" class="ed-x" data-delstepimg="' + i2 + '" style="position:absolute;top:2px;inset-inline-end:2px;background:rgba(255,255,255,.85);border-radius:6px">✕</button></span>'
               : '<button type="button" class="ed-add" data-stepimg="' + i2 + '" style="margin-top:6px;padding:5px 10px;font-size:12px">' + t("edStepImgAdd") + "</button>") +
             (portalEdit.stepImgOpen === i2
-              ? '<span class="ed-urlrow"><input id="edv-stepimg" placeholder="https://…" value="' + esc(portalEdit.stepImgDraft || "") + '"/><button type="button" class="btn btn-primary btn-sm" id="edv-stepimgapply">' + t("edApply") + "</button></span>"
+              ? '<span class="ed-urlrow"><input id="edv-stepimg" placeholder="https://…" value="' + esc(portalEdit.stepImgDraft || "") + '"/><button type="button" class="btn btn-primary btn-sm" id="edv-stepimgapply">' + t("edApply") + '</button><button type="button" class="btn btn-outline btn-sm" id="edv-stepupload">' + t("edUpload") + "</button></span>"
               : "") +
             "</span>" +
             '<button type="button" class="ed-x" data-delit="' + i2 + '">✕</button></li>').join("") +
@@ -1216,7 +1274,8 @@
           "</div></aside></div>" +
 
           '<div class="ed-savebar"><button class="btn btn-outline" id="pf-back2">' + t("pfBack") + "</button>" +
-          '<button class="btn btn-primary" id="pf-save">' + (portalEdit.kind === "new" ? t("pfSave") : t("pfSaveChanges")) + "</button></div>";
+          '<button class="btn btn-primary" id="pf-save">' + (portalEdit.kind === "new" ? t("pfSave") : t("pfSaveChanges")) + "</button></div>" +
+          '<input type="file" id="edv-file" accept="image/*" style="display:none"/>';
 
         document.body.classList.add("has-edbar");
         const back = (e) => { e.preventDefault(); portalEdit = null; document.body.classList.remove("has-edbar"); renderPortal(); window.scrollTo(0, 0); };
@@ -1269,6 +1328,7 @@
           paintEditor();
         }));
         on("edv-cancel", () => { syncText(); w.cancel = !w.cancel; paintEditor(); });
+        on("edv-durunit", () => { syncText(); paintEditor(); }, "change");
 
         /* gallery management */
         root.querySelectorAll("[data-gi]").forEach((el) => el.addEventListener("click", (e) => {
@@ -1278,6 +1338,50 @@
           paintEditor();
         }));
         on("edv-addimg", (e) => { e.preventDefault(); syncText(); portalEdit.addingImg = true; portalEdit.selImg = null; portalEdit.imgUrlDraft = ""; paintEditor(); });
+        root.querySelectorAll("[data-repl]").forEach((b) => b.addEventListener("click", (e) => {
+          e.preventDefault(); e.stopPropagation(); syncText();
+          portalEdit.addingImg = false; portalEdit.imgUrlDraft = "";
+          portalEdit.selImg = +b.dataset.repl;
+          paintEditor();
+        }));
+        root.querySelectorAll("[data-delimg]").forEach((b) => b.addEventListener("click", (e) => {
+          e.preventDefault(); e.stopPropagation(); syncText(); materialize();
+          w.imgs.splice(+b.dataset.delimg, 1);
+          portalEdit.selImg = null; paintEditor();
+        }));
+        /* upload from device gallery → downscaled JPEG data-URL */
+        const fileToDataURL = (file, cb) => {
+          const rd = new FileReader();
+          rd.onload = () => {
+            const im = new Image();
+            im.onload = () => {
+              const mx = 1280, sc = Math.min(1, mx / Math.max(im.width, im.height));
+              const cv = document.createElement("canvas");
+              cv.width = Math.max(1, Math.round(im.width * sc)); cv.height = Math.max(1, Math.round(im.height * sc));
+              cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+              cb(cv.toDataURL("image/jpeg", 0.82));
+            };
+            im.src = rd.result;
+          };
+          rd.readAsDataURL(file);
+        };
+        const fileInput = document.getElementById("edv-file");
+        const pickFile = (target) => { portalEdit.uploadTarget = target; if (fileInput) { fileInput.value = ""; fileInput.click(); } };
+        on("edv-upload", () => { syncText(); pickFile(portalEdit.addingImg ? { kind: "add" } : { kind: "repl", i: portalEdit.selImg }); });
+        on("edv-stepupload", () => { syncText(); pickFile({ kind: "step", i: portalEdit.stepImgOpen }); });
+        if (fileInput) fileInput.addEventListener("change", () => {
+          const f = fileInput.files && fileInput.files[0];
+          if (!f) return;
+          fileToDataURL(f, (url) => {
+            const tg = portalEdit.uploadTarget || { kind: "add" };
+            materialize();
+            if (tg.kind === "add") w.imgs.push(url);
+            else if (tg.kind === "repl" && tg.i != null) w.imgs[tg.i] = url;
+            else if (tg.kind === "step" && w.itinerary[tg.i]) { w.itinerary[tg.i].img = url; portalEdit.stepImgOpen = null; }
+            portalEdit.addingImg = false; portalEdit.selImg = null; portalEdit.uploadTarget = null;
+            paintEditor();
+          });
+        });
         on("edv-imgapply", () => {
           syncText();
           const url = (document.getElementById("edv-imgurl").value || "").trim();
@@ -1352,6 +1456,21 @@
         /* save */
         document.getElementById("pf-save").addEventListener("click", () => {
           syncText();
+          /* required-info validation — block save and name what's missing */
+          const missing = [];
+          if (!String((w.title.en || "") + (w.title.ar || "")).trim()) missing.push(t("vTitle"));
+          if (!String((w.desc.en || "") + (w.desc.ar || "")).trim()) missing.push(t("vDesc"));
+          if (!String((w.meeting.en || "") + (w.meeting.ar || "")).trim()) missing.push(t("vMeet"));
+          const dvEl2 = document.getElementById("edv-durval");
+          if (!dvEl2 || !(+dvEl2.value > 0)) missing.push(t("vDur"));
+          if (!(w.langs || []).length) missing.push(t("vLangs"));
+          const m0 = document.getElementById("pf-msg");
+          if (missing.length) {
+            m0.textContent = t("errRequired") + " " + missing.join(" · ");
+            m0.style.color = "#8E1020";
+            window.scrollTo(0, 0);
+            return;
+          }
           const patch = {
             title: { en: (w.title.en || w.title.ar || "Untitled tour").trim(), ar: (w.title.ar || w.title.en || "جولة").trim() },
             city: w.abroad ? null : w.city, type: w.type,
@@ -1359,24 +1478,29 @@
             departsFrom: w.departsFrom || [],
             days: w.days || 1, hours: w.hours || null,
             price: w.price || 0, groupMax: w.groupMax || 10,
-            langs: w.langs || [], cancel: !!w.cancel,
+            langs: w.langs || [], cancel: !!w.cancel, cancelDays: w.cancel ? (w.cancelDays || null) : null,
             desc: w.desc, highlights: w.highlights, exclusions: w.exclusions,
             itinerary: w.itinerary, meeting: w.meeting, notes: w.notes,
             imgs: w.imgs, videoUrl: w.videoUrl || ""
           };
-          if (portalEdit.kind === "new") {
-            allDrafts.push(Object.assign({ agency: a.id, img: patch.imgs[0] || CITY_IMG[patch.city] || "babylon", rating: 0, reviews: 0 }, patch));
-            store.set("tooiraq-drafts", JSON.stringify(allDrafts));
-            portalEdit.kind = "draft"; portalEdit.i = allDrafts.length - 1;
-          } else if (portalEdit.kind === "draft") {
-            Object.assign(allDrafts[portalEdit.i], patch);
-            store.set("tooiraq-drafts", JSON.stringify(allDrafts));
-          } else {
-            let ov = {}; try { ov = JSON.parse(store.get("tooiraq-tour-edits") || "{}"); } catch (e) {}
-            ov[portalEdit.id] = Object.assign(ov[portalEdit.id] || {}, patch);
-            store.set("tooiraq-tour-edits", JSON.stringify(ov));
-            const liveT = TOURS.find((z) => z.id === portalEdit.id);
-            if (liveT) Object.assign(liveT, patch);
+          try {
+            if (portalEdit.kind === "new") {
+              allDrafts.push(Object.assign({ agency: a.id, img: patch.imgs[0] || CITY_IMG[patch.city] || "babylon", rating: 0, reviews: 0 }, patch));
+              store.set("tooiraq-drafts", JSON.stringify(allDrafts));
+              portalEdit.kind = "draft"; portalEdit.i = allDrafts.length - 1;
+            } else if (portalEdit.kind === "draft") {
+              Object.assign(allDrafts[portalEdit.i], patch);
+              store.set("tooiraq-drafts", JSON.stringify(allDrafts));
+            } else {
+              let ov = {}; try { ov = JSON.parse(store.get("tooiraq-tour-edits") || "{}"); } catch (e) {}
+              ov[portalEdit.id] = Object.assign(ov[portalEdit.id] || {}, patch);
+              store.set("tooiraq-tour-edits", JSON.stringify(ov));
+              const liveT = TOURS.find((z) => z.id === portalEdit.id);
+              if (liveT) Object.assign(liveT, patch);
+            }
+          } catch (e) {
+            m0.textContent = t("edImgTooBig"); m0.style.color = "#8E1020";
+            window.scrollTo(0, 0); return;
           }
           const m = document.getElementById("pf-msg");
           m.textContent = t("pfSavedLocal"); m.style.color = "var(--color-accent)";
@@ -1462,6 +1586,7 @@
     if (page === "tours") renderToursPage();
     if (page === "tour") renderTourPage();
     if (page === "agencies") renderAgenciesPage();
+    if (page === "agency") renderAgencyPage();
     if (page === "portal" && !(window.TI_BACKEND && window.TI_BACKEND.enabled)) renderPortal();
     if (typeof window.TooIraq.onRender === "function") window.TooIraq.onRender();
   }
