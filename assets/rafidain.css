@@ -172,6 +172,15 @@ html[lang="ar"] .searchbox .seg label { letter-spacing:0; }
 /* second-level choice for local travelers: Explore Iraq / Travel abroad */
 .mode-goals { margin-top:10px; }
 .mode-pill.sub { min-height:38px; padding:8px 14px; font-size:14px; }
+/* mobile replaces the pill rows with two symmetric dropdowns
+   (Traveling from / Destination); desktop keeps the pills */
+.mode-selects { display:none; }
+@media (max-width:860px){
+  .tm-pills { display:none; }
+  .mode-selects { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .mode-selects .mode-city { max-width:none; margin-top:0; }
+  .mode-city-row { max-width:none; }
+}
 .mode-city {
   margin-top:12px; max-width:320px; background:var(--bg-base);
   border:1px solid var(--separator); border-radius:var(--radius-md);

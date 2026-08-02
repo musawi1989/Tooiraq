@@ -27,6 +27,8 @@
       goalIraq: "Explore Iraq", goalAbroad: "Travel abroad",
       abroadAll: "All destinations", abroadTitle: "Trips abroad from Iraq",
       departAsk: "Departure city: confirm with the agency",
+      fromLbl: "Traveling from", fromIraq: "Iraq", fromAbroad: "Outside Iraq",
+      destIraq: "Inside Iraq", destAbroad: "Outside Iraq",
       heroTitle: "Find your tour across Iraq",
       heroLead: "Compare tours from licensed Iraqi agencies, talk to them directly on WhatsApp, and book without prepayment.",
       sDest: "Destination", sDestAll: "All of Iraq", sDate: "Date", sPax: "Travelers", sGo: "Search",
@@ -125,6 +127,8 @@
       goalIraq: "جولات داخل العراق", goalAbroad: "السفر إلى الخارج",
       abroadAll: "كل الوجهات", abroadTitle: "رحلات من العراق إلى الخارج",
       departAsk: "مدينة الانطلاق: تُؤكد مع الشركة",
+      fromLbl: "أسافر من", fromIraq: "العراق", fromAbroad: "خارج العراق",
+      destIraq: "داخل العراق", destAbroad: "خارج العراق",
       heroTitle: "اعثر على جولتك في العراق",
       heroLead: "قارن الجولات من شركات عراقية مجازة، وتواصل معها مباشرة عبر واتساب، واحجز دون دفع مسبق.",
       sDest: "الوجهة", sDestAll: "كل العراق", sDate: "التاريخ", sPax: "المسافرون", sGo: "بحث",
@@ -457,6 +461,8 @@
       const cityOpts = '<option value="">' + t("yourCityPh") + "</option>" +
         CITIES.map((c) => '<option value="' + c.id + '"' + (city === c.id ? " selected" : "") + ">" + esc(L(c)) + "</option>").join("");
       el.innerHTML =
+        /* desktop: the original pill rows (unchanged) */
+        '<div class="tm-pills">' +
         '<div class="mode-pills">' +
         '<button type="button" class="mode-pill' + (mode === "local" ? " selected" : "") + '" data-m="local">🇮🇶 ' + t("modeLocal") + "</button>" +
         '<button type="button" class="mode-pill' + (mode === "intl" ? " selected" : "") + '" data-m="intl">✈️ ' + t("modeIntl") + "</button>" +
@@ -465,12 +471,30 @@
           ? '<div class="mode-pills mode-goals">' +
             '<button type="button" class="mode-pill sub' + (goal === "iraq" ? " selected" : "") + '" data-g="iraq">🏛️ ' + t("goalIraq") + "</button>" +
             '<button type="button" class="mode-pill sub' + (goal === "abroad" ? " selected" : "") + '" data-g="abroad">🛫 ' + t("goalAbroad") + "</button>" +
-            "</div>" +
-            '<div class="mode-city"><label>' + t("yourCityLbl") + '</label><select id="mode-city-sel">' + cityOpts + "</select></div>"
+            "</div>"
+          : "") +
+        "</div>" +
+        /* mobile: two symmetric dropdowns — Traveling from / Destination.
+           Both options always visible to everyone (Max, Aug 2). */
+        '<div class="mode-selects">' +
+        '<div class="mode-city"><label>' + t("fromLbl") + '</label><select id="mode-from-sel">' +
+        '<option value=""' + (mode === "" ? " selected" : "") + ">—</option>" +
+        '<option value="local"' + (mode === "local" ? " selected" : "") + ">🇮🇶 " + t("fromIraq") + "</option>" +
+        '<option value="intl"' + (mode === "intl" ? " selected" : "") + ">✈️ " + t("fromAbroad") + "</option>" +
+        "</select></div>" +
+        '<div class="mode-city"><label>' + t("sDest") + '</label><select id="mode-goal-sel">' +
+        '<option value="iraq"' + (goal === "iraq" ? " selected" : "") + ">🏛️ " + t("destIraq") + "</option>" +
+        '<option value="abroad"' + (goal === "abroad" ? " selected" : "") + ">🛫 " + t("destAbroad") + "</option>" +
+        "</select></div>" +
+        "</div>" +
+        (mode === "local"
+          ? '<div class="mode-city mode-city-row"><label>' + t("yourCityLbl") + '</label><select id="mode-city-sel">' + cityOpts + "</select></div>"
           : "");
       el.querySelectorAll("[data-m]").forEach((btn) => btn.addEventListener("click", () => {
         const next = btn.dataset.m === mode ? "" : btn.dataset.m;
         store.set("tooiraq-travel-mode", next);
+        /* desktop pills have no goal control outside local mode — reset
+           so the search box never gets stuck on abroad there */
         if (next !== "local") { store.set("tooiraq-depart-city", ""); store.set("tooiraq-travel-goal", ""); }
         paint();
         if (onChange) onChange();
@@ -480,6 +504,20 @@
         paint();
         if (onChange) onChange();
       }));
+      const fromSel = document.getElementById("mode-from-sel");
+      if (fromSel) fromSel.addEventListener("change", () => {
+        store.set("tooiraq-travel-mode", fromSel.value);
+        if (fromSel.value !== "local") store.set("tooiraq-depart-city", "");
+        /* mobile keeps the destination choice visible for everyone — no goal reset */
+        paint();
+        if (onChange) onChange();
+      });
+      const goalSel = document.getElementById("mode-goal-sel");
+      if (goalSel) goalSel.addEventListener("change", () => {
+        store.set("tooiraq-travel-goal", goalSel.value);
+        paint();
+        if (onChange) onChange();
+      });
       const sel = document.getElementById("mode-city-sel");
       if (sel) sel.addEventListener("change", () => store.set("tooiraq-depart-city", sel.value));
     };
@@ -493,7 +531,11 @@
        searches Iraqi cities. Rebuilt whenever the pills change. */
     const paxOpts = [1, 2, 3, 4, 5, 6, 8, 10].map((n) => '<option value="' + n + '">' + (n === 1 ? t("pax1") : n + " " + t("paxN")) + "</option>").join("");
     const buildSearch = () => {
-      const abroadMode = travelMode() === "local" && travelGoal() === "abroad";
+      /* abroad search applies whenever "Outside Iraq" is the chosen
+         destination — visible to every visitor (Max, Aug 2); desktop
+         pills reset the goal outside local mode so this stays local-only
+         there. */
+      const abroadMode = travelGoal() === "abroad";
       const destOpts = abroadMode
         ? '<option value="">' + t("abroadAll") + "</option>" + ABROAD.map((d) => '<option value="' + d.id + '">' + esc(L(d.name) + (lang === "ar" ? "، " : ", ") + L(d.country)) + "</option>").join("")
         : '<option value="">' + t("sDestAll") + "</option>" + CITIES.map((c) => '<option value="' + c.id + '">' + esc(L(c)) + "</option>").join("");
