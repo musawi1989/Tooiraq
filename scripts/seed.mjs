@@ -69,9 +69,12 @@ for (const x of TOURS) {
     price_cents: cents(x.price), group_max: x.groupMax || 10,
     langs: x.langs || [], cancel: cancelPolicy(x.cancel),
     highlights: x.highlights || { en: [], ar: [] },
+    exclusions: x.exclusions || { en: [], ar: [] },
     itinerary: x.itinerary || [],
     meeting: x.meeting || { en: "", ar: "" },
-    images: [x.img].filter(Boolean),
+    notes: x.notes || { en: "", ar: "" },
+    video_url: x.videoUrl || null,
+    images: (x.imgs && x.imgs.length ? x.imgs : [x.img]).filter(Boolean),
     badge: x.badge || null,
     src_url: x.src || null
   };

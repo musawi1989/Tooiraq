@@ -102,7 +102,7 @@
       pfMeetAr: "Meeting point (Arabic)", pfAbroad: "This tour goes outside Iraq (outbound)", pfDest: "Destination abroad",
       pfDeparts: "Cities this tour departs from", pfBack: "← Back to my tours",
       followUs: "Follow", socialsTitle: "Find us on social media",
-      edHint: "Live preview — this page looks exactly like what travelers will see. Tap any dashed text to edit it, and use the chips to change the details.",
+      edHint: "Live preview — this page looks exactly like what travelers will see. Tap any dashed text to edit it; price, destination, duration and photos are all edited right where they appear.",
       edLangHint: "You're editing the English text — switch to عربي (top of page) to edit the Arabic side.",
       edDest: "Destination", edPriceChip: "Price", edDurChip: "Duration", edGroupChip: "Group",
       edLangsChip: "Languages", edPhotos: "Photos", edDepartsChip: "Departs from", edOutbound: "Outbound",
@@ -111,6 +111,13 @@
       edCountryEn: "Country (English)", edCountryAr: "Country (Arabic)", edCreate: "Create & select",
       edAddHl: "+ Add highlight", edAddStep: "+ Add itinerary step",
       edPhotosLbl: "Photo URLs — one per line (first becomes the main photo)",
+      exTitle: "What's not included", notesTitle: "Know before you go", watchVideo: "Watch video",
+      edAddEx: "+ Add exclusion", edAddImg: "＋ Add image", edImgUrl: "Image URL",
+      edVideoUrl: "Video link (YouTube, Facebook…)", edApply: "Apply", edRemoveImg: "Remove",
+      edGalleryHint: "Tap a photo to replace, reorder or remove it. The order here is the order travelers see.",
+      edStepImgAdd: "🖼 Add photo to this step", edStepImgUrl: "Step photo URL",
+      edLangsTitle: "Languages offered — tap to toggle",
+      edDurD: "days", edDurH: "hours",
       protoNote: "Prototype mode — this portal is a working demo. Real provider accounts with secure login and a live database are the next build step. Anything you add here is saved only in this browser.",
       pNavDash: "Dashboard", pNavTours: "My tours", pNavAdd: "Add a tour", pNavOut: "Log out",
       pViews: "Profile views (30d)", pInq: "WhatsApp inquiries (30d)", pTours: "Live tours",
@@ -224,7 +231,7 @@
       pfMeetAr: "نقطة اللقاء (عربي)", pfAbroad: "هذه الجولة خارج العراق (سفر للخارج)", pfDest: "الوجهة خارج العراق",
       pfDeparts: "المدن التي تنطلق منها الجولة", pfBack: "← العودة إلى جولاتي",
       followUs: "تابعنا", socialsTitle: "تابعنا على مواقع التواصل",
-      edHint: "معاينة حية — هذه الصفحة تبدو تماماً كما سيراها المسافرون. اضغط على أي نص متقطع الإطار لتعديله، واستخدم الأزرار لتغيير التفاصيل.",
+      edHint: "معاينة حية — هذه الصفحة تبدو تماماً كما سيراها المسافرون. اضغط على أي نص متقطع الإطار لتعديله؛ السعر والوجهة والمدة والصور تُعدّل جميعها في مكانها مباشرة.",
       edLangHint: "أنت تعدّل النص العربي — بدّل إلى English (أعلى الصفحة) لتعديل النص الإنجليزي.",
       edDest: "الوجهة", edPriceChip: "السعر", edDurChip: "المدة", edGroupChip: "المجموعة",
       edLangsChip: "اللغات", edPhotos: "الصور", edDepartsChip: "تنطلق من", edOutbound: "خارج العراق",
@@ -233,6 +240,13 @@
       edCountryEn: "الدولة (إنجليزي)", edCountryAr: "الدولة (عربي)", edCreate: "إنشاء واختيار",
       edAddHl: "+ أضف ميزة", edAddStep: "+ أضف خطوة للبرنامج",
       edPhotosLbl: "روابط الصور — رابط في كل سطر (الأول يصبح الصورة الرئيسية)",
+      exTitle: "غير مشمول في السعر", notesTitle: "معلومات مهمة قبل الحجز", watchVideo: "شاهد الفيديو",
+      edAddEx: "+ أضف بنداً غير مشمول", edAddImg: "＋ أضف صورة", edImgUrl: "رابط الصورة",
+      edVideoUrl: "رابط الفيديو (يوتيوب، فيسبوك…)", edApply: "تطبيق", edRemoveImg: "إزالة",
+      edGalleryHint: "اضغط على صورة لاستبدالها أو ترتيبها أو إزالتها. الترتيب هنا هو ما يراه المسافرون.",
+      edStepImgAdd: "🖼 أضف صورة لهذه الخطوة", edStepImgUrl: "رابط صورة الخطوة",
+      edLangsTitle: "اللغات المتوفرة — اضغط للتبديل",
+      edDurD: "أيام", edDurH: "ساعات",
       protoNote: "وضع تجريبي — هذه البوابة نموذج عمل. حسابات المزوّدين الحقيقية مع تسجيل دخول آمن وقاعدة بيانات هي خطوة البناء التالية. ما تضيفه هنا يُحفظ في هذا المتصفح فقط.",
       pNavDash: "لوحة التحكم", pNavTours: "جولاتي", pNavAdd: "أضف جولة", pNavOut: "تسجيل الخروج",
       pViews: "مشاهدات الملف (٣٠ يوماً)", pInq: "استفسارات واتساب (٣٠ يوماً)", pTours: "جولات منشورة",
@@ -364,7 +378,8 @@
       groupMax: r.group_max || 10, langs: r.langs || [],
       cancel: r.cancel !== "nonrefundable",
       highlights: r.highlights || { en: [], ar: [] }, itinerary: r.itinerary || [],
-      meeting: r.meeting || { en: "", ar: "" },
+      exclusions: r.exclusions || { en: [], ar: [] }, notes: r.notes || { en: "", ar: "" },
+      meeting: r.meeting || { en: "", ar: "" }, videoUrl: r.video_url || "",
       rating: r.rating ? +r.rating : 0, reviews: r.review_count || 0,
       badge: r.badge || null, src: r.src_url || null
     };
@@ -828,7 +843,8 @@
       (tour.badge ? "<div>" + badgeHTML(tour, true) + "</div>" : "") +
       "</div>" +
       '<div class="gallery"><a class="g-main"><img alt="" src="' + SRC(gallery[0]) + '"/></a>' +
-      gallery.slice(1).map((g) => '<a><img loading="lazy" alt="" src="' + SRC(g) + '"/></a>').join("") + "</div></div>" +
+      gallery.slice(1).map((g) => '<a><img loading="lazy" alt="" src="' + SRC(g) + '"/></a>').join("") + "</div>" +
+      (tour.videoUrl ? '<a class="btn btn-outline btn-sm" style="margin-top:10px" target="_blank" rel="noopener" href="' + esc(tour.videoUrl) + '">▶ ' + t("watchVideo") + "</a>" : "") + "</div>" +
 
       '<div class="container detail-layout"><div class="detail-main">' +
       '<div class="panel"><h2>' + t("aboutTitle") + "</h2><p>" + esc(L(tour.desc)) + "</p>" +
@@ -837,9 +853,15 @@
       '<span class="badge badge-save">🗣 ' + t("langsWord") + ": " + (tour.langs || []).join(" · ") + "</span></div></div>" +
       '<div class="panel"><h2>' + t("incTitle") + '</h2><div class="inc-grid">' +
       L(tour.highlights).map((h) => '<div class="inc-item"><span class="tick">✓</span><span>' + esc(h) + "</span></div>").join("") + "</div></div>" +
+      (tour.exclusions && L(tour.exclusions).length
+        ? '<div class="panel"><h2>' + t("exTitle") + '</h2><div class="inc-grid">' +
+          L(tour.exclusions).map((h) => '<div class="inc-item"><span class="tick cross">✕</span><span>' + esc(h) + "</span></div>").join("") + "</div></div>" : "") +
       '<div class="panel"><h2>' + t("itinTitle") + '</h2><ul class="itin">' +
-      (tour.itinerary || []).map((s, i) => '<li><span class="dot">' + (i + 1) + '</span><span class="tx"><b>' + esc(L(s.t)) + "</b><span>" + esc(L(s.d)) + "</span></span></li>").join("") + "</ul></div>" +
+      (tour.itinerary || []).map((s, i) => '<li><span class="dot">' + (i + 1) + '</span><span class="tx"><b>' + esc(L(s.t)) + "</b><span>" + esc(L(s.d)) + "</span>" +
+        (s.img ? '<img class="itin-img" loading="lazy" alt="" src="' + SRC(s.img) + '"/>' : "") + "</span></li>").join("") + "</ul></div>" +
       '<div class="panel"><h2>' + t("meetTitle") + "</h2><p>📍 " + esc(L(tour.meeting)) + "</p></div>" +
+      (tour.notes && L(tour.notes)
+        ? '<div class="panel"><h2>' + t("notesTitle") + "</h2><p>" + esc(L(tour.notes)) + "</p></div>" : "") +
       (tour.src ? "" :
         '<div class="panel"><h2>' + t("revTitle") + "</h2>" +
         revs.map((r) => '<div class="review"><div class="who"><span class="av">' + esc(r.n.slice(0, 1)) + "</span><div><b>" + esc(r.n) + "</b><br><span>" + esc(L(r.from)) + "</span></div>" +
@@ -1003,11 +1025,12 @@
     const drafts = allDrafts.map((d, i) => ({ d: d, i: i })).filter((z) => z.d.agency === a.id);
     const live = toursOf(a.id).filter((x) => !String(x.id).startsWith("draft"));
 
-    /* ---- editor view: LIVE PREVIEW (WYSIWYG) ----
-       Renders the tour exactly like the public tour page. Dashed text
-       is contenteditable in the CURRENT language; a compact chip bar
-       edits structured details. New tours start as a ready-made
-       sample so providers begin from something real. */
+    /* ---- editor view: LIVE PREVIEW (WYSIWYG, fully in-place) ----
+       No toolbar — every part of the page edits exactly where the
+       traveler sees it: dashed text inline, price typed in the booking
+       box, destination/type/duration/group in the facts row, languages
+       as preset chips, gallery with add/replace/reorder/remove + video,
+       per-step photos, exclusions and know-before-you-go sections. */
     if (portalEdit) {
       if (!portalEdit.w) {
         const sample = {
@@ -1016,11 +1039,14 @@
           city: "baghdad", type: "culture", abroad: false, dest: null, departsFrom: [],
           days: 1, hours: 8, price: 75, groupMax: 10, langs: ["EN", "AR"], cancel: true,
           highlights: { en: ["Licensed local guide", "Transport included", "Entry tickets"], ar: ["مرشد محلي مجاز", "النقل مشمول", "تذاكر الدخول"] },
+          exclusions: { en: ["Personal expenses"], ar: ["المصاريف الشخصية"] },
           itinerary: [
             { t: { en: "Morning — departure", ar: "الصباح — الانطلاق" }, d: { en: "Pickup and drive to the first stop.", ar: "الانطلاق والتوجه إلى المحطة الأولى." } },
             { t: { en: "Afternoon — main visit", ar: "بعد الظهر — الزيارة الرئيسية" }, d: { en: "Guided visit and free time.", ar: "جولة مرشدة ووقت حر." } }
           ],
-          meeting: { en: "Hotel pickup, 8:00 AM", ar: "النقل من الفندق، ٨:٠٠ صباحاً" }, imgs: []
+          meeting: { en: "Hotel pickup, 8:00 AM", ar: "النقل من الفندق، ٨:٠٠ صباحاً" },
+          notes: { en: "Bring comfortable shoes and sun protection. Tap to edit this note, or leave it empty.", ar: "أحضر حذاءً مريحاً وواقياً من الشمس. اضغط لتعديل هذه الملاحظة أو اتركها فارغة." },
+          imgs: [], videoUrl: ""
         };
         const src0 = portalEdit.kind === "new" ? sample
           : portalEdit.kind === "draft" ? (allDrafts[portalEdit.i] || sample)
@@ -1034,26 +1060,38 @@
           langs: src0.langs && src0.langs.length ? src0.langs : ["EN", "AR"],
           cancel: src0.cancel !== false,
           highlights: { en: (src0.highlights && src0.highlights.en) || [], ar: (src0.highlights && src0.highlights.ar) || [] },
+          exclusions: { en: (src0.exclusions && src0.exclusions.en) || [], ar: (src0.exclusions && src0.exclusions.ar) || [] },
           itinerary: src0.itinerary || [], meeting: src0.meeting || {},
-          imgs: src0.imgs || [], img: src0.img || null,
+          notes: src0.notes || { en: "", ar: "" },
+          imgs: src0.imgs || [], img: src0.img || null, videoUrl: src0.videoUrl || "",
           rating: src0.rating || 0, reviews: src0.reviews || 0
         }));
       }
       const w = portalEdit.w;
       const side = lang;
+      const V2 = (o) => (o && (o[side] || o.en)) || "";
+      const LANGS_PRESET = ["AR", "EN", "KU", "TR", "FA", "UR", "HI", "BN", "ZH", "RU", "FR", "DE", "ES", "IT", "PT", "JA", "KO", "ID", "NL", "AZ"];
 
       const syncText = () => {
         root.querySelectorAll("[data-ed]").forEach((el) => {
-          const v = el.textContent.trim(), i = +el.dataset.i;
-          const k = el.dataset.ed;
+          const v = el.textContent.trim(), i = +el.dataset.i, k = el.dataset.ed;
           if (k === "title") w.title[side] = v;
           else if (k === "desc") w.desc[side] = v;
           else if (k === "meet") w.meeting[side] = v;
+          else if (k === "notes") w.notes[side] = v;
           else if (k === "hl") w.highlights[side][i] = v;
+          else if (k === "ex") w.exclusions[side][i] = v;
           else if (k === "it-t") { if (w.itinerary[i]) w.itinerary[i].t[side] = v; }
           else if (k === "it-d") { if (w.itinerary[i]) w.itinerary[i].d[side] = v; }
         });
+        const num = (id, def) => { const el = document.getElementById(id); return el ? (+el.value || def) : def; };
+        w.price = num("edv-price", w.price); w.days = num("edv-days", w.days);
+        w.hours = num("edv-hours", w.hours); w.groupMax = num("edv-group", w.groupMax);
+        const vv = document.getElementById("edv-video"); if (vv) w.videoUrl = vv.value.trim();
+        const iu = document.getElementById("edv-imgurl"); if (iu) portalEdit.imgUrlDraft = iu.value.trim();
+        const su = document.getElementById("edv-stepimg"); if (su) portalEdit.stepImgDraft = su.value.trim();
       };
+      const repaint = () => { syncText(); paintEditor(); };
 
       const slugify = (s) => (s || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || ("dest-" + (CITIES.length + ABROAD.length + 1));
       const persistCustomDest = (kind, obj) => {
@@ -1061,88 +1099,113 @@
         try { cd = Object.assign({ cities: [], abroad: [] }, JSON.parse(store.get("tooiraq-custom-dests") || "{}")); } catch (e) {}
         cd[kind].push(obj); store.set("tooiraq-custom-dests", JSON.stringify(cd));
       };
+      const galleryList = () => (w.imgs && w.imgs.length ? w.imgs.slice()
+        : [w.img, CITY_IMG[w.city], "river", "marsh", "babylon"].filter(Boolean).filter((v, i2, arr) => arr.indexOf(v) === i2));
+      const materialize = () => { if (!w.imgs.length) w.imgs = galleryList(); };
 
       function paintEditor() {
         const wt = { title: w.title, city: w.city, abroad: w.abroad, dest: w.dest, departsFrom: w.departsFrom, days: w.days, hours: w.hours };
-        const gallery = (w.imgs && w.imgs.length ? w.imgs.slice(0, 5)
-          : [w.img, CITY_IMG[w.city], "river", "marsh", "babylon"].filter(Boolean))
-          .filter((v, i2, arr) => arr.indexOf(v) === i2).slice(0, 5);
-        while (gallery.length < 5) gallery.push(gallery[0] || "baghdad");
-        const chip = (key, ic, lbl, on) =>
-          '<button type="button" class="ed-chip' + (portalEdit.panel === key ? " open" : "") + (on ? " on" : "") + '" data-chip="' + key + '">' + ic + " " + lbl + "</button>";
-        const P = portalEdit.panel;
-        const destSel = w.abroad
-          ? '<label>' + t("edDest") + '</label><select id="edp-dest">' + ABROAD.map((z) => '<option value="' + z.id + '"' + (w.dest === z.id ? " selected" : "") + ">" + esc(L(z.name) + " — " + L(z.country)) + "</option>").join("") + "</select>"
-          : '<label>' + t("edDest") + '</label><select id="edp-dest">' + CITIES.map((z) => '<option value="' + z.id + '"' + (w.city === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("") + "</select>";
-        const newDestForm =
-          '<div class="ed-newdest"><label style="color:var(--color-primary)">' + t("edNewDest") + "</label>" +
-          '<div class="form-row"><div><label>' + t("edNameEn") + '</label><input id="ednd-en"/></div>' +
-          "<div><label>" + t("edNameAr") + '</label><input id="ednd-ar" dir="rtl"/></div></div>' +
-          (w.abroad ? '<div class="form-row"><div><label>' + t("edCountryEn") + '</label><input id="ednd-cen"/></div>' +
-            "<div><label>" + t("edCountryAr") + '</label><input id="ednd-car" dir="rtl"/></div></div>' : "") +
-          '<button type="button" class="ed-add" id="ednd-go" style="margin-top:8px">' + t("edCreate") + "</button></div>";
-        const panelHTML =
-          P === "dest" ? destSel + newDestForm :
-          P === "type" ? '<label>' + t("edTypeChip") + '</label><select id="edp-type">' + TYPES.map((z) => '<option value="' + z.id + '"' + (w.type === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("") + "</select>" :
-          P === "price" ? '<label>' + t("pfPrice") + '</label><input id="edp-price" type="number" min="0" value="' + (w.price || 0) + '"/>' :
-          P === "dur" ? '<div class="form-row"><div><label>' + t("pfDays") + '</label><input id="edp-days" type="number" min="1" value="' + (w.days || 1) + '"/></div>' +
-            "<div><label>" + t("pfHours") + '</label><input id="edp-hours" type="number" min="1" max="24" value="' + (w.hours || 8) + '"/></div></div>' :
-          P === "group" ? '<label>' + t("pfGroup") + '</label><input id="edp-group" type="number" min="1" value="' + (w.groupMax || 10) + '"/>' :
-          P === "langs" ? '<label>' + t("pfLangs") + '</label><input id="edp-langs" value="' + esc((w.langs || []).join(" ")) + '"/>' :
-          P === "photos" ? '<label>' + t("edPhotosLbl") + '</label><textarea id="edp-imgs">' + esc((w.imgs || []).join("\n")) + "</textarea>" :
-          P === "departs" ? '<label>' + t("pfDeparts") + '</label><div class="chip-multi">' +
-            CITIES.map((z) => '<button type="button" class="pf-chip' + ((w.departsFrom || []).includes(z.id) ? " on" : "") + '" data-dep="' + z.id + '">' + esc(L(z)) + "</button>").join("") + "</div>" :
-          "";
+        const gal = galleryList().slice(0, 8);
+        const sel = portalEdit.selImg;
+        const destOpts = w.abroad
+          ? ABROAD.map((z) => '<option value="' + z.id + '"' + (w.dest === z.id ? " selected" : "") + ">" + esc(L(z.name) + " — " + L(z.country)) + "</option>").join("")
+          : CITIES.map((z) => '<option value="' + z.id + '"' + (w.city === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("");
+        const typeOpts = TYPES.map((z) => '<option value="' + z.id + '"' + (w.type === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("");
+        const mini = (id, val, wch) => '<input class="ed-mini" id="' + id + '" type="number" min="0" value="' + val + '" style="width:' + (wch || 52) + 'px"/>';
 
         root.innerHTML =
           '<div class="container" style="padding:16px 0 8px">' +
           '<a href="#" id="pf-back" class="footnote">' + t("pfBack") + "</a>" +
           '<div class="notice-proto mt-2">' + t("edHint") + " " + t("edLangHint") + "</div>" +
-          '<div class="ed-bar"><div class="ed-chips">' +
-          chip("dest", "📍", t("edDest")) + chip("type", "🗂", t("edTypeChip")) +
-          chip("price", "💵", t("edPriceChip")) + chip("dur", "🕐", t("edDurChip")) +
-          chip("group", "👥", t("edGroupChip")) + chip("langs", "🗣", t("edLangsChip")) +
-          chip("photos", "🖼", t("edPhotos")) + chip("departs", "🚌", t("edDepartsChip")) +
-          chip("outbound", "🛫", t("edOutbound"), w.abroad) +
-          chip("cancel", "↩", t("pfCancel"), w.cancel) +
-          "</div>" +
-          (panelHTML ? '<div class="ed-panel">' + panelHTML + "</div>" : "") +
           '<div id="pf-msg" class="form-note" style="margin-top:6px"></div>' +
-          "</div></div>" +
+          "</div>" +
 
           '<div class="container detail-top">' +
           '<div class="crumbs">' + t("crumbHome") + " / " + t("crumbTours") + " / " + esc(locLabel(wt)) + "</div>" +
           '<div class="detail-title-row"><div><h1 contenteditable="true" data-ed="title">' + esc(V2(w.title)) + "</h1>" +
-          '<div class="detail-sub">' +
+
+          /* facts row — everything edits right here */
+          '<div class="detail-sub" style="align-items:center">' +
           (w.rating ? '<span class="rating-row"><b>' + w.rating.toFixed(1) + "</b>" + starsHTML(w.rating) + "<span>(" + w.reviews + " " + t("reviewsWord") + ")</span></span>"
             : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") +
-          "<span>📍 " + esc(locLabel(wt)) + "</span><span>🗂 " + esc(L(typeOf(w.type))) + "</span><span>🕐 " + durLbl(w) + "</span>" +
-          (w.groupMax ? "<span>👥 " + t("upTo") + " " + w.groupMax + "</span>" : "") + departBadgeHTML(wt) + "</div></div></div>" +
-          '<div class="gallery"><a class="g-main"><img alt="" src="' + SRC(gallery[0]) + '"/></a>' +
-          gallery.slice(1).map((g) => '<a><img loading="lazy" alt="" src="' + SRC(g) + '"/></a>').join("") + "</div></div>" +
+          '<span>📍 <select class="ed-mini-sel" id="edv-dest">' + destOpts + '</select>' +
+          '<button type="button" class="ed-x" id="edv-newdest" title="' + t("edNewDest") + '" style="font-weight:700">＋</button></span>' +
+          '<span>🗂 <select class="ed-mini-sel" id="edv-type">' + typeOpts + "</select></span>" +
+          "<span>🕐 " + mini("edv-days", w.days || 1, 44) + " " + t("edDurD") + " · " + mini("edv-hours", w.hours || 8, 44) + " " + t("edDurH") + "</span>" +
+          "<span>👥 " + t("upTo") + " " + mini("edv-group", w.groupMax || 10, 48) + "</span>" +
+          '<button type="button" class="ed-chip' + (w.abroad ? " on" : "") + '" id="edv-abroad">🛫 ' + t("edOutbound") + "</button>" +
+          "</div>" +
+
+          /* departs-from as compact pills, right under the facts */
+          '<div class="chip-multi" style="margin-top:8px"><span class="footnote" style="align-self:center">🚌 ' + t("edDepartsChip") + ":</span>" +
+          CITIES.map((z) => '<button type="button" class="pf-chip' + ((w.departsFrom || []).includes(z.id) ? " on" : "") + '" data-dep="' + z.id + '">' + esc(L(z)) + "</button>").join("") + "</div>" +
+          (portalEdit.newDestOpen
+            ? '<div class="ed-panel panel" style="margin-top:10px"><label style="color:var(--color-primary)">' + t("edNewDest") + "</label>" +
+              '<div class="form-row"><div><label>' + t("edNameEn") + '</label><input id="ednd-en"/></div>' +
+              "<div><label>" + t("edNameAr") + '</label><input id="ednd-ar" dir="rtl"/></div></div>' +
+              (w.abroad ? '<div class="form-row"><div><label>' + t("edCountryEn") + '</label><input id="ednd-cen"/></div>' +
+                "<div><label>" + t("edCountryAr") + '</label><input id="ednd-car" dir="rtl"/></div></div>' : "") +
+              '<button type="button" class="ed-add" id="ednd-go">' + t("edCreate") + "</button></div>"
+            : "") +
+          "</div></div>" +
+
+          /* gallery with in-place management */
+          '<div class="gallery">' +
+          gal.map((g, i2) =>
+            (i2 === 0 ? '<a class="g-main g-tile' : '<a class="g-tile') + (sel === i2 ? " g-sel" : "") + '" data-gi="' + i2 + '"><img alt="" src="' + SRC(g) + '"/>' +
+            '<span class="g-badge">' + (i2 + 1) + "</span></a>").join("") +
+          '<a class="g-tile g-addtile" id="edv-addimg"><span>' + t("edAddImg") + "</span></a>" +
+          "</div>" +
+          '<p class="footnote" style="margin-top:6px">' + t("edGalleryHint") + "</p>" +
+          ((sel !== undefined && sel !== null) || portalEdit.addingImg
+            ? '<div class="ed-urlrow"><input id="edv-imgurl" placeholder="https://…" value="' + esc(portalEdit.addingImg ? (portalEdit.imgUrlDraft || "") : (/^https?:/.test(gal[sel] || "") ? gal[sel] : "")) + '"/>' +
+              '<button type="button" class="btn btn-primary btn-sm" id="edv-imgapply">' + t("edApply") + "</button>" +
+              (!portalEdit.addingImg
+                ? '<button type="button" class="btn btn-outline btn-sm" id="edv-imgleft">◀</button>' +
+                  '<button type="button" class="btn btn-outline btn-sm" id="edv-imgright">▶</button>' +
+                  '<button type="button" class="btn btn-outline btn-sm" id="edv-imgdel">✕ ' + t("edRemoveImg") + "</button>"
+                : "") + "</div>"
+            : "") +
+          '<div class="ed-urlrow"><span class="footnote" style="white-space:nowrap">▶ ' + t("edVideoUrl") + '</span><input id="edv-video" placeholder="https://youtube.com/…" value="' + esc(w.videoUrl || "") + '"/></div>' +
+          "</div>" +
 
           '<div class="container detail-layout"><div class="detail-main">' +
           '<div class="panel"><h2>' + t("aboutTitle") + '</h2><p contenteditable="true" data-ed="desc">' + esc(V2(w.desc)) + "</p>" +
-          '<div class="mt-4" style="display:flex;gap:8px;flex-wrap:wrap">' +
-          (w.cancel ? '<span class="badge badge-save">✓ ' + t("freeCancel") + "</span>" : "") +
-          '<span class="badge badge-save">🗣 ' + t("langsWord") + ": " + (w.langs || []).join(" · ") + "</span></div></div>" +
+          '<div class="mt-4" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
+          '<button type="button" class="ed-chip' + (w.cancel ? " on" : "") + '" id="edv-cancel">↩ ' + t("freeCancel") + "</button></div>" +
+          '<div class="mt-4"><span class="footnote">🗣 ' + t("edLangsTitle") + '</span><div class="chip-multi" style="margin-top:6px">' +
+          LANGS_PRESET.map((lg) => '<button type="button" class="pf-chip' + ((w.langs || []).includes(lg) ? " on" : "") + '" data-lang="' + lg + '">' + lg + "</button>").join("") +
+          "</div></div></div>" +
+
           '<div class="panel"><h2>' + t("incTitle") + '</h2><div class="inc-grid">' +
           (w.highlights[side] || []).map((h, i2) =>
             '<div class="inc-item"><span class="tick">✓</span><span contenteditable="true" data-ed="hl" data-i="' + i2 + '">' + esc(h) + '</span><button type="button" class="ed-x" data-delhl="' + i2 + '">✕</button></div>').join("") +
           '</div><button type="button" class="ed-add" id="ed-addhl">' + t("edAddHl") + "</button></div>" +
+
+          '<div class="panel"><h2>' + t("exTitle") + '</h2><div class="inc-grid">' +
+          (w.exclusions[side] || []).map((h, i2) =>
+            '<div class="inc-item"><span class="tick cross">✕</span><span contenteditable="true" data-ed="ex" data-i="' + i2 + '">' + esc(h) + '</span><button type="button" class="ed-x" data-delex="' + i2 + '">✕</button></div>').join("") +
+          '</div><button type="button" class="ed-add" id="ed-addex">' + t("edAddEx") + "</button></div>" +
+
           '<div class="panel"><h2>' + t("itinTitle") + '</h2><ul class="itin">' +
           (w.itinerary || []).map((s, i2) =>
-            '<li><span class="dot">' + (i2 + 1) + '</span><span class="tx"><b contenteditable="true" data-ed="it-t" data-i="' + i2 + '">' + esc(V2(s.t)) + '</b><span contenteditable="true" data-ed="it-d" data-i="' + i2 + '">' + esc(V2(s.d)) + "</span></span>" +
+            '<li><span class="dot">' + (i2 + 1) + '</span><span class="tx"><b contenteditable="true" data-ed="it-t" data-i="' + i2 + '">' + esc(V2(s.t)) + '</b><span contenteditable="true" data-ed="it-d" data-i="' + i2 + '">' + esc(V2(s.d)) + "</span>" +
+            (s.img ? '<span style="position:relative;display:inline-block"><img class="itin-img" alt="" src="' + SRC(s.img) + '"/><button type="button" class="ed-x" data-delstepimg="' + i2 + '" style="position:absolute;top:2px;inset-inline-end:2px;background:rgba(255,255,255,.85);border-radius:6px">✕</button></span>'
+              : '<button type="button" class="ed-add" data-stepimg="' + i2 + '" style="margin-top:6px;padding:5px 10px;font-size:12px">' + t("edStepImgAdd") + "</button>") +
+            (portalEdit.stepImgOpen === i2
+              ? '<span class="ed-urlrow"><input id="edv-stepimg" placeholder="https://…" value="' + esc(portalEdit.stepImgDraft || "") + '"/><button type="button" class="btn btn-primary btn-sm" id="edv-stepimgapply">' + t("edApply") + "</button></span>"
+              : "") +
+            "</span>" +
             '<button type="button" class="ed-x" data-delit="' + i2 + '">✕</button></li>').join("") +
           '</ul><button type="button" class="ed-add" id="ed-addit">' + t("edAddStep") + "</button></div>" +
+
           '<div class="panel"><h2>' + t("meetTitle") + '</h2><p>📍 <span contenteditable="true" data-ed="meet">' + esc(V2(w.meeting)) + "</span></p></div>" +
+          '<div class="panel"><h2>' + t("notesTitle") + '</h2><p contenteditable="true" data-ed="notes">' + esc(V2(w.notes)) + "</p></div>" +
           "</div>" +
 
           '<aside><div class="panel bookbox">' +
-          (w.price
-            ? '<div><span class="from">' + t("from") + '</span><div class="amount">$' + w.price + " <small>" + t("perPerson") + "</small></div>" +
-              (w.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>"
-            : '<div><div class="amount" style="font-size:22px">' + t("poa") + "</div></div>") +
+          '<div><span class="from">' + t("from") + '</span><div class="amount">$<input class="ed-mini ed-price" id="edv-price" type="number" min="0" value="' + (w.price || 0) + '"/> <small>' + t("perPerson") + "</small></div>" +
+          (w.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>" +
           '<div class="field"><label>' + t("bbDate") + '</label><input type="date" disabled/></div>' +
           '<div class="field"><label>' + t("bbPax") + '</label><select disabled><option>' + t("pax1") + "</option></select></div>" +
           '<button class="btn btn-wa btn-block" disabled>' + t("bookWa") + "</button>" +
@@ -1156,53 +1219,30 @@
           '<button class="btn btn-primary" id="pf-save">' + (portalEdit.kind === "new" ? t("pfSave") : t("pfSaveChanges")) + "</button></div>";
 
         document.body.classList.add("has-edbar");
-        const repaint = () => { syncText(); paintEditor(); };
         const back = (e) => { e.preventDefault(); portalEdit = null; document.body.classList.remove("has-edbar"); renderPortal(); window.scrollTo(0, 0); };
         document.getElementById("pf-back").addEventListener("click", back);
         document.getElementById("pf-back2").addEventListener("click", back);
+        const on = (id, fn, ev) => { const el = document.getElementById(id); if (el) el.addEventListener(ev || "click", fn); };
 
-        root.querySelectorAll("[data-chip]").forEach((b) => b.addEventListener("click", () => {
-          const k = b.dataset.chip;
-          syncText();
-          if (k === "outbound") {
-            w.abroad = !w.abroad;
-            if (w.abroad && !w.dest) w.dest = ABROAD[0] && ABROAD[0].id;
-            if (!w.abroad && !w.city) w.city = "baghdad";
-            portalEdit.panel = "dest";
-          } else if (k === "cancel") {
-            w.cancel = !w.cancel;
-          } else {
-            portalEdit.panel = portalEdit.panel === k ? null : k;
-          }
+        /* facts row */
+        on("edv-dest", () => { syncText(); const v = document.getElementById("edv-dest").value; if (w.abroad) w.dest = v; else w.city = v; paintEditor(); }, "change");
+        on("edv-type", () => { syncText(); w.type = document.getElementById("edv-type").value; paintEditor(); }, "change");
+        on("edv-abroad", () => {
+          syncText(); w.abroad = !w.abroad;
+          if (w.abroad && !w.dest) w.dest = ABROAD[0] && ABROAD[0].id;
+          if (!w.abroad && !w.city) w.city = "baghdad";
           paintEditor();
-        }));
-
-        const bind = (id, fn, ev) => { const el = document.getElementById(id); if (el) el.addEventListener(ev || "change", fn); };
-        bind("edp-dest", () => { syncText(); const v = document.getElementById("edp-dest").value; if (w.abroad) w.dest = v; else w.city = v; paintEditor(); });
-        bind("edp-type", () => { syncText(); w.type = document.getElementById("edp-type").value; paintEditor(); });
-        bind("edp-price", () => { syncText(); w.price = +document.getElementById("edp-price").value || 0; paintEditor(); });
-        bind("edp-days", () => { syncText(); w.days = +document.getElementById("edp-days").value || 1; paintEditor(); });
-        bind("edp-hours", () => { syncText(); w.hours = +document.getElementById("edp-hours").value || null; paintEditor(); });
-        bind("edp-group", () => { syncText(); w.groupMax = +document.getElementById("edp-group").value || 10; paintEditor(); });
-        bind("edp-langs", () => { syncText(); w.langs = document.getElementById("edp-langs").value.split(/[\s,·]+/).filter(Boolean).map((s) => s.toUpperCase()); paintEditor(); });
-        bind("edp-imgs", () => { syncText(); w.imgs = document.getElementById("edp-imgs").value.split("\n").map((s) => s.trim()).filter(Boolean); paintEditor(); });
-        root.querySelectorAll("[data-dep]").forEach((b) => b.addEventListener("click", () => {
-          syncText();
-          const id = b.dataset.dep, ix = (w.departsFrom || []).indexOf(id);
-          if (ix >= 0) w.departsFrom.splice(ix, 1); else (w.departsFrom = w.departsFrom || []).push(id);
-          paintEditor();
-        }));
-        bind("ednd-go", () => {
-          const en = (document.getElementById("ednd-en") || {}).value || "";
-          const ar = (document.getElementById("ednd-ar") || {}).value || "";
+        });
+        on("edv-newdest", () => { syncText(); portalEdit.newDestOpen = !portalEdit.newDestOpen; paintEditor(); });
+        on("ednd-go", () => {
+          const gv2 = (id) => (document.getElementById(id) || {}).value || "";
+          const en = gv2("ednd-en"), ar = gv2("ednd-ar");
           if (!en.trim() && !ar.trim()) return;
           syncText();
           const id = slugify(en || ar);
           if (w.abroad) {
-            const cen = (document.getElementById("ednd-cen") || {}).value || "";
-            const car = (document.getElementById("ednd-car") || {}).value || "";
             if (!ABROAD.some((z) => z.id === id)) {
-              const obj = { id: id, name: { en: en.trim() || ar.trim(), ar: ar.trim() || en.trim() }, country: { en: cen.trim(), ar: car.trim() || cen.trim() }, custom: true };
+              const obj = { id: id, name: { en: en.trim() || ar.trim(), ar: ar.trim() || en.trim() }, country: { en: gv2("ednd-cen").trim(), ar: gv2("ednd-car").trim() || gv2("ednd-cen").trim() }, custom: true };
               ABROAD.push(obj); persistCustomDest("abroad", obj);
             }
             w.dest = id;
@@ -1213,28 +1253,103 @@
             }
             w.city = id;
           }
+          portalEdit.newDestOpen = false;
           paintEditor();
-        }, "click");
-        bind("ed-addhl", () => {
+        });
+        root.querySelectorAll("[data-dep]").forEach((b) => b.addEventListener("click", () => {
+          syncText();
+          const id = b.dataset.dep, ix = (w.departsFrom || []).indexOf(id);
+          if (ix >= 0) w.departsFrom.splice(ix, 1); else (w.departsFrom = w.departsFrom || []).push(id);
+          paintEditor();
+        }));
+        root.querySelectorAll("[data-lang]").forEach((b) => b.addEventListener("click", () => {
+          syncText();
+          const lg = b.dataset.lang, ix = (w.langs || []).indexOf(lg);
+          if (ix >= 0) w.langs.splice(ix, 1); else (w.langs = w.langs || []).push(lg);
+          paintEditor();
+        }));
+        on("edv-cancel", () => { syncText(); w.cancel = !w.cancel; paintEditor(); });
+
+        /* gallery management */
+        root.querySelectorAll("[data-gi]").forEach((el) => el.addEventListener("click", (e) => {
+          e.preventDefault(); syncText();
+          portalEdit.addingImg = false; portalEdit.imgUrlDraft = "";
+          portalEdit.selImg = portalEdit.selImg === +el.dataset.gi ? null : +el.dataset.gi;
+          paintEditor();
+        }));
+        on("edv-addimg", (e) => { e.preventDefault(); syncText(); portalEdit.addingImg = true; portalEdit.selImg = null; portalEdit.imgUrlDraft = ""; paintEditor(); });
+        on("edv-imgapply", () => {
+          syncText();
+          const url = (document.getElementById("edv-imgurl").value || "").trim();
+          if (!url) return;
+          materialize();
+          if (portalEdit.addingImg) { w.imgs.push(url); portalEdit.addingImg = false; }
+          else if (portalEdit.selImg != null) w.imgs[portalEdit.selImg] = url;
+          portalEdit.selImg = null; portalEdit.imgUrlDraft = "";
+          paintEditor();
+        });
+        on("edv-imgdel", () => {
+          syncText(); materialize();
+          if (portalEdit.selImg != null) w.imgs.splice(portalEdit.selImg, 1);
+          portalEdit.selImg = null; paintEditor();
+        });
+        const move = (dir) => {
+          syncText(); materialize();
+          const i2 = portalEdit.selImg; if (i2 == null) return;
+          const j = i2 + dir; if (j < 0 || j >= w.imgs.length) return;
+          const tmp = w.imgs[i2]; w.imgs[i2] = w.imgs[j]; w.imgs[j] = tmp;
+          portalEdit.selImg = j; paintEditor();
+        };
+        on("edv-imgleft", () => move(-1));
+        on("edv-imgright", () => move(1));
+
+        /* lists */
+        on("ed-addhl", () => {
           syncText();
           (w.highlights.en = w.highlights.en || []).push(side === "en" ? "New highlight" : "ميزة جديدة");
           (w.highlights.ar = w.highlights.ar || []).push(side === "ar" ? "ميزة جديدة" : "New highlight");
           paintEditor();
-        }, "click");
+        });
         root.querySelectorAll("[data-delhl]").forEach((b) => b.addEventListener("click", () => {
           syncText(); const i2 = +b.dataset.delhl;
           (w.highlights.en || []).splice(i2, 1); (w.highlights.ar || []).splice(i2, 1);
           paintEditor();
         }));
-        bind("ed-addit", () => {
+        on("ed-addex", () => {
+          syncText();
+          (w.exclusions.en = w.exclusions.en || []).push(side === "en" ? "Not included item" : "بند غير مشمول");
+          (w.exclusions.ar = w.exclusions.ar || []).push(side === "ar" ? "بند غير مشمول" : "Not included item");
+          paintEditor();
+        });
+        root.querySelectorAll("[data-delex]").forEach((b) => b.addEventListener("click", () => {
+          syncText(); const i2 = +b.dataset.delex;
+          (w.exclusions.en || []).splice(i2, 1); (w.exclusions.ar || []).splice(i2, 1);
+          paintEditor();
+        }));
+        on("ed-addit", () => {
           syncText();
           (w.itinerary = w.itinerary || []).push({ t: { en: "New step", ar: "خطوة جديدة" }, d: { en: "Describe this part of the day.", ar: "صف هذا الجزء من اليوم." } });
           paintEditor();
-        }, "click");
+        });
         root.querySelectorAll("[data-delit]").forEach((b) => b.addEventListener("click", () => {
-          syncText(); (w.itinerary || []).splice(+b.dataset.delit, 1); paintEditor();
+          syncText(); (w.itinerary || []).splice(+b.dataset.delit, 1);
+          portalEdit.stepImgOpen = null; paintEditor();
+        }));
+        root.querySelectorAll("[data-stepimg]").forEach((b) => b.addEventListener("click", () => {
+          syncText(); portalEdit.stepImgOpen = +b.dataset.stepimg; portalEdit.stepImgDraft = ""; paintEditor();
+        }));
+        on("edv-stepimgapply", () => {
+          syncText();
+          const url = (document.getElementById("edv-stepimg").value || "").trim();
+          if (url && w.itinerary[portalEdit.stepImgOpen]) w.itinerary[portalEdit.stepImgOpen].img = url;
+          portalEdit.stepImgOpen = null; paintEditor();
+        });
+        root.querySelectorAll("[data-delstepimg]").forEach((b) => b.addEventListener("click", () => {
+          syncText(); const s = w.itinerary[+b.dataset.delstepimg]; if (s) delete s.img;
+          paintEditor();
         }));
 
+        /* save */
         document.getElementById("pf-save").addEventListener("click", () => {
           syncText();
           const patch = {
@@ -1245,8 +1360,9 @@
             days: w.days || 1, hours: w.hours || null,
             price: w.price || 0, groupMax: w.groupMax || 10,
             langs: w.langs || [], cancel: !!w.cancel,
-            desc: w.desc, highlights: w.highlights, itinerary: w.itinerary,
-            meeting: w.meeting, imgs: w.imgs
+            desc: w.desc, highlights: w.highlights, exclusions: w.exclusions,
+            itinerary: w.itinerary, meeting: w.meeting, notes: w.notes,
+            imgs: w.imgs, videoUrl: w.videoUrl || ""
           };
           if (portalEdit.kind === "new") {
             allDrafts.push(Object.assign({ agency: a.id, img: patch.imgs[0] || CITY_IMG[patch.city] || "babylon", rating: 0, reviews: 0 }, patch));
@@ -1267,7 +1383,6 @@
           window.scrollTo(0, 0);
         });
       }
-      const V2 = (o) => (o && (o[side] || o.en)) || "";
       paintEditor();
       return;
     }

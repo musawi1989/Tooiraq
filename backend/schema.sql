@@ -149,8 +149,10 @@ create table if not exists public.tours (
   langs text[] not null default '{}',
   cancel cancel_policy not null default 'free48',
   highlights jsonb not null default '{"en":[],"ar":[]}',
-  itinerary jsonb not null default '[]',                    -- [{t:{en,ar}, d:{en,ar}}]
+  exclusions jsonb not null default '{"en":[],"ar":[]}',    -- "what's not included"
+  itinerary jsonb not null default '[]',                    -- [{t:{en,ar}, d:{en,ar}, img?}]
   meeting jsonb not null default '{"en":"","ar":""}',
+  notes jsonb not null default '{"en":"","ar":""}',         -- "know before you go"
   pickup boolean not null default false,
   images text[] not null default '{}',                      -- storage paths or img.js keys
   video_url text,
