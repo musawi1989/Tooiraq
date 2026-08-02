@@ -90,8 +90,9 @@
       portalTitle: "Provider portal", portalSub: "Manage your agency profile and tours on TooIraq.",
       plEmail: "Email", plPass: "Password", plAgency: "Your agency (demo)", plBtn: "Log in",
       plUser: "Username", plBad: "Wrong username or password.",
-      plDemoHint: "Testing phase — demo agency login: tooiraq / 123456",
+      plDemoHint: "Testing phase — every listed provider has a demo login: its username below with password 123456 (e.g. tooiraq / 123456).",
       plDemoAs: "Demo account — managing sample agency", plSignedAs: "Signed in as",
+      plDemoList: "View all demo usernames",
       protoNote: "Prototype mode — this portal is a working demo. Real provider accounts with secure login and a live database are the next build step. Anything you add here is saved only in this browser.",
       pNavDash: "Dashboard", pNavTours: "My tours", pNavAdd: "Add a tour", pNavOut: "Log out",
       pViews: "Profile views (30d)", pInq: "WhatsApp inquiries (30d)", pTours: "Live tours",
@@ -193,8 +194,9 @@
       portalTitle: "بوابة المزوّدين", portalSub: "أدر ملف شركتك وجولاتك على TooIraq.",
       plEmail: "البريد الإلكتروني", plPass: "كلمة المرور", plAgency: "شركتك (تجريبي)", plBtn: "تسجيل الدخول",
       plUser: "اسم المستخدم", plBad: "اسم المستخدم أو كلمة المرور غير صحيحة.",
-      plDemoHint: "مرحلة تجريبية — دخول الشركة التجريبي: tooiraq / 123456",
+      plDemoHint: "مرحلة تجريبية — لكل مزوّد مدرج دخول تجريبي: اسم المستخدم أدناه مع كلمة المرور 123456 (مثال: tooiraq / 123456).",
       plDemoAs: "حساب تجريبي — تدير شركة عينة", plSignedAs: "مسجّل الدخول باسم",
+      plDemoList: "عرض جميع أسماء المستخدمين التجريبية",
       protoNote: "وضع تجريبي — هذه البوابة نموذج عمل. حسابات المزوّدين الحقيقية مع تسجيل دخول آمن وقاعدة بيانات هي خطوة البناء التالية. ما تضيفه هنا يُحفظ في هذا المتصفح فقط.",
       pNavDash: "لوحة التحكم", pNavTours: "جولاتي", pNavAdd: "أضف جولة", pNavOut: "تسجيل الخروج",
       pViews: "مشاهدات الملف (٣٠ يوماً)", pInq: "استفسارات واتساب (٣٠ يوماً)", pTours: "جولات منشورة",
@@ -883,9 +885,13 @@
 
     if (!who) {
       /* credential-gated demo login (testing phase, Max's sample accounts):
-         tooiraq/123456 → manages the flagship sample agency;
-         admin/123456 here forwards to the admin panel. Real accounts
-         come with Supabase (portal.js takes over when configured). */
+         EVERY listed provider has a demo account — username = its
+         directory id, password 123456. "tooiraq" stays as an alias for
+         the flagship sample agency, and admin/123456 forwards to the
+         admin panel. Real accounts come with Supabase (portal.js takes
+         over when configured). */
+      const userList = AGENCIES.map((x) =>
+        '<div style="display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px solid var(--separator)"><code>' + esc(x.id) + "</code><span>" + esc(L(x.name)) + "</span></div>").join("");
       root.innerHTML =
         '<div class="container"><div class="auth-card panel">' +
         '<h1 class="t2">' + t("portalTitle") + '</h1><p class="subhead mt-2">' + t("portalSub") + "</p>" +
@@ -896,21 +902,19 @@
         '<div id="pl-err" class="form-note hide" style="color:#8E1020"></div>' +
         '<button class="btn btn-primary btn-block" id="pl-go">' + t("plBtn") + "</button>" +
         '<p class="footnote">' + t("plDemoHint") + "</p>" +
+        '<details class="footnote"><summary style="cursor:pointer">' + t("plDemoList") + '</summary><div style="max-height:220px;overflow:auto;margin-top:8px">' + userList + "</div></details>" +
         "</div></div></div>";
       const go = () => {
         const u = document.getElementById("pl-user").value.trim().toLowerCase();
         const p = document.getElementById("pl-pass").value;
-        if (u === "tooiraq" && p === "123456") {
-          store.set("tooiraq-provider", "dijla-journeys");
-          store.set("tooiraq-provider-user", "tooiraq");
-          renderPortal();
-        } else if (u === "admin" && p === "123456") {
-          store.set("tooiraq-admin", "1");
-          window.location.href = "admin.html";
-        } else {
-          const e2 = document.getElementById("pl-err");
-          e2.textContent = t("plBad"); e2.classList.remove("hide");
-        }
+        const err = () => { const e2 = document.getElementById("pl-err"); e2.textContent = t("plBad"); e2.classList.remove("hide"); };
+        if (p !== "123456") return err();
+        if (u === "admin") { store.set("tooiraq-admin", "1"); window.location.href = "admin.html"; return; }
+        const aid = u === "tooiraq" ? "dijla-journeys" : (AGENCIES.some((x) => x.id === u) ? u : null);
+        if (!aid) return err();
+        store.set("tooiraq-provider", aid);
+        store.set("tooiraq-provider-user", u);
+        renderPortal();
       };
       document.getElementById("pl-go").addEventListener("click", go);
       document.getElementById("pl-pass").addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
@@ -926,7 +930,7 @@
 
     function ptour(x, isLive) {
       return '<div class="ptour"><img alt="" src="' + SRC(x.img) + '"/>' +
-        '<div class="tx"><b>' + esc(L(x.title)) + "</b><span>" + esc(L(cityOf(x.city) || {})) + " · $" + x.price + " · " +
+        '<div class="tx"><b>' + esc(L(x.title)) + "</b><span>" + esc(locLabel(x)) + " · $" + x.price + " · " +
         (x.days > 1 ? x.days + " " + t("days") : (x.hours || 8) + " " + t("hours")) + "</span></div>" +
         '<span class="pill-status ' + (isLive ? "pill-live" : "pill-pending") + '">' + (isLive ? t("pLive") : t("pPending")) + "</span></div>";
     }
