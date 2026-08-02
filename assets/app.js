@@ -102,6 +102,15 @@
       pfMeetAr: "Meeting point (Arabic)", pfAbroad: "This tour goes outside Iraq (outbound)", pfDest: "Destination abroad",
       pfDeparts: "Cities this tour departs from", pfBack: "← Back to my tours",
       followUs: "Follow", socialsTitle: "Find us on social media",
+      edHint: "Live preview — this page looks exactly like what travelers will see. Tap any dashed text to edit it, and use the chips to change the details.",
+      edLangHint: "You're editing the English text — switch to عربي (top of page) to edit the Arabic side.",
+      edDest: "Destination", edPriceChip: "Price", edDurChip: "Duration", edGroupChip: "Group",
+      edLangsChip: "Languages", edPhotos: "Photos", edDepartsChip: "Departs from", edOutbound: "Outbound",
+      edTypeChip: "Type", edDone: "Done",
+      edNewDest: "➕ New destination", edNameEn: "Name (English)", edNameAr: "Name (Arabic)",
+      edCountryEn: "Country (English)", edCountryAr: "Country (Arabic)", edCreate: "Create & select",
+      edAddHl: "+ Add highlight", edAddStep: "+ Add itinerary step",
+      edPhotosLbl: "Photo URLs — one per line (first becomes the main photo)",
       protoNote: "Prototype mode — this portal is a working demo. Real provider accounts with secure login and a live database are the next build step. Anything you add here is saved only in this browser.",
       pNavDash: "Dashboard", pNavTours: "My tours", pNavAdd: "Add a tour", pNavOut: "Log out",
       pViews: "Profile views (30d)", pInq: "WhatsApp inquiries (30d)", pTours: "Live tours",
@@ -215,6 +224,15 @@
       pfMeetAr: "نقطة اللقاء (عربي)", pfAbroad: "هذه الجولة خارج العراق (سفر للخارج)", pfDest: "الوجهة خارج العراق",
       pfDeparts: "المدن التي تنطلق منها الجولة", pfBack: "← العودة إلى جولاتي",
       followUs: "تابعنا", socialsTitle: "تابعنا على مواقع التواصل",
+      edHint: "معاينة حية — هذه الصفحة تبدو تماماً كما سيراها المسافرون. اضغط على أي نص متقطع الإطار لتعديله، واستخدم الأزرار لتغيير التفاصيل.",
+      edLangHint: "أنت تعدّل النص العربي — بدّل إلى English (أعلى الصفحة) لتعديل النص الإنجليزي.",
+      edDest: "الوجهة", edPriceChip: "السعر", edDurChip: "المدة", edGroupChip: "المجموعة",
+      edLangsChip: "اللغات", edPhotos: "الصور", edDepartsChip: "تنطلق من", edOutbound: "خارج العراق",
+      edTypeChip: "النوع", edDone: "تم",
+      edNewDest: "➕ وجهة جديدة", edNameEn: "الاسم (إنجليزي)", edNameAr: "الاسم (عربي)",
+      edCountryEn: "الدولة (إنجليزي)", edCountryAr: "الدولة (عربي)", edCreate: "إنشاء واختيار",
+      edAddHl: "+ أضف ميزة", edAddStep: "+ أضف خطوة للبرنامج",
+      edPhotosLbl: "روابط الصور — رابط في كل سطر (الأول يصبح الصورة الرئيسية)",
       protoNote: "وضع تجريبي — هذه البوابة نموذج عمل. حسابات المزوّدين الحقيقية مع تسجيل دخول آمن وقاعدة بيانات هي خطوة البناء التالية. ما تضيفه هنا يُحفظ في هذا المتصفح فقط.",
       pNavDash: "لوحة التحكم", pNavTours: "جولاتي", pNavAdd: "أضف جولة", pNavOut: "تسجيل الخروج",
       pViews: "مشاهدات الملف (٣٠ يوماً)", pInq: "استفسارات واتساب (٣٠ يوماً)", pTours: "جولات منشورة",
@@ -307,6 +325,15 @@
      the public pages reflect a provider's edits immediately. Harmless
      when absent; replaced by the real DB once Supabase is live. */
   function applyLocalEdits() {
+    /* provider-created destinations first, so overrides/filters can
+       reference them; they join CITIES/ABROAD and therefore appear in
+       every component that renders destinations (home selectors, tour
+       filters, editor chips, admin lists). */
+    try {
+      const cd = JSON.parse(store.get("tooiraq-custom-dests") || "{}");
+      (cd.cities || []).forEach((c) => { if (c && c.id && !CITIES.some((x) => x.id === c.id)) CITIES.push(c); });
+      (cd.abroad || []).forEach((d) => { if (d && d.id && !ABROAD.some((x) => x.id === d.id)) ABROAD.push(d); });
+    } catch (e) {}
     try {
       const ov = JSON.parse(store.get("tooiraq-tour-edits") || "{}");
       TOURS.forEach((x) => { if (ov[x.id]) Object.assign(x, ov[x.id]); });
@@ -976,104 +1003,272 @@
     const drafts = allDrafts.map((d, i) => ({ d: d, i: i })).filter((z) => z.d.agency === a.id);
     const live = toursOf(a.id).filter((x) => !String(x.id).startsWith("draft"));
 
-    /* ---- editor view (add / edit any tour) ---- */
+    /* ---- editor view: LIVE PREVIEW (WYSIWYG) ----
+       Renders the tour exactly like the public tour page. Dashed text
+       is contenteditable in the CURRENT language; a compact chip bar
+       edits structured details. New tours start as a ready-made
+       sample so providers begin from something real. */
     if (portalEdit) {
-      const isDraft = portalEdit.kind === "draft";
-      const isNew = portalEdit.kind === "new";
-      const x = isNew ? { title: {}, desc: {}, highlights: {}, itinerary: [], meeting: {}, langs: [], imgs: [] }
-        : (isDraft ? (allDrafts[portalEdit.i] || {}) : (TOURS.find((z) => z.id === portalEdit.id) || {}));
-      const V = (o, side) => (o && o[side]) || "";
-      const cityOpts = CITIES.map((z) => '<option value="' + z.id + '"' + (x.city === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("");
-      const typeOpts = TYPES.map((z) => '<option value="' + z.id + '"' + (x.type === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("");
-      const destOpts = ABROAD.map((z) => '<option value="' + z.id + '"' + (x.dest === z.id ? " selected" : "") + ">" + esc(L(z.name) + " — " + L(z.country)) + "</option>").join("");
-      const depChecked = (id) => ((x.departsFrom && x.departsFrom.length) ? x.departsFrom.includes(id) : (!x.abroad && id === x.city));
-      const depChecks = CITIES.map((z) =>
-        '<label class="f-check"><input type="checkbox" class="pf-dep" value="' + z.id + '"' + (depChecked(z.id) ? " checked" : "") + "/>" + esc(L(z)) + "</label>").join("");
-      const itinTxt = (side) => (x.itinerary || []).map((s) => V(s.t, side) + " | " + V(s.d, side)).join("\n");
-
-      root.innerHTML =
-        '<div class="container" style="padding:24px 0 64px;max-width:760px">' +
-        '<a href="#" id="pf-back" class="footnote">' + t("pfBack") + "</a>" +
-        '<h1 class="t2 mt-2">' + (isNew ? t("pAddTitle") : t("pfEdit") + " — " + esc(L(x.title))) + "</h1>" +
-        '<div class="notice-proto mt-4">' + t("protoNote") + "</div>" +
-        '<div class="panel mt-4"><div class="form-grid">' +
-        '<div class="form-row"><div><label>' + t("pfTitleEn") + '</label><input id="pf-ten" value="' + esc(V(x.title, "en")) + '"/></div>' +
-        "<div><label>" + t("pfTitleAr") + '</label><input id="pf-tar" dir="rtl" value="' + esc(V(x.title, "ar")) + '"/></div></div>' +
-        '<div class="form-row"><div><label>' + t("pfCity") + '</label><select id="pf-city">' + cityOpts + "</select></div>" +
-        "<div><label>" + t("pfType") + '</label><select id="pf-type">' + typeOpts + "</select></div></div>" +
-        '<div class="form-row"><div style="display:flex;align-items:end"><label class="f-check" style="margin-bottom:6px"><input type="checkbox" id="pf-abroad"' + (x.abroad ? " checked" : "") + "/>" + t("pfAbroad") + "</label></div>" +
-        '<div id="pf-dest-wrap"' + (x.abroad ? "" : ' style="display:none"') + "><label>" + t("pfDest") + '</label><select id="pf-dest">' + destOpts + "</select></div></div>" +
-        "<div><label>" + t("pfDeparts") + '</label><div class="pe-city-checks">' + depChecks + "</div></div>" +
-        '<div class="form-row"><div><label>' + t("pfDays") + '</label><input id="pf-days" type="number" min="1" value="' + (x.days || 1) + '"/></div>' +
-        "<div><label>" + t("pfHours") + '</label><input id="pf-hours" type="number" min="1" max="24" value="' + (x.hours || 8) + '"/></div></div>' +
-        '<div class="form-row"><div><label>' + t("pfPrice") + '</label><input id="pf-price" type="number" min="0" value="' + (x.price || 0) + '"/></div>' +
-        "<div><label>" + t("pfGroup") + '</label><input id="pf-group" type="number" min="1" value="' + (x.groupMax || 10) + '"/></div></div>' +
-        '<div class="form-row"><div><label>' + t("pfLangs") + '</label><input id="pf-langs" value="' + esc((x.langs || []).join(" ")) + '" placeholder="EN AR"/></div>' +
-        '<div style="display:flex;align-items:end"><label class="f-check" style="margin-bottom:6px"><input type="checkbox" id="pf-cancel"' + (x.cancel !== false ? " checked" : "") + "/>" + t("pfCancel") + "</label></div></div>" +
-        "<div><label>" + t("pfDescEn") + '</label><textarea id="pf-den">' + esc(V(x.desc, "en")) + "</textarea></div>" +
-        "<div><label>" + t("pfDescAr") + '</label><textarea id="pf-dar" dir="rtl">' + esc(V(x.desc, "ar")) + "</textarea></div>" +
-        '<div class="form-row"><div><label>' + t("pfHi") + '</label><textarea id="pf-hen">' + esc(((x.highlights || {}).en || []).join("\n")) + "</textarea></div>" +
-        "<div><label>" + t("pfHiAr") + '</label><textarea id="pf-har" dir="rtl">' + esc(((x.highlights || {}).ar || []).join("\n")) + "</textarea></div></div>" +
-        '<div class="form-row"><div><label>' + t("pfItinEn") + '</label><textarea id="pf-ien">' + esc(itinTxt("en")) + "</textarea></div>" +
-        "<div><label>" + t("pfItinAr") + '</label><textarea id="pf-iar" dir="rtl">' + esc(itinTxt("ar")) + "</textarea></div></div>" +
-        '<div class="form-row"><div><label>' + t("pfMeet") + ' (EN)</label><input id="pf-men" value="' + esc(V(x.meeting, "en")) + '"/></div>' +
-        "<div><label>" + t("pfMeetAr") + '</label><input id="pf-mar" dir="rtl" value="' + esc(V(x.meeting, "ar")) + '"/></div></div>' +
-        "<div><label>" + t("pfImgs") + '</label><textarea id="pf-imgs">' + esc((x.imgs || []).join("\n")) + "</textarea></div>" +
-        '<div id="pf-msg" class="form-note"></div>' +
-        '<button class="btn btn-primary" id="pf-save">' + (isNew ? t("pfSave") : t("pfSaveChanges")) + "</button>" +
-        "</div></div></div>";
-
-      document.getElementById("pf-back").addEventListener("click", (e) => { e.preventDefault(); portalEdit = null; renderPortal(); });
-      document.getElementById("pf-abroad").addEventListener("change", (e) => {
-        document.getElementById("pf-dest-wrap").style.display = e.target.checked ? "" : "none";
-      });
-      document.getElementById("pf-save").addEventListener("click", () => {
-        const g = (id) => document.getElementById(id).value;
-        const abroad = document.getElementById("pf-abroad").checked;
-        const parseItin = () => {
-          const en = g("pf-ien").split("\n").filter((s) => s.trim());
-          const ar = g("pf-iar").split("\n").filter((s) => s.trim());
-          return en.map((line, i2) => {
-            const [te, de] = line.split("|").map((s) => (s || "").trim());
-            const [ta, da] = (ar[i2] || "").split("|").map((s) => (s || "").trim());
-            return { t: { en: te || "", ar: ta || te || "" }, d: { en: de || "", ar: da || de || "" } };
-          });
+      if (!portalEdit.w) {
+        const sample = {
+          title: { en: "Your Tour Name — tap to edit", ar: "اسم جولتك — اضغط للتعديل" },
+          desc: { en: "Describe your tour here: what travelers will see, what makes it special, and what is included in the price.", ar: "صف جولتك هنا: ما الذي سيراه المسافرون، وما الذي يميزها، وما المشمول في السعر." },
+          city: "baghdad", type: "culture", abroad: false, dest: null, departsFrom: [],
+          days: 1, hours: 8, price: 75, groupMax: 10, langs: ["EN", "AR"], cancel: true,
+          highlights: { en: ["Licensed local guide", "Transport included", "Entry tickets"], ar: ["مرشد محلي مجاز", "النقل مشمول", "تذاكر الدخول"] },
+          itinerary: [
+            { t: { en: "Morning — departure", ar: "الصباح — الانطلاق" }, d: { en: "Pickup and drive to the first stop.", ar: "الانطلاق والتوجه إلى المحطة الأولى." } },
+            { t: { en: "Afternoon — main visit", ar: "بعد الظهر — الزيارة الرئيسية" }, d: { en: "Guided visit and free time.", ar: "جولة مرشدة ووقت حر." } }
+          ],
+          meeting: { en: "Hotel pickup, 8:00 AM", ar: "النقل من الفندق، ٨:٠٠ صباحاً" }, imgs: []
         };
-        const patch = {
-          title: { en: g("pf-ten").trim() || "Untitled tour", ar: g("pf-tar").trim() || g("pf-ten").trim() || "جولة" },
-          city: abroad ? null : g("pf-city"), type: g("pf-type"),
-          abroad: abroad, dest: abroad ? g("pf-dest") : null,
-          departsFrom: Array.from(document.querySelectorAll(".pf-dep:checked")).map((cb) => cb.value),
-          days: +g("pf-days") || 1, hours: +g("pf-hours") || null,
-          price: +g("pf-price") || 0, groupMax: +g("pf-group") || 10,
-          langs: g("pf-langs").split(/[\s,·]+/).filter(Boolean).map((s) => s.toUpperCase()),
-          cancel: document.getElementById("pf-cancel").checked,
-          desc: { en: g("pf-den"), ar: g("pf-dar") },
-          highlights: { en: g("pf-hen").split("\n").filter(Boolean), ar: g("pf-har").split("\n").filter(Boolean) },
-          itinerary: parseItin(),
-          meeting: { en: g("pf-men"), ar: g("pf-mar") || g("pf-men") },
-          imgs: g("pf-imgs").split("\n").map((s) => s.trim()).filter(Boolean)
-        };
-        if (isNew) {
-          allDrafts.push(Object.assign({ agency: a.id, img: patch.imgs[0] || CITY_IMG[patch.city] || "babylon", rating: 0, reviews: 0 }, patch));
-          store.set("tooiraq-drafts", JSON.stringify(allDrafts));
-          portalEdit = null; renderPortal(); return;
-        }
-        if (isDraft) {
-          Object.assign(allDrafts[portalEdit.i], patch);
-          store.set("tooiraq-drafts", JSON.stringify(allDrafts));
-        } else {
-          /* live catalog tour → browser-local override, visible across
-             the whole site in this browser during the demo */
-          let ov = {}; try { ov = JSON.parse(store.get("tooiraq-tour-edits") || "{}"); } catch (e) {}
-          ov[portalEdit.id] = Object.assign(ov[portalEdit.id] || {}, patch);
-          store.set("tooiraq-tour-edits", JSON.stringify(ov));
-          const liveT = TOURS.find((z) => z.id === portalEdit.id);
-          if (liveT) Object.assign(liveT, patch);
-        }
-        const m = document.getElementById("pf-msg");
-        m.textContent = t("pfSavedLocal"); m.style.color = "var(--color-accent)";
-      });
+        const src0 = portalEdit.kind === "new" ? sample
+          : portalEdit.kind === "draft" ? (allDrafts[portalEdit.i] || sample)
+          : (TOURS.find((z) => z.id === portalEdit.id) || sample);
+        portalEdit.w = JSON.parse(JSON.stringify({
+          title: src0.title || {}, desc: src0.desc || {},
+          city: src0.city || "baghdad", type: src0.type || "culture",
+          abroad: !!src0.abroad, dest: src0.dest || null,
+          departsFrom: src0.departsFrom || [], days: src0.days || 1, hours: src0.hours || 8,
+          price: src0.price || 0, groupMax: src0.groupMax || 10,
+          langs: src0.langs && src0.langs.length ? src0.langs : ["EN", "AR"],
+          cancel: src0.cancel !== false,
+          highlights: { en: (src0.highlights && src0.highlights.en) || [], ar: (src0.highlights && src0.highlights.ar) || [] },
+          itinerary: src0.itinerary || [], meeting: src0.meeting || {},
+          imgs: src0.imgs || [], img: src0.img || null,
+          rating: src0.rating || 0, reviews: src0.reviews || 0
+        }));
+      }
+      const w = portalEdit.w;
+      const side = lang;
+
+      const syncText = () => {
+        root.querySelectorAll("[data-ed]").forEach((el) => {
+          const v = el.textContent.trim(), i = +el.dataset.i;
+          const k = el.dataset.ed;
+          if (k === "title") w.title[side] = v;
+          else if (k === "desc") w.desc[side] = v;
+          else if (k === "meet") w.meeting[side] = v;
+          else if (k === "hl") w.highlights[side][i] = v;
+          else if (k === "it-t") { if (w.itinerary[i]) w.itinerary[i].t[side] = v; }
+          else if (k === "it-d") { if (w.itinerary[i]) w.itinerary[i].d[side] = v; }
+        });
+      };
+
+      const slugify = (s) => (s || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || ("dest-" + (CITIES.length + ABROAD.length + 1));
+      const persistCustomDest = (kind, obj) => {
+        let cd = { cities: [], abroad: [] };
+        try { cd = Object.assign({ cities: [], abroad: [] }, JSON.parse(store.get("tooiraq-custom-dests") || "{}")); } catch (e) {}
+        cd[kind].push(obj); store.set("tooiraq-custom-dests", JSON.stringify(cd));
+      };
+
+      function paintEditor() {
+        const wt = { title: w.title, city: w.city, abroad: w.abroad, dest: w.dest, departsFrom: w.departsFrom, days: w.days, hours: w.hours };
+        const gallery = (w.imgs && w.imgs.length ? w.imgs.slice(0, 5)
+          : [w.img, CITY_IMG[w.city], "river", "marsh", "babylon"].filter(Boolean))
+          .filter((v, i2, arr) => arr.indexOf(v) === i2).slice(0, 5);
+        while (gallery.length < 5) gallery.push(gallery[0] || "baghdad");
+        const chip = (key, ic, lbl, on) =>
+          '<button type="button" class="ed-chip' + (portalEdit.panel === key ? " open" : "") + (on ? " on" : "") + '" data-chip="' + key + '">' + ic + " " + lbl + "</button>";
+        const P = portalEdit.panel;
+        const destSel = w.abroad
+          ? '<label>' + t("edDest") + '</label><select id="edp-dest">' + ABROAD.map((z) => '<option value="' + z.id + '"' + (w.dest === z.id ? " selected" : "") + ">" + esc(L(z.name) + " — " + L(z.country)) + "</option>").join("") + "</select>"
+          : '<label>' + t("edDest") + '</label><select id="edp-dest">' + CITIES.map((z) => '<option value="' + z.id + '"' + (w.city === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("") + "</select>";
+        const newDestForm =
+          '<div class="ed-newdest"><label style="color:var(--color-primary)">' + t("edNewDest") + "</label>" +
+          '<div class="form-row"><div><label>' + t("edNameEn") + '</label><input id="ednd-en"/></div>' +
+          "<div><label>" + t("edNameAr") + '</label><input id="ednd-ar" dir="rtl"/></div></div>' +
+          (w.abroad ? '<div class="form-row"><div><label>' + t("edCountryEn") + '</label><input id="ednd-cen"/></div>' +
+            "<div><label>" + t("edCountryAr") + '</label><input id="ednd-car" dir="rtl"/></div></div>' : "") +
+          '<button type="button" class="ed-add" id="ednd-go" style="margin-top:8px">' + t("edCreate") + "</button></div>";
+        const panelHTML =
+          P === "dest" ? destSel + newDestForm :
+          P === "type" ? '<label>' + t("edTypeChip") + '</label><select id="edp-type">' + TYPES.map((z) => '<option value="' + z.id + '"' + (w.type === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("") + "</select>" :
+          P === "price" ? '<label>' + t("pfPrice") + '</label><input id="edp-price" type="number" min="0" value="' + (w.price || 0) + '"/>' :
+          P === "dur" ? '<div class="form-row"><div><label>' + t("pfDays") + '</label><input id="edp-days" type="number" min="1" value="' + (w.days || 1) + '"/></div>' +
+            "<div><label>" + t("pfHours") + '</label><input id="edp-hours" type="number" min="1" max="24" value="' + (w.hours || 8) + '"/></div></div>' :
+          P === "group" ? '<label>' + t("pfGroup") + '</label><input id="edp-group" type="number" min="1" value="' + (w.groupMax || 10) + '"/>' :
+          P === "langs" ? '<label>' + t("pfLangs") + '</label><input id="edp-langs" value="' + esc((w.langs || []).join(" ")) + '"/>' :
+          P === "photos" ? '<label>' + t("edPhotosLbl") + '</label><textarea id="edp-imgs">' + esc((w.imgs || []).join("\n")) + "</textarea>" :
+          P === "departs" ? '<label>' + t("pfDeparts") + '</label><div class="chip-multi">' +
+            CITIES.map((z) => '<button type="button" class="pf-chip' + ((w.departsFrom || []).includes(z.id) ? " on" : "") + '" data-dep="' + z.id + '">' + esc(L(z)) + "</button>").join("") + "</div>" :
+          "";
+
+        root.innerHTML =
+          '<div class="container" style="padding:16px 0 8px">' +
+          '<a href="#" id="pf-back" class="footnote">' + t("pfBack") + "</a>" +
+          '<div class="notice-proto mt-2">' + t("edHint") + " " + t("edLangHint") + "</div>" +
+          '<div class="ed-bar"><div class="ed-chips">' +
+          chip("dest", "📍", t("edDest")) + chip("type", "🗂", t("edTypeChip")) +
+          chip("price", "💵", t("edPriceChip")) + chip("dur", "🕐", t("edDurChip")) +
+          chip("group", "👥", t("edGroupChip")) + chip("langs", "🗣", t("edLangsChip")) +
+          chip("photos", "🖼", t("edPhotos")) + chip("departs", "🚌", t("edDepartsChip")) +
+          chip("outbound", "🛫", t("edOutbound"), w.abroad) +
+          chip("cancel", "↩", t("pfCancel"), w.cancel) +
+          "</div>" +
+          (panelHTML ? '<div class="ed-panel">' + panelHTML + "</div>" : "") +
+          '<div id="pf-msg" class="form-note" style="margin-top:6px"></div>' +
+          "</div></div>" +
+
+          '<div class="container detail-top">' +
+          '<div class="crumbs">' + t("crumbHome") + " / " + t("crumbTours") + " / " + esc(locLabel(wt)) + "</div>" +
+          '<div class="detail-title-row"><div><h1 contenteditable="true" data-ed="title">' + esc(V2(w.title)) + "</h1>" +
+          '<div class="detail-sub">' +
+          (w.rating ? '<span class="rating-row"><b>' + w.rating.toFixed(1) + "</b>" + starsHTML(w.rating) + "<span>(" + w.reviews + " " + t("reviewsWord") + ")</span></span>"
+            : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") +
+          "<span>📍 " + esc(locLabel(wt)) + "</span><span>🗂 " + esc(L(typeOf(w.type))) + "</span><span>🕐 " + durLbl(w) + "</span>" +
+          (w.groupMax ? "<span>👥 " + t("upTo") + " " + w.groupMax + "</span>" : "") + departBadgeHTML(wt) + "</div></div></div>" +
+          '<div class="gallery"><a class="g-main"><img alt="" src="' + SRC(gallery[0]) + '"/></a>' +
+          gallery.slice(1).map((g) => '<a><img loading="lazy" alt="" src="' + SRC(g) + '"/></a>').join("") + "</div></div>" +
+
+          '<div class="container detail-layout"><div class="detail-main">' +
+          '<div class="panel"><h2>' + t("aboutTitle") + '</h2><p contenteditable="true" data-ed="desc">' + esc(V2(w.desc)) + "</p>" +
+          '<div class="mt-4" style="display:flex;gap:8px;flex-wrap:wrap">' +
+          (w.cancel ? '<span class="badge badge-save">✓ ' + t("freeCancel") + "</span>" : "") +
+          '<span class="badge badge-save">🗣 ' + t("langsWord") + ": " + (w.langs || []).join(" · ") + "</span></div></div>" +
+          '<div class="panel"><h2>' + t("incTitle") + '</h2><div class="inc-grid">' +
+          (w.highlights[side] || []).map((h, i2) =>
+            '<div class="inc-item"><span class="tick">✓</span><span contenteditable="true" data-ed="hl" data-i="' + i2 + '">' + esc(h) + '</span><button type="button" class="ed-x" data-delhl="' + i2 + '">✕</button></div>').join("") +
+          '</div><button type="button" class="ed-add" id="ed-addhl">' + t("edAddHl") + "</button></div>" +
+          '<div class="panel"><h2>' + t("itinTitle") + '</h2><ul class="itin">' +
+          (w.itinerary || []).map((s, i2) =>
+            '<li><span class="dot">' + (i2 + 1) + '</span><span class="tx"><b contenteditable="true" data-ed="it-t" data-i="' + i2 + '">' + esc(V2(s.t)) + '</b><span contenteditable="true" data-ed="it-d" data-i="' + i2 + '">' + esc(V2(s.d)) + "</span></span>" +
+            '<button type="button" class="ed-x" data-delit="' + i2 + '">✕</button></li>').join("") +
+          '</ul><button type="button" class="ed-add" id="ed-addit">' + t("edAddStep") + "</button></div>" +
+          '<div class="panel"><h2>' + t("meetTitle") + '</h2><p>📍 <span contenteditable="true" data-ed="meet">' + esc(V2(w.meeting)) + "</span></p></div>" +
+          "</div>" +
+
+          '<aside><div class="panel bookbox">' +
+          (w.price
+            ? '<div><span class="from">' + t("from") + '</span><div class="amount">$' + w.price + " <small>" + t("perPerson") + "</small></div>" +
+              (w.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") + "</div>"
+            : '<div><div class="amount" style="font-size:22px">' + t("poa") + "</div></div>") +
+          '<div class="field"><label>' + t("bbDate") + '</label><input type="date" disabled/></div>' +
+          '<div class="field"><label>' + t("bbPax") + '</label><select disabled><option>' + t("pax1") + "</option></select></div>" +
+          '<button class="btn btn-wa btn-block" disabled>' + t("bookWa") + "</button>" +
+          '<button class="btn btn-tint btn-block" disabled>' + t("bookReq") + "</button>" +
+          '<p class="bb-note">' + t("bbNote") + "</p>" +
+          '<div class="bb-agency"><div class="alogo" style="background:#CE1126;width:42px;height:42px;border-radius:10px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center">' + a.initials + '</div><div><span class="footnote">' + t("offeredBy") + "</span><br><b>" + esc(L(a.name)) + "</b></div></div>" +
+          socialsHTML(a, true) +
+          "</div></aside></div>" +
+
+          '<div class="ed-savebar"><button class="btn btn-outline" id="pf-back2">' + t("pfBack") + "</button>" +
+          '<button class="btn btn-primary" id="pf-save">' + (portalEdit.kind === "new" ? t("pfSave") : t("pfSaveChanges")) + "</button></div>";
+
+        document.body.classList.add("has-edbar");
+        const repaint = () => { syncText(); paintEditor(); };
+        const back = (e) => { e.preventDefault(); portalEdit = null; document.body.classList.remove("has-edbar"); renderPortal(); window.scrollTo(0, 0); };
+        document.getElementById("pf-back").addEventListener("click", back);
+        document.getElementById("pf-back2").addEventListener("click", back);
+
+        root.querySelectorAll("[data-chip]").forEach((b) => b.addEventListener("click", () => {
+          const k = b.dataset.chip;
+          syncText();
+          if (k === "outbound") {
+            w.abroad = !w.abroad;
+            if (w.abroad && !w.dest) w.dest = ABROAD[0] && ABROAD[0].id;
+            if (!w.abroad && !w.city) w.city = "baghdad";
+            portalEdit.panel = "dest";
+          } else if (k === "cancel") {
+            w.cancel = !w.cancel;
+          } else {
+            portalEdit.panel = portalEdit.panel === k ? null : k;
+          }
+          paintEditor();
+        }));
+
+        const bind = (id, fn, ev) => { const el = document.getElementById(id); if (el) el.addEventListener(ev || "change", fn); };
+        bind("edp-dest", () => { syncText(); const v = document.getElementById("edp-dest").value; if (w.abroad) w.dest = v; else w.city = v; paintEditor(); });
+        bind("edp-type", () => { syncText(); w.type = document.getElementById("edp-type").value; paintEditor(); });
+        bind("edp-price", () => { syncText(); w.price = +document.getElementById("edp-price").value || 0; paintEditor(); });
+        bind("edp-days", () => { syncText(); w.days = +document.getElementById("edp-days").value || 1; paintEditor(); });
+        bind("edp-hours", () => { syncText(); w.hours = +document.getElementById("edp-hours").value || null; paintEditor(); });
+        bind("edp-group", () => { syncText(); w.groupMax = +document.getElementById("edp-group").value || 10; paintEditor(); });
+        bind("edp-langs", () => { syncText(); w.langs = document.getElementById("edp-langs").value.split(/[\s,·]+/).filter(Boolean).map((s) => s.toUpperCase()); paintEditor(); });
+        bind("edp-imgs", () => { syncText(); w.imgs = document.getElementById("edp-imgs").value.split("\n").map((s) => s.trim()).filter(Boolean); paintEditor(); });
+        root.querySelectorAll("[data-dep]").forEach((b) => b.addEventListener("click", () => {
+          syncText();
+          const id = b.dataset.dep, ix = (w.departsFrom || []).indexOf(id);
+          if (ix >= 0) w.departsFrom.splice(ix, 1); else (w.departsFrom = w.departsFrom || []).push(id);
+          paintEditor();
+        }));
+        bind("ednd-go", () => {
+          const en = (document.getElementById("ednd-en") || {}).value || "";
+          const ar = (document.getElementById("ednd-ar") || {}).value || "";
+          if (!en.trim() && !ar.trim()) return;
+          syncText();
+          const id = slugify(en || ar);
+          if (w.abroad) {
+            const cen = (document.getElementById("ednd-cen") || {}).value || "";
+            const car = (document.getElementById("ednd-car") || {}).value || "";
+            if (!ABROAD.some((z) => z.id === id)) {
+              const obj = { id: id, name: { en: en.trim() || ar.trim(), ar: ar.trim() || en.trim() }, country: { en: cen.trim(), ar: car.trim() || cen.trim() }, custom: true };
+              ABROAD.push(obj); persistCustomDest("abroad", obj);
+            }
+            w.dest = id;
+          } else {
+            if (!CITIES.some((z) => z.id === id)) {
+              const obj = { id: id, en: en.trim() || ar.trim(), ar: ar.trim() || en.trim(), motif: "dome", color: "art-teal", custom: true };
+              CITIES.push(obj); persistCustomDest("cities", obj);
+            }
+            w.city = id;
+          }
+          paintEditor();
+        }, "click");
+        bind("ed-addhl", () => {
+          syncText();
+          (w.highlights.en = w.highlights.en || []).push(side === "en" ? "New highlight" : "ميزة جديدة");
+          (w.highlights.ar = w.highlights.ar || []).push(side === "ar" ? "ميزة جديدة" : "New highlight");
+          paintEditor();
+        }, "click");
+        root.querySelectorAll("[data-delhl]").forEach((b) => b.addEventListener("click", () => {
+          syncText(); const i2 = +b.dataset.delhl;
+          (w.highlights.en || []).splice(i2, 1); (w.highlights.ar || []).splice(i2, 1);
+          paintEditor();
+        }));
+        bind("ed-addit", () => {
+          syncText();
+          (w.itinerary = w.itinerary || []).push({ t: { en: "New step", ar: "خطوة جديدة" }, d: { en: "Describe this part of the day.", ar: "صف هذا الجزء من اليوم." } });
+          paintEditor();
+        }, "click");
+        root.querySelectorAll("[data-delit]").forEach((b) => b.addEventListener("click", () => {
+          syncText(); (w.itinerary || []).splice(+b.dataset.delit, 1); paintEditor();
+        }));
+
+        document.getElementById("pf-save").addEventListener("click", () => {
+          syncText();
+          const patch = {
+            title: { en: (w.title.en || w.title.ar || "Untitled tour").trim(), ar: (w.title.ar || w.title.en || "جولة").trim() },
+            city: w.abroad ? null : w.city, type: w.type,
+            abroad: w.abroad, dest: w.abroad ? w.dest : null,
+            departsFrom: w.departsFrom || [],
+            days: w.days || 1, hours: w.hours || null,
+            price: w.price || 0, groupMax: w.groupMax || 10,
+            langs: w.langs || [], cancel: !!w.cancel,
+            desc: w.desc, highlights: w.highlights, itinerary: w.itinerary,
+            meeting: w.meeting, imgs: w.imgs
+          };
+          if (portalEdit.kind === "new") {
+            allDrafts.push(Object.assign({ agency: a.id, img: patch.imgs[0] || CITY_IMG[patch.city] || "babylon", rating: 0, reviews: 0 }, patch));
+            store.set("tooiraq-drafts", JSON.stringify(allDrafts));
+            portalEdit.kind = "draft"; portalEdit.i = allDrafts.length - 1;
+          } else if (portalEdit.kind === "draft") {
+            Object.assign(allDrafts[portalEdit.i], patch);
+            store.set("tooiraq-drafts", JSON.stringify(allDrafts));
+          } else {
+            let ov = {}; try { ov = JSON.parse(store.get("tooiraq-tour-edits") || "{}"); } catch (e) {}
+            ov[portalEdit.id] = Object.assign(ov[portalEdit.id] || {}, patch);
+            store.set("tooiraq-tour-edits", JSON.stringify(ov));
+            const liveT = TOURS.find((z) => z.id === portalEdit.id);
+            if (liveT) Object.assign(liveT, patch);
+          }
+          const m = document.getElementById("pf-msg");
+          m.textContent = t("pfSavedLocal"); m.style.color = "var(--color-accent)";
+          window.scrollTo(0, 0);
+        });
+      }
+      const V2 = (o) => (o && (o[side] || o.en)) || "";
+      paintEditor();
       return;
     }
 
