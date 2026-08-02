@@ -124,7 +124,10 @@
       fcDaysLbl: "Days notice needed for free cancellation",
       errRequired: "Please fill in the missing information:",
       vTitle: "Tour title", vDesc: "Description", vMeet: "Meeting point", vDur: "Duration (number)", vLangs: "At least one language",
-      edUpload: "⬆ Upload from gallery", edImgTooBig: "That image is too large to store in the demo — try a smaller one or use a URL.",
+      edUpload: "Upload from gallery", edImgTooBig: "That image is too large to store in the demo — try a smaller one or use a URL.",
+      edImgSelectedPre: "Photo", edImgSelectedPost: "what would you like to do?",
+      edReplaceUpload: "Replace — upload from gallery", edMoveEarlier: "Move earlier", edMoveLater: "Move later",
+      edApplyLink: "Use image link", edAddImgHead: "New photo — upload from your gallery, or paste an image link below:",
       protoNote: "Prototype mode — this portal is a working demo. Real provider accounts with secure login and a live database are the next build step. Anything you add here is saved only in this browser.",
       pNavDash: "Dashboard", pNavTours: "My tours", pNavAdd: "Add a tour", pNavOut: "Log out",
       pViews: "Profile views (30d)", pInq: "WhatsApp inquiries (30d)", pTours: "Live tours",
@@ -260,7 +263,10 @@
       fcDaysLbl: "عدد أيام الإشعار المطلوبة للإلغاء المجاني",
       errRequired: "يرجى إكمال المعلومات الناقصة:",
       vTitle: "عنوان الجولة", vDesc: "الوصف", vMeet: "نقطة اللقاء", vDur: "المدة (رقم)", vLangs: "لغة واحدة على الأقل",
-      edUpload: "⬆ رفع من المعرض", edImgTooBig: "الصورة كبيرة جداً للتخزين في التجربة — جرّب صورة أصغر أو استخدم رابطاً.",
+      edUpload: "رفع من المعرض", edImgTooBig: "الصورة كبيرة جداً للتخزين في التجربة — جرّب صورة أصغر أو استخدم رابطاً.",
+      edImgSelectedPre: "الصورة", edImgSelectedPost: "ماذا تريد أن تفعل؟",
+      edReplaceUpload: "استبدال — رفع من المعرض", edMoveEarlier: "قدّم", edMoveLater: "أخّر",
+      edApplyLink: "استخدام الرابط", edAddImgHead: "صورة جديدة — ارفعها من معرض جهازك أو الصق رابطاً أدناه:",
       protoNote: "وضع تجريبي — هذه البوابة نموذج عمل. حسابات المزوّدين الحقيقية مع تسجيل دخول آمن وقاعدة بيانات هي خطوة البناء التالية. ما تضيفه هنا يُحفظ في هذا المتصفح فقط.",
       pNavDash: "لوحة التحكم", pNavTours: "جولاتي", pNavAdd: "أضف جولة", pNavOut: "تسجيل الخروج",
       pViews: "مشاهدات الملف (٣٠ يوماً)", pInq: "استفسارات واتساب (٣٠ يوماً)", pTours: "جولات منشورة",
@@ -1175,19 +1181,20 @@
           '<div class="crumbs">' + t("crumbHome") + " / " + t("crumbTours") + " / " + esc(locLabel(wt)) + "</div>" +
           '<div class="detail-title-row"><div><h1 contenteditable="true" data-ed="title">' + esc(V2(w.title)) + "</h1>" +
 
-          /* facts row — everything edits right here */
-          '<div class="detail-sub" style="align-items:center">' +
+          /* facts — every option labeled with what it is */
+          '<div class="detail-sub" style="align-items:center;margin-bottom:4px">' +
           (w.rating ? '<span class="rating-row"><b>' + w.rating.toFixed(1) + "</b>" + starsHTML(w.rating) + "<span>(" + w.reviews + " " + t("reviewsWord") + ")</span></span>"
-            : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") +
-          '<span>📍 <select class="ed-mini-sel" id="edv-dest">' + destOpts + '</select>' +
-          '<button type="button" class="ed-plus" id="edv-newdest" title="' + t("edNewDest") + '">＋</button></span>' +
-          '<span>🗂 <select class="ed-mini-sel" id="edv-type">' + typeOpts + "</select></span>" +
-          '<span>🕐 <select class="ed-mini-sel" id="edv-durunit">' +
+            : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") + "</div>" +
+          '<div class="ed-facts">' +
+          '<div class="ed-fact"><label>📍 ' + t("edDest") + '</label><div class="ed-fact-c"><select class="ed-mini-sel" id="edv-dest">' + destOpts + "</select>" +
+          '<button type="button" class="ed-plus" id="edv-newdest" title="' + t("edNewDest") + '">＋</button></div></div>' +
+          '<div class="ed-fact"><label>🗂 ' + t("edTypeChip") + '</label><div class="ed-fact-c"><select class="ed-mini-sel" id="edv-type">' + typeOpts + "</select></div></div>" +
+          '<div class="ed-fact"><label>🕐 ' + t("durUnit") + '</label><div class="ed-fact-c"><select class="ed-mini-sel" id="edv-durunit">' +
           '<option value="days"' + ((w.days || 1) > 1 ? " selected" : "") + ">" + t("durDays") + "</option>" +
-          '<option value="hours"' + ((w.days || 1) <= 1 ? " selected" : "") + ">" + t("durHours") + "</option></select> " +
-          mini("edv-durval", (w.days || 1) > 1 ? w.days : (w.hours || 8), 56) + "</span>" +
-          "<span>👥 " + t("upTo") + " " + mini("edv-group", w.groupMax || 10, 48) + "</span>" +
-          '<button type="button" class="ed-chip' + (w.abroad ? " on" : "") + '" id="edv-abroad">🛫 ' + t("edOutbound") + "</button>" +
+          '<option value="hours"' + ((w.days || 1) <= 1 ? " selected" : "") + ">" + t("durHours") + "</option></select>" +
+          mini("edv-durval", (w.days || 1) > 1 ? w.days : (w.hours || 8), 56) + "</div></div>" +
+          '<div class="ed-fact"><label>👥 ' + t("pfGroup") + '</label><div class="ed-fact-c">' + mini("edv-group", w.groupMax || 10, 56) + "</div></div>" +
+          '<div class="ed-fact"><label>🛫 ' + t("edOutbound") + '</label><div class="ed-fact-c"><button type="button" class="ed-chip' + (w.abroad ? " on" : "") + '" id="edv-abroad">' + (w.abroad ? "✓ " : "") + t("edOutbound") + "</button></div></div>" +
           "</div>" +
 
           /* departs-from as compact pills, right under the facts */
@@ -1203,26 +1210,35 @@
             : "") +
           "</div></div>" +
 
-          /* gallery with in-place management */
+          /* gallery — tapping a photo opens its action card RIGHT UNDER it */
           '<div class="gallery">' +
           gal.map((g, i2) =>
-            (i2 === 0 ? '<a class="g-main g-tile' : '<a class="g-tile') + (sel === i2 ? " g-sel" : "") + '" data-gi="' + i2 + '"><img alt="" src="' + SRC(g) + '"/>' +
+            ((i2 === 0 ? '<a class="g-main g-tile' : '<a class="g-tile') + (sel === i2 ? " g-sel" : "") + '" data-gi="' + i2 + '"><img alt="" src="' + SRC(g) + '"/>' +
             '<span class="g-badge">' + (i2 + 1) + "</span>" +
-            '<span class="g-tools"><button type="button" class="ed-gbtn" data-repl="' + i2 + '" title="' + esc(t("edApply")) + '">↻</button>' +
-            '<button type="button" class="ed-gbtn" data-delimg="' + i2 + '" title="' + esc(t("edRemoveImg")) + '">✕</button></span></a>').join("") +
+            '<span class="g-tools"><button type="button" class="ed-gbtn" data-repl="' + i2 + '" title="' + esc(t("edReplaceUpload")) + '">↻</button>' +
+            '<button type="button" class="ed-gbtn" data-delimg="' + i2 + '" title="' + esc(t("edRemoveImg")) + '">✕</button></span></a>') +
+            (sel === i2
+              ? '<div class="g-actions" id="g-actions">' +
+                '<div class="g-actions-head">🖼 ' + t("edImgSelectedPre") + " " + (i2 + 1) + " — " + t("edImgSelectedPost") + "</div>" +
+                '<div class="g-actions-btns">' +
+                '<button type="button" class="btn btn-primary btn-sm" id="edv-upload">⬆ ' + t("edReplaceUpload") + "</button>" +
+                '<button type="button" class="btn btn-outline btn-sm" id="edv-imgdel">✕ ' + t("edRemoveImg") + "</button>" +
+                '<button type="button" class="btn btn-outline btn-sm" id="edv-imgleft">◀ ' + t("edMoveEarlier") + "</button>" +
+                '<button type="button" class="btn btn-outline btn-sm" id="edv-imgright">▶ ' + t("edMoveLater") + "</button></div>" +
+                '<div class="ed-urlrow"><input id="edv-imgurl" placeholder="https://…" value="' + esc(/^https?:/.test(gal[i2] || "") ? gal[i2] : "") + '"/>' +
+                '<button type="button" class="btn btn-outline btn-sm" id="edv-imgapply">' + t("edApplyLink") + "</button></div></div>"
+              : "")).join("") +
           '<a class="g-tile g-addtile" id="edv-addimg"><span>' + t("edAddImg") + "</span></a>" +
+          (portalEdit.addingImg
+            ? '<div class="g-actions" id="g-actions">' +
+              '<div class="g-actions-head">🖼 ' + t("edAddImgHead") + "</div>" +
+              '<div class="g-actions-btns">' +
+              '<button type="button" class="btn btn-primary btn-sm" id="edv-upload">⬆ ' + t("edUpload") + "</button></div>" +
+              '<div class="ed-urlrow"><input id="edv-imgurl" placeholder="https://…" value="' + esc(portalEdit.imgUrlDraft || "") + '"/>' +
+              '<button type="button" class="btn btn-outline btn-sm" id="edv-imgapply">' + t("edApplyLink") + "</button></div></div>"
+            : "") +
           "</div>" +
           '<p class="footnote" style="margin-top:6px">' + t("edGalleryHint") + "</p>" +
-          ((sel !== undefined && sel !== null) || portalEdit.addingImg
-            ? '<div class="ed-urlrow"><input id="edv-imgurl" placeholder="https://…" value="' + esc(portalEdit.addingImg ? (portalEdit.imgUrlDraft || "") : (/^https?:/.test(gal[sel] || "") ? gal[sel] : "")) + '"/>' +
-              '<button type="button" class="btn btn-primary btn-sm" id="edv-imgapply">' + t("edApply") + "</button>" +
-              '<button type="button" class="btn btn-outline btn-sm" id="edv-upload">' + t("edUpload") + "</button>" +
-              (!portalEdit.addingImg
-                ? '<button type="button" class="btn btn-outline btn-sm" id="edv-imgleft">◀</button>' +
-                  '<button type="button" class="btn btn-outline btn-sm" id="edv-imgright">▶</button>' +
-                  '<button type="button" class="btn btn-outline btn-sm" id="edv-imgdel">✕ ' + t("edRemoveImg") + "</button>"
-                : "") + "</div>"
-            : "") +
           '<div class="ed-urlrow"><span class="footnote" style="white-space:nowrap">▶ ' + t("edVideoUrl") + '</span><input id="edv-video" placeholder="https://youtube.com/…" value="' + esc(w.videoUrl || "") + '"/></div>' +
           "</div>" +
 
@@ -1278,6 +1294,8 @@
           '<input type="file" id="edv-file" accept="image/*" style="display:none"/>';
 
         document.body.classList.add("has-edbar");
+        const gAct = document.getElementById("g-actions");
+        if (gAct && portalEdit.scrollToActions) { gAct.scrollIntoView({ block: "nearest" }); portalEdit.scrollToActions = false; }
         const back = (e) => { e.preventDefault(); portalEdit = null; document.body.classList.remove("has-edbar"); renderPortal(); window.scrollTo(0, 0); };
         document.getElementById("pf-back").addEventListener("click", back);
         document.getElementById("pf-back2").addEventListener("click", back);
@@ -1335,14 +1353,15 @@
           e.preventDefault(); syncText();
           portalEdit.addingImg = false; portalEdit.imgUrlDraft = "";
           portalEdit.selImg = portalEdit.selImg === +el.dataset.gi ? null : +el.dataset.gi;
+          portalEdit.scrollToActions = portalEdit.selImg != null;
           paintEditor();
         }));
-        on("edv-addimg", (e) => { e.preventDefault(); syncText(); portalEdit.addingImg = true; portalEdit.selImg = null; portalEdit.imgUrlDraft = ""; paintEditor(); });
+        on("edv-addimg", (e) => { e.preventDefault(); syncText(); portalEdit.addingImg = true; portalEdit.selImg = null; portalEdit.imgUrlDraft = ""; portalEdit.scrollToActions = true; paintEditor(); });
         root.querySelectorAll("[data-repl]").forEach((b) => b.addEventListener("click", (e) => {
           e.preventDefault(); e.stopPropagation(); syncText();
           portalEdit.addingImg = false; portalEdit.imgUrlDraft = "";
           portalEdit.selImg = +b.dataset.repl;
-          paintEditor();
+          pickFile({ kind: "repl", i: +b.dataset.repl });
         }));
         root.querySelectorAll("[data-delimg]").forEach((b) => b.addEventListener("click", (e) => {
           e.preventDefault(); e.stopPropagation(); syncText(); materialize();

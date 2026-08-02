@@ -39,6 +39,9 @@ Based on the user's uploaded "Rafidain Design System" doc: **Iraq Red `#CE1126` 
 ## WhatsApp routing
 Each agency's chat/booking buttons use that agency's OWN `wa` number from data.js (`https://wa.me/<a.wa>`). A short-lived "route everything to one central number" edit (July 19, 2026, via Netlify Agent Runner) was reverted at Max's request — do not reintroduce a central `WA_NUMBER`. Buttons only render where an agency has `wa` set (currently the sample agencies); real pending agencies have `wa: ""` and show their source link instead.
 
+## v5.3 (Aug 2, 2026) — image action cards + labeled editor facts
+Tapping a gallery photo in the editor opens a highlighted action card **directly under that photo** (red-tinted, "Photo N — what would you like to do?"): Replace via device-gallery upload (primary), Remove, Move earlier/later, and a secondary image-link row. The on-image ↻ button skips the card and opens the device photo picker straight away (upload-from-gallery only, per Max); on-image ✕ still removes instantly. The "＋ Add image" tile opens the same style card. The editor's start-of-page options (Destination, Type, Duration, Max group size, Outbound) are now labeled control boxes (`.ed-facts`) so each option says what it is.
+
 ## v5.2 batch (Aug 2, 2026)
 - **Najaf split from Karbala site-wide:** CITIES now has `karbala` ("Karbala"/"كربلاء") and `najaf` ("النجف") as separate cities (CITY_IMG najaf→shrine). Tour NAMES may still say "Karbala & Najaf" (that's just the tour's name, per Max) but no category/filter/selector joins them. `karbala-najaf-ziyara` keeps city `karbala`.
 - **Agency profile pages:** new `agency.html?id=…` (renderAgencyPage) — logo, name, verified/pending badge, base, since, rating, description, WA/call/site buttons, socials, and all their tours. The "Offered by" box on tour pages is now one whole tappable link (`.bb-agency-link`) to it; agency-card names link too.

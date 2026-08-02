@@ -559,6 +559,30 @@ body.has-edbar { padding-bottom:84px; }
   box-shadow:var(--shadow-1); font-family:inherit; vertical-align:middle;
 }
 .ed-plus:active { background:var(--color-primary); color:#fff; }
+/* labeled editor facts (each start-of-page option described) */
+.ed-facts { display:flex; flex-wrap:wrap; gap:10px 14px; margin-top:10px; }
+.ed-fact {
+  background:var(--bg-tertiary); border:1px solid var(--separator);
+  border-radius:var(--radius-md); padding:8px 12px; box-shadow:var(--shadow-1);
+}
+.ed-fact label {
+  display:block; font-size:10px; font-weight:600; letter-spacing:.4px;
+  text-transform:uppercase; color:var(--label-secondary); margin-bottom:5px;
+}
+html[lang="ar"] .ed-fact label { letter-spacing:0; }
+.ed-fact-c { display:flex; align-items:center; gap:6px; }
+
+/* image action card — appears directly under the tapped photo */
+.g-actions {
+  grid-column:1 / -1; background:var(--color-primary-tint);
+  border:1.5px solid var(--color-primary); border-radius:var(--radius-md);
+  padding:12px 14px;
+}
+.g-actions-head { font-size:13px; font-weight:600; color:#8E1020; margin-bottom:10px; }
+.g-actions-btns { display:flex; flex-wrap:wrap; gap:8px; }
+.g-actions .ed-urlrow { margin-top:10px; }
+.g-actions .ed-urlrow input { background:#fff; }
+
 /* whole provider box on tour page is a link */
 .bb-agency-link { display:flex; text-decoration:none; color:inherit; border-radius:var(--radius-md); transition:background var(--dur-fast) var(--ease-standard); padding:6px; margin:-6px; }
 .bb-agency-link:active, .bb-agency-link:hover { background:var(--bg-canvas); }
