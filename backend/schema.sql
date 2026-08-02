@@ -133,9 +133,14 @@ create table if not exists public.tours (
   status tour_status not null default 'draft',
   title jsonb not null default '{"en":"","ar":""}',
   description jsonb not null default '{"en":"","ar":""}',
-  city_id text not null,
+  city_id text,                                             -- Iraqi destination city (null for abroad tours)
   type_id text not null,
   departs_city_ids text[] not null default '{}',            -- CITIES ids this tour can be joined from; empty = falls back to city_id (see app.js dbTourAdapt)
+  abroad boolean not null default false,                    -- true = outbound tour leaving Iraq (shown only to local Iraqi travelers)
+  dest_id text,                                             -- data.js ABROAD id (istanbul, beirut, ...) when abroad = true
+  constraint tours_location_chk check (
+    (abroad and dest_id is not null) or ((not abroad) and city_id is not null)
+  ),
   days int not null default 1 check (days >= 1),
   hours int check (hours between 1 and 24),
   price_cents int not null default 0 check (price_cents >= 0),  -- 0 = price on request

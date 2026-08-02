@@ -25,6 +25,7 @@
     ppItinAr: "Itinerary — one step per line: Title | detail (Arabic)",
     ppLangs: "Tour languages (e.g. EN · AR · KU)", ppPickup: "Hotel pickup available",
     ppDepartsFrom: "Cities this tour departs from", ppDepartsFromHint: "Shown to local Iraqi travelers searching by their own city — check every city where you genuinely offer pickup, not just the destination.",
+    ppAbroad: "This tour goes outside Iraq (outbound)", ppAbroadDest: "Destination abroad",
     ppPolicy: "Cancellation policy", pol_free48: "Free up to 48h before", pol_free24: "Free up to 24h before", pol_nonrefundable: "Non-refundable",
     ts_draft: "Draft", ts_pending_review: "Pending review", ts_published: "Published", ts_paused: "Paused", ts_archived: "Archived",
     ppTraveler: "Traveler", ppConfirm: "Confirm", ppDecline: "Decline", ppComplete: "Completed", ppNoShow: "No-show",
@@ -50,6 +51,7 @@
     ppItinAr: "البرنامج — خطوة في كل سطر: العنوان | التفاصيل (عربي)",
     ppLangs: "لغات الجولة (مثال: EN · AR · KU)", ppPickup: "توصيل من الفندق متاح",
     ppDepartsFrom: "المدن التي تنطلق منها هذه الجولة", ppDepartsFromHint: "تظهر للمسافرين العراقيين المحليين الذين يبحثون بمدينتهم — حدّد كل مدينة تقدّم منها استلاماً فعلياً، وليس فقط مدينة الوجهة.",
+    ppAbroad: "هذه الجولة خارج العراق (سفر للخارج)", ppAbroadDest: "الوجهة خارج العراق",
     ppPolicy: "سياسة الإلغاء", pol_free48: "مجاني حتى ٤٨ ساعة", pol_free24: "مجاني حتى ٢٤ ساعة", pol_nonrefundable: "غير قابل للاسترجاع",
     ts_draft: "مسودة", ts_pending_review: "قيد المراجعة", ts_published: "منشورة", ts_paused: "موقوفة", ts_archived: "مؤرشفة",
     ppTraveler: "المسافر", ppConfirm: "تأكيد", ppDecline: "رفض", ppComplete: "اكتملت", ppNoShow: "لم يحضر",
@@ -211,6 +213,8 @@
     }
     const cityOpts = CITIES.map((z) => '<option value="' + z.id + '"' + (x.city_id === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("");
     const typeOpts = TYPES.map((z) => '<option value="' + z.id + '"' + (x.type_id === z.id ? " selected" : "") + ">" + esc(L(z)) + "</option>").join("");
+    const destOpts = (typeof ABROAD !== "undefined" ? ABROAD : []).map((z) =>
+      '<option value="' + z.id + '"' + (x.dest_id === z.id ? " selected" : "") + ">" + esc(L(z.name) + " — " + L(z.country)) + "</option>").join("");
     const polOpts = ["free48", "free24", "nonrefundable"].map((p) =>
       '<option value="' + p + '"' + (x.cancel === p ? " selected" : "") + ">" + t("pol_" + p) + "</option>").join("");
     const itinTxt = (side) => (x.itinerary || []).map((s) => (L2(s.t, side) + " | " + L2(s.d, side))).join("\n");
@@ -226,6 +230,8 @@
       "<div><label>" + t("pfTitleAr") + '</label><input id="pe-tar" dir="rtl" value="' + esc(x.title.ar || "") + '"/></div></div>' +
       '<div class="form-row"><div><label>' + t("pfCity") + '</label><select id="pe-city">' + cityOpts + "</select></div>" +
       "<div><label>" + t("pfType") + '</label><select id="pe-type">' + typeOpts + "</select></div></div>" +
+      '<div class="form-row"><div style="display:flex;align-items:end"><label class="f-check" style="margin-bottom:6px"><input type="checkbox" id="pe-abroad"' + (x.abroad ? " checked" : "") + "/>" + t("ppAbroad") + "</label></div>" +
+      '<div id="pe-dest-wrap"' + (x.abroad ? "" : ' style="display:none"') + "><label>" + t("ppAbroadDest") + '</label><select id="pe-dest">' + destOpts + "</select></div></div>" +
       '<div><label>' + t("ppDepartsFrom") + '</label><div class="pe-city-checks">' + departsChecks + "</div>" +
       '<p class="footnote mt-2">' + t("ppDepartsFromHint") + "</p></div>" +
       '<div class="form-row"><div><label>' + t("pfDays") + '</label><input id="pe-days" type="number" min="1" value="' + (x.days || 1) + '"/></div>' +
@@ -265,7 +271,10 @@
         agency_id: agency.id, status: status,
         title: { en: gv("pe-ten").trim(), ar: gv("pe-tar").trim() || gv("pe-ten").trim() },
         description: { en: gv("pe-den").trim(), ar: gv("pe-dar").trim() },
-        city_id: gv("pe-city"), type_id: gv("pe-type"),
+        city_id: document.getElementById("pe-abroad").checked ? null : gv("pe-city"),
+        type_id: gv("pe-type"),
+        abroad: document.getElementById("pe-abroad").checked,
+        dest_id: document.getElementById("pe-abroad").checked ? gv("pe-dest") : null,
         departs_city_ids: Array.from(document.querySelectorAll(".pe-depart-c:checked")).map((cb) => cb.value),
         days: +gv("pe-days") || 1, hours: +gv("pe-hours") || null,
         price_cents: Math.round((+gv("pe-price") || 0) * 100),
@@ -285,6 +294,9 @@
       msg.textContent = t("ppSavedOk"); msg.style.color = "var(--color-accent)";
       if (r && r.data && r.data.id) editId = r.data.id;
     };
+    document.getElementById("pe-abroad").addEventListener("change", (e) => {
+      document.getElementById("pe-dest-wrap").style.display = e.target.checked ? "" : "none";
+    });
     document.getElementById("pe-draft").addEventListener("click", () => save(editId && x.status && x.status !== "draft" ? x.status : "draft"));
     document.getElementById("pe-send").addEventListener("click", () => save("pending_review"));
   }

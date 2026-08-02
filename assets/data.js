@@ -689,11 +689,170 @@ function refTour(o) {
     desc: { en: "Private tours in and around Erbil, bookable via tourHQ.", ar: "جولات خاصة في أربيل وما حولها، تُحجز عبر tourHQ." } })
 ].forEach(t2 => TOURS.push(t2));
 
+/* ============================================================
+   TRAVEL ABROAD — outbound tours by Iraqi agencies (core feature).
+   Iraqi travelers ("traveling within Iraq" mode) can browse trips
+   that leave Iraq: Istanbul, Beirut, Mashhad, Dubai and so on.
+   - abroad: true, dest: ABROAD id, city: null (not an Iraqi city).
+   - departsFrom: Iraqi CITIES ids ONLY when genuinely stated;
+     real pending listings leave it empty = "confirm with agency".
+   Visitors from abroad never see these.
+   ============================================================ */
+const ABROAD = [
+  { id: "istanbul",    name: { en: "Istanbul",     ar: "إسطنبول" },    country: { en: "Türkiye",  ar: "تركيا" } },
+  { id: "antalya",     name: { en: "Antalya",      ar: "أنطاليا" },    country: { en: "Türkiye",  ar: "تركيا" } },
+  { id: "beirut",      name: { en: "Beirut",       ar: "بيروت" },      country: { en: "Lebanon",  ar: "لبنان" } },
+  { id: "dubai",       name: { en: "Dubai",        ar: "دبي" },        country: { en: "UAE",      ar: "الإمارات" } },
+  { id: "mashhad",     name: { en: "Mashhad",      ar: "مشهد" },       country: { en: "Iran",     ar: "إيران" } },
+  { id: "cairo",       name: { en: "Cairo",        ar: "القاهرة" },    country: { en: "Egypt",    ar: "مصر" } },
+  { id: "kualalumpur", name: { en: "Kuala Lumpur", ar: "كوالالمبور" }, country: { en: "Malaysia", ar: "ماليزيا" } },
+  { id: "yerevan",     name: { en: "Yerevan",      ar: "يريفان" },     country: { en: "Armenia",  ar: "أرمينيا" } }
+];
+
+/* sample outbound tours (fictional sample agencies — covered by the
+   site-wide sample notice, same as all other sample listings) */
+TOURS.push(
+  {
+    id: "dijla-istanbul-getaway",
+    abroad: true, dest: "istanbul", city: null, type: "culture", agency: "dijla-journeys",
+    departsFrom: ["baghdad"],
+    motif: "dome", color: "art-teal", img: "shrine",
+    days: 5, hours: null, price: 549, rating: 4.7, reviews: 63, groupMax: 25,
+    langs: ["AR", "EN"], cancel: true,
+    title: { en: "Istanbul Getaway: 5 Days from Baghdad", ar: "رحلة إسطنبول: ٥ أيام من بغداد" },
+    desc: {
+      en: "Flights, hotel and guided days in Istanbul — Sultanahmet, the Bosphorus and the bazaars — organised end-to-end from Baghdad with an Arabic-speaking group leader.",
+      ar: "طيران وفندق وجولات مرشدة في إسطنبول — السلطان أحمد والبوسفور والأسواق — رحلة منظمة بالكامل من بغداد مع مرافق ناطق بالعربية."
+    },
+    highlights: {
+      en: ["Round-trip flights from Baghdad", "4 nights hotel with breakfast", "Bosphorus cruise & old-city day", "Arabic-speaking group leader"],
+      ar: ["طيران ذهاباً وإياباً من بغداد", "٤ ليالٍ فندقية مع الإفطار", "جولة البوسفور ويوم المدينة القديمة", "مرافق ناطق بالعربية"]
+    },
+    meeting: { en: "Baghdad International Airport, 3 hours before departure", ar: "مطار بغداد الدولي، قبل ٣ ساعات من الإقلاع" },
+    itinerary: [
+      { t: { en: "Day 1 — Fly & settle in", ar: "اليوم الأول — الطيران والوصول" }, d: { en: "Meet at Baghdad airport, fly to Istanbul, hotel check-in.", ar: "اللقاء في مطار بغداد، الطيران إلى إسطنبول، تسجيل الدخول في الفندق." } },
+      { t: { en: "Days 2–4 — Istanbul", ar: "الأيام ٢–٤ — إسطنبول" }, d: { en: "Guided old city, Bosphorus cruise, bazaar time and free evenings.", ar: "جولات المدينة القديمة والبوسفور والأسواق مع أمسيات حرة." } },
+      { t: { en: "Day 5 — Return", ar: "اليوم الخامس — العودة" }, d: { en: "Morning free, afternoon flight back to Baghdad.", ar: "صباح حر ثم رحلة العودة إلى بغداد بعد الظهر." } }
+    ]
+  },
+  {
+    id: "noor-mashhad-ziyara",
+    abroad: true, dest: "mashhad", city: null, type: "religious", agency: "noor-pilgrim",
+    departsFrom: ["karbala", "baghdad"],
+    motif: "dome", color: "art-night", img: "shrine",
+    days: 6, hours: null, price: 429, rating: 4.9, reviews: 174, groupMax: 40,
+    langs: ["AR", "FA"], cancel: false,
+    title: { en: "Mashhad Ziyara: 6-Day Pilgrimage Group", ar: "زيارة مشهد: حملة ٦ أيام" },
+    desc: {
+      en: "A fully escorted ziyara to the shrine of Imam Ridha in Mashhad — visas, transport, hotel near the haram and daily shrine visits, departing from Karbala or Baghdad.",
+      ar: "حملة زيارة كاملة إلى مرقد الإمام الرضا في مشهد — التأشيرات والنقل وفندق قرب الحرم وزيارات يومية، انطلاقاً من كربلاء أو بغداد."
+    },
+    highlights: {
+      en: ["Visa assistance included", "Hotel walking distance to the haram", "Daily escorted shrine visits", "Departures from Karbala or Baghdad"],
+      ar: ["مساعدة في التأشيرة", "فندق على مسافة مشي من الحرم", "زيارات يومية مرافقة", "انطلاق من كربلاء أو بغداد"]
+    },
+    meeting: { en: "Noor office in Karbala, or Baghdad airport group meet", ar: "مكتب نور في كربلاء، أو التجمع في مطار بغداد" },
+    itinerary: [
+      { t: { en: "Day 1 — Departure", ar: "اليوم الأول — الانطلاق" }, d: { en: "Group departure from Karbala or Baghdad.", ar: "انطلاق الحملة من كربلاء أو بغداد." } },
+      { t: { en: "Days 2–5 — Mashhad", ar: "الأيام ٢–٥ — مشهد" }, d: { en: "Daily visits to the shrine with the group's religious guide.", ar: "زيارات يومية للحرم مع مرشد الحملة الديني." } },
+      { t: { en: "Day 6 — Return", ar: "اليوم السادس — العودة" }, d: { en: "Farewell visit and return journey home.", ar: "زيارة الوداع ثم رحلة العودة." } }
+    ]
+  },
+  {
+    id: "breeze-beirut-escape",
+    abroad: true, dest: "beirut", city: null, type: "culture", agency: "basra-breeze",
+    departsFrom: ["basra"],
+    motif: "palm", color: "art-terracotta", img: "basra",
+    days: 5, hours: null, price: 599, rating: 4.5, reviews: 38, groupMax: 16,
+    langs: ["AR", "EN"], cancel: true,
+    title: { en: "Beirut Escape: 5 Days from Basra", ar: "رحلة بيروت: ٥ أيام من البصرة" },
+    desc: {
+      en: "Fly from Basra for five days between Beirut's corniche, the mountains and Byblos — hotels, transfers and a mixed program of guided days and free time.",
+      ar: "طيران من البصرة لخمسة أيام بين كورنيش بيروت والجبل وجبيل — فنادق وتنقلات وبرنامج يجمع الجولات المرشدة والوقت الحر."
+    },
+    highlights: {
+      en: ["Round-trip flights from Basra", "Beirut & Byblos guided days", "Mountain cable-car excursion", "Free evenings on the corniche"],
+      ar: ["طيران ذهاباً وإياباً من البصرة", "جولات مرشدة في بيروت وجبيل", "رحلة التلفريك الجبلية", "أمسيات حرة على الكورنيش"]
+    },
+    meeting: { en: "Basra International Airport, 3 hours before departure", ar: "مطار البصرة الدولي، قبل ٣ ساعات من الإقلاع" },
+    itinerary: [
+      { t: { en: "Day 1 — Fly to Beirut", ar: "اليوم الأول — الطيران إلى بيروت" }, d: { en: "Depart Basra, arrive Beirut, seafront hotel check-in.", ar: "الانطلاق من البصرة والوصول إلى بيروت وفندق على الواجهة البحرية." } },
+      { t: { en: "Days 2–4 — Lebanon", ar: "الأيام ٢–٤ — لبنان" }, d: { en: "Byblos, Harissa cable car and Beirut city days.", ar: "جبيل وتلفريك حريصا وأيام في بيروت." } },
+      { t: { en: "Day 5 — Return", ar: "اليوم الخامس — العودة" }, d: { en: "Return flight to Basra.", ar: "رحلة العودة إلى البصرة." } }
+    ]
+  },
+  {
+    id: "dijla-dubai-family",
+    abroad: true, dest: "dubai", city: null, type: "culture", agency: "dijla-journeys",
+    departsFrom: ["baghdad"],
+    motif: "river", color: "art-gold", img: "river",
+    days: 5, hours: null, price: 699, rating: 4.6, reviews: 52, groupMax: 20,
+    langs: ["AR", "EN"], cancel: true,
+    title: { en: "Dubai Family Break: 5 Days from Baghdad", ar: "عطلة دبي العائلية: ٥ أيام من بغداد" },
+    desc: {
+      en: "A family-friendly Dubai package from Baghdad — flights, hotel, desert safari evening and a full free day for the malls and attractions of your choice.",
+      ar: "باقة عائلية إلى دبي من بغداد — طيران وفندق وأمسية سفاري صحراوية ويوم حر كامل للمولات والمعالم التي تختارونها."
+    },
+    highlights: {
+      en: ["Round-trip flights from Baghdad", "Family rooms available", "Desert safari with dinner", "Free day for malls & attractions"],
+      ar: ["طيران ذهاباً وإياباً من بغداد", "غرف عائلية متوفرة", "سفاري صحراوية مع عشاء", "يوم حر للمولات والمعالم"]
+    },
+    meeting: { en: "Baghdad International Airport, 3 hours before departure", ar: "مطار بغداد الدولي، قبل ٣ ساعات من الإقلاع" },
+    itinerary: [
+      { t: { en: "Day 1 — Fly to Dubai", ar: "اليوم الأول — الطيران إلى دبي" }, d: { en: "Depart Baghdad, hotel check-in, evening at the Marina.", ar: "الانطلاق من بغداد وتسجيل الدخول وأمسية في المارينا." } },
+      { t: { en: "Days 2–4 — Dubai", ar: "الأيام ٢–٤ — دبي" }, d: { en: "City tour, desert safari evening and a free family day.", ar: "جولة المدينة وأمسية السفاري ويوم عائلي حر." } },
+      { t: { en: "Day 5 — Return", ar: "اليوم الخامس — العودة" }, d: { en: "Return flight to Baghdad.", ar: "رحلة العودة إلى بغداد." } }
+    ]
+  }
+);
+
+/* REAL Iraqi outbound operators found online — onboarding pattern:
+   pending, source links, no invented prices/departures. */
+[
+  refAgency({ id: "almassal", name: { en: "Al Massal Travel & Tourism", ar: "شركة المسل للسفر والسياحة" }, base: { en: "Baghdad (Karrada & Al-Mansour)", ar: "بغداد (الكرادة والمنصور)" }, initials: "AM", color: "art-teal", site: "https://almassal.iq/",
+    desc: { en: "Baghdad agency selling outbound packages — Türkiye, Lebanon, UAE, Egypt, Malaysia, Armenia and more.", ar: "شركة بغدادية تبيع باقات سفر إلى الخارج — تركيا ولبنان والإمارات ومصر وماليزيا وأرمينيا وغيرها." } }),
+  refAgency({ id: "naizak-baghdad", name: { en: "Naizak Baghdad Travel", ar: "نيزك بغداد للسياحة والسفر" }, base: { en: "Baghdad (Al-Adhamiyah)", ar: "بغداد (الأعظمية)" }, initials: "NB", color: "art-indigo", site: "https://naizakbaghdad.iq/",
+    desc: { en: "Licensed Baghdad agency (est. 2013) offering international flights, visas and group tours to destinations like Dubai, Türkiye and Egypt.", ar: "شركة بغدادية مجازة (تأسست ٢٠١٣) تقدم تذاكر دولية وتأشيرات ورحلات جماعية إلى وجهات مثل دبي وتركيا ومصر." } })
+].forEach(a => AGENCIES.push(a));
+
+[
+  refTour({ id: "almassal-istanbul", agency: "almassal", abroad: true, dest: "istanbul", city: null, type: "culture", img: "shrine", motif: "dome", days: 8,
+    src: "https://almassal.iq/", srcName: "almassal.iq",
+    title: { en: "Istanbul Package — 8 Days (Al Massal)", ar: "باقة إسطنبول — ٨ أيام (المسل)" },
+    desc: { en: "Al Massal's 8-day Istanbul program — details and dates on their site.", ar: "برنامج المسل لإسطنبول لثمانية أيام — التفاصيل والمواعيد على موقعهم." } }),
+  refTour({ id: "almassal-antalya", agency: "almassal", abroad: true, dest: "antalya", city: null, type: "nature", img: "mountains", motif: "mountains", days: 8,
+    src: "https://almassal.iq/", srcName: "almassal.iq",
+    title: { en: "Antalya & Fethiye — 8 Days (Al Massal)", ar: "أنطاليا وفتحية — ٨ أيام (المسل)" },
+    desc: { en: "Turkish riviera program covering Antalya and Fethiye.", ar: "برنامج الريفييرا التركية يشمل أنطاليا وفتحية." } }),
+  refTour({ id: "almassal-beirut", agency: "almassal", abroad: true, dest: "beirut", city: null, type: "culture", img: "basra", motif: "palm", days: 8,
+    src: "https://almassal.iq/", srcName: "almassal.iq",
+    title: { en: "Beirut Package — 8 Days (Al Massal)", ar: "باقة بيروت — ٨ أيام (المسل)" },
+    desc: { en: "Eight days in Lebanon with Al Massal — details on the original listing.", ar: "ثمانية أيام في لبنان مع المسل — التفاصيل في الإعلان الأصلي." } }),
+  refTour({ id: "almassal-dubai", agency: "almassal", abroad: true, dest: "dubai", city: null, type: "culture", img: "river", motif: "river", days: 8,
+    src: "https://almassal.iq/", srcName: "almassal.iq",
+    title: { en: "Dubai Package — 7–8 Days (Al Massal)", ar: "باقة دبي — ٧–٨ أيام (المسل)" },
+    desc: { en: "Dubai program (7–8 days per the listing), including seasonal New Year departures.", ar: "برنامج دبي (٧–٨ أيام حسب الإعلان) مع انطلاقات موسمية لرأس السنة." } }),
+  refTour({ id: "almassal-cairo-sharm", agency: "almassal", abroad: true, dest: "cairo", city: null, type: "history", img: "ur", motif: "ziggurat", days: 8,
+    src: "https://almassal.iq/", srcName: "almassal.iq",
+    title: { en: "Cairo & Sharm El-Sheikh — 8 Days (Al Massal)", ar: "القاهرة وشرم الشيخ — ٨ أيام (المسل)" },
+    desc: { en: "Egypt program pairing Cairo with Sharm El-Sheikh; other Egypt routes on their site.", ar: "برنامج مصر يجمع القاهرة وشرم الشيخ؛ مسارات مصرية أخرى على موقعهم." } }),
+  refTour({ id: "almassal-kl", agency: "almassal", abroad: true, dest: "kualalumpur", city: null, type: "nature", img: "marsh", motif: "boat", days: 8,
+    src: "https://almassal.iq/", srcName: "almassal.iq",
+    title: { en: "Kuala Lumpur & Singapore — 8 Days (Al Massal)", ar: "كوالالمبور وسنغافورة — ٨ أيام (المسل)" },
+    desc: { en: "Malaysia and Singapore combined program.", ar: "برنامج مشترك بين ماليزيا وسنغافورة." } }),
+  refTour({ id: "almassal-yerevan", agency: "almassal", abroad: true, dest: "yerevan", city: null, type: "nature", img: "mountains", motif: "mountains", days: 8,
+    src: "https://almassal.iq/", srcName: "almassal.iq",
+    title: { en: "Yerevan, Armenia — 8 Days (Al Massal)", ar: "يريفان، أرمينيا — ٨ أيام (المسل)" },
+    desc: { en: "Eight days in Armenia — details and dates on the original listing.", ar: "ثمانية أيام في أرمينيا — التفاصيل والمواعيد في الإعلان الأصلي." } })
+].forEach(t2 => TOURS.push(t2));
+
 /* ---------- local-departure city (for the "traveling within Iraq" home
    selector) ----------
    departsFrom = array of CITIES ids a tour can genuinely be joined
    from. Only set explicitly above where the tour's own text already
    states a different hub (e.g. "Baghdad or Hillah" pickup, or a
-   Baghdad-based agency's Baghdad-to-Erbil route). Every other tour
-   falls back to its own destination city — never invented. */
-TOURS.forEach(t => { if (!t.departsFrom) t.departsFrom = [t.city]; });
+   Baghdad-based agency's Baghdad-to-Erbil route). Every other Iraq
+   tour falls back to its own destination city — never invented.
+   Abroad tours with no stated departure keep an EMPTY list, which
+   renders as "confirm with the agency" instead of a guessed city. */
+TOURS.forEach(t => { if (!t.departsFrom) t.departsFrom = t.abroad ? [] : [t.city]; });

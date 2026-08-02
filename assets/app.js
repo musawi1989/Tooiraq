@@ -24,6 +24,9 @@
       departsFromLbl: "Departs from",
       noLocalDepartPre: "No tours currently depart from", noLocalDepartPost: "Try Baghdad, the main transport hub, or clear this filter.",
       clearDepart: "Clear this filter",
+      goalIraq: "Explore Iraq", goalAbroad: "Travel abroad",
+      abroadAll: "All destinations", abroadTitle: "Trips abroad from Iraq",
+      departAsk: "Departure city: confirm with the agency",
       heroTitle: "Find your tour across Iraq",
       heroLead: "Compare tours from licensed Iraqi agencies, talk to them directly on WhatsApp, and book without prepayment.",
       sDest: "Destination", sDestAll: "All of Iraq", sDate: "Date", sPax: "Travelers", sGo: "Search",
@@ -119,6 +122,9 @@
       departsFromLbl: "تنطلق من",
       noLocalDepartPre: "لا توجد حالياً جولات تنطلق من", noLocalDepartPost: "جرّب بغداد، المحور الرئيسي للنقل، أو امسح هذا الفلتر.",
       clearDepart: "امسح هذا الفلتر",
+      goalIraq: "جولات داخل العراق", goalAbroad: "السفر إلى الخارج",
+      abroadAll: "كل الوجهات", abroadTitle: "رحلات من العراق إلى الخارج",
+      departAsk: "مدينة الانطلاق: تُؤكد مع الشركة",
       heroTitle: "اعثر على جولتك في العراق",
       heroLead: "قارن الجولات من شركات عراقية مجازة، وتواصل معها مباشرة عبر واتساب، واحجز دون دفع مسبق.",
       sDest: "الوجهة", sDestAll: "كل العراق", sDate: "التاريخ", sPax: "المسافرون", sGo: "بحث",
@@ -213,6 +219,16 @@
   const L = (o) => (o && (o[lang] || o.en)) || "";
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
   const cityOf = (id) => CITIES.find((c) => c.id === id);
+  const destOf = (id) => (typeof ABROAD !== "undefined" ? ABROAD.find((d) => d.id === id) : null);
+  /* location label that works for Iraq tours (city) and abroad tours (dest + country) */
+  const locLabel = (tour) => {
+    if (!tour.abroad) return L(cityOf(tour.city));
+    const d = destOf(tour.dest);
+    return d ? L(d.name) + (lang === "ar" ? "، " : ", ") + L(d.country) : "";
+  };
+  const locHref = (tour) => tour.abroad
+    ? "tours.html?scope=abroad&dest=" + tour.dest
+    : "tours.html?city=" + tour.city;
   const typeOf = (id) => TYPES.find((x) => x.id === id);
   const agencyOf = (id) => AGENCIES.find((a) => a.id === id);
   const toursOf = (aid) => TOURS.filter((x) => x.agency === aid);
@@ -221,6 +237,15 @@
   /* only surface departsFrom when it names a REAL hub beyond the tour's own destination city */
   const departExtras = (tour) => (tour.departsFrom || [tour.city]).filter((c) => c !== tour.city);
   const departBadgeHTML = (tour) => {
+    if (tour.abroad) {
+      /* outbound tours: the Iraqi departure city IS the selling point —
+         always show it, or an honest "confirm with the agency" when the
+         operator's own listing doesn't state one. */
+      const from = (tour.departsFrom || []).filter(Boolean);
+      return "<span>🛫 " + (from.length
+        ? t("departsFromLbl") + ": " + from.map((cid) => esc(L(cityOf(cid)))).join(" · ")
+        : t("departAsk")) + "</span>";
+    }
     const extra = departExtras(tour);
     return extra.length ? "<span>🚌 " + t("departsFromLbl") + ": " + extra.map((cid) => esc(L(cityOf(cid)))).join(" · ") + "</span>" : "";
   };
@@ -247,8 +272,9 @@
       agency: (r.agencies && r.agencies.id) || r.agency_id,
       img: (r.images && r.images[0]) || "babylon", imgs: r.images || [],
       title: r.title || { en: "", ar: "" }, desc: r.description || { en: "", ar: "" },
-      city: r.city_id, type: r.type_id,
-      departsFrom: (r.departs_city_ids && r.departs_city_ids.length) ? r.departs_city_ids : [r.city_id],
+      city: r.abroad ? null : r.city_id, type: r.type_id,
+      abroad: !!r.abroad, dest: r.abroad ? (r.dest_id || null) : null,
+      departsFrom: (r.departs_city_ids && r.departs_city_ids.length) ? r.departs_city_ids : (r.abroad ? [] : [r.city_id]),
       days: r.days || 1, hours: r.hours || null,
       price: Math.round((r.price_cents || 0) / 100),
       groupMax: r.group_max || 10, langs: r.langs || [],
@@ -353,13 +379,12 @@
 
   /* ---------- shared card renderers ---------- */
   function tourCard(tour) {
-    const c = cityOf(tour.city);
     return (
       '<article class="tcard">' +
       '<a class="media" href="tour.html?id=' + tour.id + '">' + badgeHTML(tour) +
       '<img loading="lazy" alt="' + esc(L(tour.title)) + '" src="' + SRC(tour.img) + '"/></a>' +
       '<div class="body">' +
-      '<span class="place">' + esc(L(c)) + "</span>" +
+      '<span class="place">' + esc(locLabel(tour)) + "</span>" +
       '<h3><a href="tour.html?id=' + tour.id + '">' + esc(L(tour.title)) + "</a></h3>" +
       (tour.rating ? '<div class="rating-row">' + starsHTML(tour.rating) + "<b>" + tour.rating.toFixed(1) + "</b><span>(" + tour.reviews + ")</span></div>"
         : '<div class="rating-row"><span class="badge badge-save">' + t("onboardingBadge") + "</span></div>") +
@@ -371,15 +396,15 @@
   }
 
   function resultCard(tour) {
-    const c = cityOf(tour.city), ty = typeOf(tour.type), a = agencyOf(tour.agency);
+    const ty = typeOf(tour.type), a = agencyOf(tour.agency);
     return (
       '<article class="rcard">' +
       '<a class="media" href="tour.html?id=' + tour.id + '">' + badgeHTML(tour) +
       '<img loading="lazy" alt="' + esc(L(tour.title)) + '" src="' + SRC(tour.img) + '"/></a>' +
       '<div class="mid">' +
       '<h3><a href="tour.html?id=' + tour.id + '">' + esc(L(tour.title)) + "</a></h3>" +
-      '<div class="loc"><a href="tours.html?city=' + tour.city + '">' + esc(L(c)) + "</a> · " + esc(L(ty)) + (a ? " · " + esc(L(a.name)) : "") + "</div>" +
-      '<div class="feats"><span>🕐 ' + durLbl(tour) + "</span><span>👥 " + t("upTo") + " " + tour.groupMax + " " + t("people") + "</span><span>🗣 " + (tour.langs || []).join(" · ") + "</span>" + departBadgeHTML(tour) + "</div>" +
+      '<div class="loc"><a href="' + locHref(tour) + '">' + esc(locLabel(tour)) + "</a> · " + esc(L(ty)) + (a ? " · " + esc(L(a.name)) : "") + "</div>" +
+      '<div class="feats"><span>🕐 ' + durLbl(tour) + "</span>" + (tour.groupMax ? "<span>👥 " + t("upTo") + " " + tour.groupMax + " " + t("people") + "</span>" : "") + "<span>🗣 " + (tour.langs || []).join(" · ") + "</span>" + departBadgeHTML(tour) + "</div>" +
       '<p class="subhead">' + esc(L(tour.desc)) + "</p>" +
       (tour.cancel ? '<span class="freecancel">✓ ' + t("freeCancel") + "</span>" : "") +
       "</div>" +
@@ -417,16 +442,18 @@
 
   /* ---------- travel mode (local traveler city selector) ----------
      Explicit, visible toggle — nothing is assumed from language.
-     "local" reveals a Your-city picker used to filter tours by
-     departsFrom on tours.html; "intl" (or unset) hides it entirely,
-     per the requirement that this only applies to local travelers. */
+     "local" reveals a second choice (Explore Iraq / Travel abroad)
+     plus a Your-city picker used to filter tours by departsFrom;
+     "intl" (or unset) hides all of it — visitors from abroad only
+     ever see tours inside Iraq. */
   function travelMode() { return store.get("tooiraq-travel-mode") || ""; }
+  function travelGoal() { return store.get("tooiraq-travel-goal") || "iraq"; }
   function departCity() { return store.get("tooiraq-depart-city") || ""; }
-  function renderTravelMode() {
+  function renderTravelMode(onChange) {
     const el = document.getElementById("travel-mode");
     if (!el) return;
     const paint = () => {
-      const mode = travelMode(), city = departCity();
+      const mode = travelMode(), goal = travelGoal(), city = departCity();
       const cityOpts = '<option value="">' + t("yourCityPh") + "</option>" +
         CITIES.map((c) => '<option value="' + c.id + '"' + (city === c.id ? " selected" : "") + ">" + esc(L(c)) + "</option>").join("");
       el.innerHTML =
@@ -434,12 +461,24 @@
         '<button type="button" class="mode-pill' + (mode === "local" ? " selected" : "") + '" data-m="local">🇮🇶 ' + t("modeLocal") + "</button>" +
         '<button type="button" class="mode-pill' + (mode === "intl" ? " selected" : "") + '" data-m="intl">✈️ ' + t("modeIntl") + "</button>" +
         "</div>" +
-        (mode === "local" ? '<div class="mode-city"><label>' + t("yourCityLbl") + '</label><select id="mode-city-sel">' + cityOpts + "</select></div>" : "");
+        (mode === "local"
+          ? '<div class="mode-pills mode-goals">' +
+            '<button type="button" class="mode-pill sub' + (goal === "iraq" ? " selected" : "") + '" data-g="iraq">🏛️ ' + t("goalIraq") + "</button>" +
+            '<button type="button" class="mode-pill sub' + (goal === "abroad" ? " selected" : "") + '" data-g="abroad">🛫 ' + t("goalAbroad") + "</button>" +
+            "</div>" +
+            '<div class="mode-city"><label>' + t("yourCityLbl") + '</label><select id="mode-city-sel">' + cityOpts + "</select></div>"
+          : "");
       el.querySelectorAll("[data-m]").forEach((btn) => btn.addEventListener("click", () => {
         const next = btn.dataset.m === mode ? "" : btn.dataset.m;
         store.set("tooiraq-travel-mode", next);
-        if (next !== "local") store.set("tooiraq-depart-city", "");
+        if (next !== "local") { store.set("tooiraq-depart-city", ""); store.set("tooiraq-travel-goal", ""); }
         paint();
+        if (onChange) onChange();
+      }));
+      el.querySelectorAll("[data-g]").forEach((btn) => btn.addEventListener("click", () => {
+        store.set("tooiraq-travel-goal", btn.dataset.g);
+        paint();
+        if (onChange) onChange();
       }));
       const sel = document.getElementById("mode-city-sel");
       if (sel) sel.addEventListener("change", () => store.set("tooiraq-depart-city", sel.value));
@@ -449,27 +488,39 @@
 
   /* ---------- home ---------- */
   function renderHome() {
-    renderTravelMode();
-    const citiesOpts = '<option value="">' + t("sDestAll") + "</option>" + CITIES.map((c) => '<option value="' + c.id + '">' + esc(L(c)) + "</option>").join("");
+    /* search box adapts to the visitor's choice: local travelers who pick
+       "Travel abroad" search outbound destinations; everyone else
+       searches Iraqi cities. Rebuilt whenever the pills change. */
     const paxOpts = [1, 2, 3, 4, 5, 6, 8, 10].map((n) => '<option value="' + n + '">' + (n === 1 ? t("pax1") : n + " " + t("paxN")) + "</option>").join("");
-    fill("searchbox",
-      '<div class="seg"><label>' + t("sDest") + '</label><select id="q-city">' + citiesOpts + "</select></div>" +
-      '<div class="seg"><label>' + t("sDate") + '</label><input type="date" id="q-date"/></div>' +
-      '<div class="seg"><label>' + t("sPax") + '</label><select id="q-pax">' + paxOpts + "</select></div>" +
-      '<div class="go"><button class="btn btn-primary" id="q-go">' + t("sGo") + "</button></div>");
-    document.getElementById("q-go").addEventListener("click", () => {
-      const c = document.getElementById("q-city").value, d = document.getElementById("q-date").value, p = document.getElementById("q-pax").value;
-      const qs = new URLSearchParams(); if (c) qs.set("city", c); if (d) qs.set("date", d); if (p && p !== "1") qs.set("pax", p);
-      const mode = store.get("tooiraq-travel-mode"), dep = store.get("tooiraq-depart-city");
-      if (mode === "local" && dep) qs.set("depart", dep);
-      window.location.href = "tours.html" + (qs.toString() ? "?" + qs.toString() : "");
-    });
+    const buildSearch = () => {
+      const abroadMode = travelMode() === "local" && travelGoal() === "abroad";
+      const destOpts = abroadMode
+        ? '<option value="">' + t("abroadAll") + "</option>" + ABROAD.map((d) => '<option value="' + d.id + '">' + esc(L(d.name) + (lang === "ar" ? "، " : ", ") + L(d.country)) + "</option>").join("")
+        : '<option value="">' + t("sDestAll") + "</option>" + CITIES.map((c) => '<option value="' + c.id + '">' + esc(L(c)) + "</option>").join("");
+      fill("searchbox",
+        '<div class="seg"><label>' + t("sDest") + '</label><select id="q-city">' + destOpts + "</select></div>" +
+        '<div class="seg"><label>' + t("sDate") + '</label><input type="date" id="q-date"/></div>' +
+        '<div class="seg"><label>' + t("sPax") + '</label><select id="q-pax">' + paxOpts + "</select></div>" +
+        '<div class="go"><button class="btn btn-primary" id="q-go">' + t("sGo") + "</button></div>");
+      document.getElementById("q-go").addEventListener("click", () => {
+        const c = document.getElementById("q-city").value, d = document.getElementById("q-date").value, p = document.getElementById("q-pax").value;
+        const qs = new URLSearchParams();
+        if (abroadMode) { qs.set("scope", "abroad"); if (c) qs.set("dest", c); }
+        else if (c) qs.set("city", c);
+        if (d) qs.set("date", d); if (p && p !== "1") qs.set("pax", p);
+        const mode = store.get("tooiraq-travel-mode"), dep = store.get("tooiraq-depart-city");
+        if (mode === "local" && dep) qs.set("depart", dep);
+        window.location.href = "tours.html" + (qs.toString() ? "?" + qs.toString() : "");
+      });
+    };
+    renderTravelMode(buildSearch);
+    buildSearch();
     fill("type-chips", '<a class="chip selected" href="tours.html">' + t("chipAll") + "</a>" +
       TYPES.map((x) => '<a class="chip" href="tours.html?type=' + x.id + '">' + esc(L(x)) + "</a>").join(""));
 
     const CAT_ICONS = { history: "🏛️", nature: "🌿", religious: "🕌", culture: "🏙️", festival: "🎉" };
     fill("cat-grid", TYPES.map((x) => {
-      const n = TOURS.filter((z) => z.type === x.id).length;
+      const n = TOURS.filter((z) => z.type === x.id && !z.abroad).length;
       return '<a class="cat-card" href="tours.html?type=' + x.id + '">' +
         '<span class="cat-ic">' + (CAT_ICONS[x.id] || "📍") + "</span>" +
         '<span><span class="cat-name">' + esc(L(x)) + '</span><span class="cat-count">' +
@@ -485,7 +536,7 @@
     fill("dest-big", CITIES.slice(0, 2).map(tile).join(""));
     fill("dest-small", CITIES.slice(2, 6).map(tile).join(""));
 
-    const top = TOURS.slice().sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0)).slice(0, 6);
+    const top = TOURS.filter((x) => !x.abroad).sort((a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0)).slice(0, 6);
     fill("featured", top.map(tourCard).join(""));
 
     fill("trust-row",
@@ -501,10 +552,15 @@
     const root = document.getElementById("results-root");
     if (!root) return;
     const params = new URLSearchParams(window.location.search);
-    const maxPrice = Math.max.apply(null, TOURS.map((x) => x.price));
-    const localMode = travelMode() === "local" || !!params.get("depart");
+    /* scope: "abroad" (outbound tours from Iraq) only via explicit URL
+       param — the regular Tours page always shows Iraq tours. */
+    const abroadScope = params.get("scope") === "abroad";
+    const base = TOURS.filter((x) => abroadScope ? x.abroad : !x.abroad);
+    const maxPrice = Math.max.apply(null, base.map((x) => x.price || 0).concat([100]));
+    const localMode = travelMode() === "local" || !!params.get("depart") || abroadScope;
     const state = {
       cities: params.get("city") ? [params.get("city")] : [],
+      dests: params.get("dest") ? [params.get("dest")] : [],
       types: params.get("type") ? [params.get("type")] : [],
       price: maxPrice, dur: [], minRating: 0, cancel: false, sort: "rec",
       depart: localMode ? (params.get("depart") || departCity() || "") : ""
@@ -512,10 +568,19 @@
 
     function checks(list, key, sel) {
       return list.map((item) => {
-        const n = TOURS.filter((x) => x[key] === item.id).length;
+        const n = base.filter((x) => x[key] === item.id).length;
         return '<label class="f-check"><input type="checkbox" data-f="' + key + '" value="' + item.id + '"' + (sel.includes(item.id) ? " checked" : "") + "/>" +
           esc(L(item)) + '<span class="cnt">' + n + "</span></label>";
       }).join("");
+    }
+    /* abroad destinations flattened to the {id,en,ar} shape checks() expects */
+    const ABROAD_OPTS = abroadScope ? ABROAD.map((d) => ({
+      id: d.id, en: d.name.en + ", " + d.country.en, ar: d.name.ar + "، " + d.country.ar
+    })) : [];
+    if (abroadScope) {
+      const h1 = document.querySelector('h1[data-i18n="resultsTitle"]');
+      if (h1) { h1.textContent = t("abroadTitle"); h1.removeAttribute("data-i18n"); }
+      document.title = t("abroadTitle") + " — TooIraq";
     }
 
     root.innerHTML =
@@ -526,7 +591,9 @@
         '<option value="">' + t("yourCityPh") + "</option>" +
         CITIES.map((c) => '<option value="' + c.id + '"' + (state.depart === c.id ? " selected" : "") + ">" + esc(L(c)) + "</option>").join("") +
         "</select></div>" : "") +
-      '<div class="f-group"><h5>' + t("fDest") + "</h5>" + checks(CITIES, "city", state.cities) + "</div>" +
+      (abroadScope
+        ? '<div class="f-group"><h5>' + t("fDest") + "</h5>" + checks(ABROAD_OPTS, "dest", state.dests) + "</div>"
+        : '<div class="f-group"><h5>' + t("fDest") + "</h5>" + checks(CITIES, "city", state.cities) + "</div>") +
       '<div class="f-group"><h5>' + t("fType") + "</h5>" + checks(TYPES, "type", state.types) + "</div>" +
       '<div class="f-group"><h5>' + t("fPrice") + '</h5><input type="range" id="f-price" min="40" max="' + maxPrice + '" value="' + maxPrice + '" step="5"/><div class="f-price-val">$<span id="f-price-v">' + maxPrice + "</span></div></div>" +
       '<div class="f-group"><h5>' + t("fDuration") + "</h5>" +
@@ -546,14 +613,20 @@
       '<div id="r-list"></div></div></div>';
 
     function apply() {
-      let list = TOURS.filter((x) =>
+      let list = base.filter((x) =>
         (!state.cities.length || state.cities.includes(x.city)) &&
+        (!state.dests.length || state.dests.includes(x.dest)) &&
         (!state.types.length || state.types.includes(x.type)) &&
         x.price <= state.price &&
         (!state.dur.length || state.dur.includes(x.days > 1 ? "2" : (x.days === 1 ? "1" : ""))) &&
         (x.rating || 0) >= state.minRating &&
         (!state.cancel || x.cancel) &&
-        (!state.depart || (x.departsFrom || [x.city]).includes(state.depart)));
+        /* depart filter: abroad tours with NO stated departure stay
+           visible under any city (card says "confirm with the agency")
+           rather than being silently hidden or falsely matched. */
+        (!state.depart || (x.abroad
+          ? (!(x.departsFrom || []).length || x.departsFrom.includes(state.depart))
+          : (x.departsFrom || [x.city]).includes(state.depart))));
       if (state.sort === "priceUp") list.sort((a, b) => (a.price || 1e9) - (b.price || 1e9));
       else if (state.sort === "priceDn") list.sort((a, b) => (b.price || 0) - (a.price || 0));
       else if (state.sort === "rating") list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -577,6 +650,7 @@
     root.addEventListener("change", (e) => {
       const el = e.target;
       if (el.dataset.f === "city") state.cities = collect("city");
+      if (el.dataset.f === "dest") state.dests = collect("dest");
       if (el.dataset.f === "type") state.types = collect("type");
       if (el.dataset.dur) state.dur = Array.from(root.querySelectorAll("[data-dur]:checked")).map((x) => x.dataset.dur);
       if (el.dataset.r !== undefined) state.minRating = parseFloat(el.dataset.r);
@@ -588,7 +662,7 @@
     root.addEventListener("input", (e) => {
       if (e.target.id === "f-price") { state.price = +e.target.value; document.getElementById("f-price-v").textContent = e.target.value; apply(); }
     });
-    document.getElementById("f-clear").addEventListener("click", () => { window.location.href = "tours.html"; });
+    document.getElementById("f-clear").addEventListener("click", () => { window.location.href = "tours.html" + (abroadScope ? "?scope=abroad" : ""); });
     const fToggle = document.getElementById("f-toggle"), fPanel = root.querySelector(".filters");
     const setSheet = (open) => {
       fPanel.classList.toggle("open", open);
@@ -609,7 +683,7 @@
     if (!wrap) return;
     const params = new URLSearchParams(window.location.search);
     const tour = TOURS.find((x) => x.id === params.get("id")) || TOURS[0];
-    const c = cityOf(tour.city), ty = typeOf(tour.type), a = agencyOf(tour.agency);
+    const ty = typeOf(tour.type), a = agencyOf(tour.agency);
     document.title = L(tour.title) + " — TooIraq";
     const gallery = (tour.imgs && tour.imgs.length ? tour.imgs.slice(0, 5)
       : [tour.img, CITY_IMG[tour.city], "river", "marsh", "babylon"])
@@ -620,12 +694,12 @@
 
     wrap.innerHTML =
       '<div class="container detail-top">' +
-      '<div class="crumbs"><a href="index.html">' + t("crumbHome") + '</a> / <a href="tours.html">' + t("crumbTours") + '</a> / <a href="tours.html?city=' + tour.city + '">' + esc(L(c)) + "</a></div>" +
+      '<div class="crumbs"><a href="index.html">' + t("crumbHome") + '</a> / <a href="tours.html' + (tour.abroad ? "?scope=abroad" : "") + '">' + t("crumbTours") + '</a> / <a href="' + locHref(tour) + '">' + esc(locLabel(tour)) + "</a></div>" +
       '<div class="detail-title-row"><div><h1>' + esc(L(tour.title)) + "</h1>" +
       '<div class="detail-sub">' +
       (tour.rating ? '<span class="rating-row"><b>' + tour.rating.toFixed(1) + "</b>" + starsHTML(tour.rating) + "<span>(" + tour.reviews + " " + t("reviewsWord") + ")</span></span>"
         : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") +
-      "<span>📍 " + esc(L(c)) + "</span><span>🗂 " + esc(L(ty)) + "</span><span>🕐 " + durLbl(tour) + "</span>" +
+      "<span>📍 " + esc(locLabel(tour)) + "</span><span>🗂 " + esc(L(ty)) + "</span><span>🕐 " + durLbl(tour) + "</span>" +
       (tour.groupMax ? "<span>👥 " + t("upTo") + " " + tour.groupMax + "</span>" : "") + departBadgeHTML(tour) + "</div></div>" +
       (tour.badge ? "<div>" + badgeHTML(tour, true) + "</div>" : "") +
       "</div>" +

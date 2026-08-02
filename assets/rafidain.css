@@ -169,6 +169,9 @@ html[lang="ar"] .searchbox .seg label { letter-spacing:0; }
 }
 .mode-pill:hover { border-color:var(--color-primary); }
 .mode-pill.selected { background:var(--color-primary); border-color:var(--color-primary); color:#fff; }
+/* second-level choice for local travelers: Explore Iraq / Travel abroad */
+.mode-goals { margin-top:10px; }
+.mode-pill.sub { min-height:38px; padding:8px 14px; font-size:14px; }
 .mode-city {
   margin-top:12px; max-width:320px; background:var(--bg-base);
   border:1px solid var(--separator); border-radius:var(--radius-md);
