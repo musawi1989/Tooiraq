@@ -438,7 +438,7 @@
   }
 
   const BRAND_MARK =
-    '<svg class="brand-mark" viewBox="0 0 44 44" fill="none"><rect width="44" height="44" rx="12" fill="#CE1126"/><g stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 33V15M35 33V15"/><path d="M9 19c4-8.5 22-8.5 26 0"/><path d="M18 33v-7c0-4.5 8-4.5 8 0v7"/><path d="M11 25.5l5 5.5M16 25.5l-5 5.5M28 25.5l5 5.5M33 25.5l-5 5.5"/><path d="M7.5 33h29"/></g><circle cx="22" cy="17.5" r="1.6" fill="#fff"/></svg>';
+    '<img class="brand-mark" src="assets/logo-mark-256.png" alt="Iraq Tour"/>';
 
   /* ---------- chrome ---------- */
   function injectChrome(active) {

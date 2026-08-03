@@ -112,7 +112,7 @@ html[lang="ar"] .eyebrow { letter-spacing:0; }
 .header-inner { display:flex; align-items:center; gap:20px; height:64px; }
 .brand { display:flex; align-items:center; gap:10px; color:var(--label-primary); flex:none; }
 .brand:hover { color:var(--label-primary); }
-.brand-mark { width:36px; height:36px; }
+.brand-mark { width:36px; height:36px; border-radius:10px; object-fit:cover; display:block; }
 .brand-name { font-size:20px; font-weight:700; letter-spacing:-0.2px; }
 .brand-name b { color:var(--color-primary); font-weight:700; }
 .main-nav { display:flex; gap:6px; margin-inline-start:8px; }
