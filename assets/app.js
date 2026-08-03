@@ -1184,6 +1184,7 @@
           (w.rating ? '<span class="rating-row"><b>' + w.rating.toFixed(1) + "</b>" + starsHTML(w.rating) + "<span>(" + w.reviews + " " + t("reviewsWord") + ")</span></span>"
             : '<span class="badge badge-save">' + t("onboardingBadge") + "</span>") + "</div>" +
           '<div class="ed-facts">' +
+          '<div class="ed-fact"><label>🛫 ' + t("edOutbound") + '</label><div class="ed-fact-c"><button type="button" class="ed-chip' + (w.abroad ? " on" : "") + '" id="edv-abroad">' + (w.abroad ? "✓ " : "") + t("edOutbound") + "</button></div></div>" +
           '<div class="ed-fact"><label>📍 ' + t("edDest") + '</label><div class="ed-fact-c"><select class="ed-mini-sel" id="edv-dest">' + destOpts + "</select>" +
           '<button type="button" class="ed-plus" id="edv-newdest" title="' + t("edNewDest") + '">＋</button></div></div>' +
           '<div class="ed-fact"><label>🗂 ' + t("edTypeChip") + '</label><div class="ed-fact-c"><select class="ed-mini-sel" id="edv-type">' + typeOpts + "</select></div></div>" +
@@ -1192,7 +1193,6 @@
           '<option value="hours"' + ((w.days || 1) <= 1 ? " selected" : "") + ">" + t("durHours") + "</option></select>" +
           mini("edv-durval", (w.days || 1) > 1 ? w.days : (w.hours || 8), 56) + "</div></div>" +
           '<div class="ed-fact"><label>👥 ' + t("pfGroup") + '</label><div class="ed-fact-c">' + mini("edv-group", w.groupMax || 10, 56) + "</div></div>" +
-          '<div class="ed-fact"><label>🛫 ' + t("edOutbound") + '</label><div class="ed-fact-c"><button type="button" class="ed-chip' + (w.abroad ? " on" : "") + '" id="edv-abroad">' + (w.abroad ? "✓ " : "") + t("edOutbound") + "</button></div></div>" +
           "</div>" +
 
           /* departs-from as compact pills, right under the facts */
