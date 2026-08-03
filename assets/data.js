@@ -15,7 +15,8 @@ const CITIES = [
   { id: "najaf",    en: "Najaf",             ar: "النجف",            motif: "dome",      color: "art-night" },
   { id: "marshes",  en: "The Marshes",       ar: "الأهوار",          motif: "boat",      color: "art-olive" },
   { id: "samarra",  en: "Samarra",           ar: "سامراء",           motif: "malwiya",   color: "art-terracotta" },
-  { id: "mosul",    en: "Mosul & Nineveh",   ar: "الموصل ونينوى",    motif: "citadel",   color: "art-terracotta" },
+  { id: "mosul",    en: "Mosul",             ar: "الموصل",           motif: "citadel",   color: "art-terracotta" },
+  { id: "nineveh",  en: "Nineveh",           ar: "نينوى",            motif: "citadel",   color: "art-olive" },
   { id: "basra",    en: "Basra",             ar: "البصرة",           motif: "palm",      color: "art-teal" }
 ];
 
@@ -257,7 +258,7 @@ const TOURS = [
 
 const CITY_IMG = {
   baghdad: "baghdad", erbil: "citadel", babylon: "babylon", karbala: "shrine",
-  najaf: "shrine", marshes: "marsh", samarra: "malwiya", mosul: "citadel", basra: "basra"
+  najaf: "shrine", marshes: "marsh", samarra: "malwiya", mosul: "citadel", nineveh: "citadel", basra: "basra"
 };
 
 const TOUR_EXTRAS = {
@@ -507,7 +508,7 @@ const REAL_TOURS = [
             ar: "برنامج أسبوع عبر مواقع العراق القديم بين بغداد وأربيل من Aknaf Alsawary — التفاصيل في الإعلان الأصلي." },
     highlights: { en: ["Baghdad & Erbil combined", "Monthly fixed departures", "Iraqi agency"], ar: ["بغداد وأربيل معاً", "انطلاقات شهرية ثابتة", "وكالة عراقية"] },
     meeting: { en: "See the original listing for dates and meeting details.", ar: "راجع الإعلان الأصلي للمواعيد وتفاصيل اللقاء." }, itinerary: [] },
-  { id: "aknaf-unesco-9d", agency: "aknaf-alsawary", city: "mosul", type: "history", img: "citadel", motif: "citadel", color: "art-terracotta",
+  { id: "aknaf-unesco-9d", agency: "aknaf-alsawary", city: "nineveh", type: "history", img: "citadel", motif: "citadel", color: "art-terracotta",
     days: 9, price: 0, groupMax: 0, langs: ["EN", "AR"], cancel: false,
     src: "https://aknafalsawary.com/tours/iraq-unesco-tour/", srcName: "aknafalsawary.com",
     title: { en: "9-Day Iraq UNESCO Tour: Babylon, Hatra, Nasiriyah & Erbil", ar: "جولة يونسكو العراق في ٩ أيام: بابل والحضر والناصرية وأربيل" },
